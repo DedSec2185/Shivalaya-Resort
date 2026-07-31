@@ -1,0 +1,1025 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Panache — Shivalaya Resorts Menu</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500;1,600&family=Poppins:wght@400;500;600;700;800&family=Kaushan+Script&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --cream:      #F1E6CC;
+  --cream-lt:   #F8F1DF;
+  --cream-wht:  #FAF6ED;
+  --kraft:      #C9A667;
+  --kraft-dk:   #B4924F;
+  --wood:       #4A2E1B;
+  --wood-lt:    #6B4226;
+  --ink:        #1E1108;
+  --muted:      #6B5842;
+  --rust:       #9C3B26;
+  --gold:       #B8893A;
+  --gold-dk:    #9C7A3E;
+  --dots:       #C2A876;
+}
+
+body {
+  background: #d9cdb0;
+  font-family: "Poppins", sans-serif;
+  color: var(--ink);
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+}
+
+/* ══════════════════════════════════════════════
+   COVER PAGE — BOCA split style
+   ══════════════════════════════════════════════ */
+.cover-page {
+  width: 210mm;
+  min-height: 297mm;
+  margin: 28px auto;
+  position: relative;
+  box-shadow: 0 6px 40px rgba(0,0,0,0.28);
+  overflow: hidden;
+  background: var(--wood);
+}
+
+.cover-halves {
+  min-height: 297mm;
+  display: grid;
+  grid-template-columns: 0.88fr 9mm 1.08fr;
+}
+
+/* LEFT — kraft panel with logo & branding */
+.cover-left {
+  background:
+    radial-gradient(ellipse at 25% 20%, rgba(255,255,255,0.10), transparent 55%),
+    var(--kraft);
+  padding: 20mm 14mm 16mm 18mm;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.cover-logo {
+  width: 200px;
+  height: auto;
+  margin-bottom: 6mm;
+  filter: drop-shadow(0 3px 10px rgba(0,0,0,0.2));
+}
+
+.cover-divider {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 75%;
+  margin: 5mm 0;
+}
+.cover-divider span { flex: 1; height: 1px; background: var(--wood); opacity: 0.4; }
+.cover-divider em {
+  font-family: "Cormorant Garamond", serif;
+  font-style: normal;
+  font-size: 14px;
+  color: var(--wood);
+  opacity: 0.7;
+  letter-spacing: 3px;
+}
+
+.cover-tagline {
+  font-family: "Cormorant Garamond", serif;
+  font-style: italic;
+  font-weight: 600;
+  font-size: 15px;
+  color: var(--wood);
+  letter-spacing: 0.3px;
+  line-height: 1.6;
+  text-align: center;
+  max-width: 85%;
+}
+
+.cover-resort {
+  margin-top: auto;
+  padding-top: 10mm;
+  font-family: "Poppins", sans-serif;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 4px;
+  color: var(--wood);
+  text-transform: uppercase;
+  opacity: 0.8;
+}
+
+/* SPINE — wooden hinge strip */
+.spine-strip {
+  background: linear-gradient(90deg, var(--wood-lt), var(--wood) 50%, #3a2314);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-evenly;
+  padding: 14mm 0;
+}
+.spine-strip .clip-screw { width: 4.2mm; height: 4.2mm; }
+
+/* RIGHT — cream panel with index */
+.cover-right {
+  background: var(--cream-lt);
+  padding: 20mm 16mm 14mm 14mm;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+
+.cover-right-location {
+  font-family: "Bebas Neue", sans-serif;
+  font-size: 18px;
+  letter-spacing: 2px;
+  color: var(--ink);
+  text-transform: uppercase;
+}
+.cover-right-sub {
+  font-family: "Cormorant Garamond", serif;
+  font-style: italic;
+  font-size: 13px;
+  color: var(--muted);
+  margin-top: 2px;
+}
+
+.cover-rule-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 6mm 0 5mm;
+}
+.cover-rule-right span { flex: 1; height: 1px; background: var(--gold); opacity: 0.5; }
+.cover-rule-right em {
+  font-family: "Poppins", sans-serif;
+  font-weight: 700;
+  font-size: 10px;
+  color: var(--gold-dk);
+  letter-spacing: 3px;
+  text-transform: uppercase;
+}
+
+.cover-idx-group { margin-bottom: 5mm; }
+.cover-idx-label {
+  font-family: "Poppins", sans-serif;
+  font-weight: 700;
+  font-size: 9.5px;
+  letter-spacing: 2px;
+  color: var(--rust);
+  text-transform: uppercase;
+  margin-bottom: 2mm;
+  display: flex;
+  align-items: baseline;
+  gap: 5px;
+}
+.cover-idx-label .pg-num {
+  font-family: "Bebas Neue", sans-serif;
+  font-size: 20px;
+  color: var(--wood);
+  opacity: 0.4;
+}
+.cover-idx-list {
+  font-family: "Cormorant Garamond", serif;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--ink);
+  line-height: 2;
+  columns: 2;
+  column-gap: 6mm;
+}
+.cover-idx-list div {
+  break-inside: avoid;
+  padding-left: 12px;
+  position: relative;
+}
+.cover-idx-list div::before {
+  content: "›";
+  position: absolute;
+  left: 0;
+  color: var(--rust);
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.cover-right-footer {
+  margin-top: auto;
+  padding-top: 6mm;
+  border-top: 1px solid rgba(0,0,0,0.08);
+  font-family: "Cormorant Garamond", serif;
+  font-style: italic;
+  font-size: 12px;
+  color: var(--muted);
+  text-align: center;
+  letter-spacing: 0.5px;
+}
+
+/* ══════════════════════════════════════════════
+   INDEX PAGE (PAGE 2 — right half feel)
+   ══════════════════════════════════════════════ */
+.index-page {
+  width: 210mm;
+  min-height: 297mm;
+  margin: 28px auto;
+  position: relative;
+  box-shadow: 0 6px 40px rgba(0,0,0,0.25);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  background: var(--cream);
+}
+
+/* wood clip bar */
+.clip-bar {
+  width: 100%;
+  height: 12mm;
+  background: linear-gradient(180deg, var(--wood-lt) 0%, var(--wood) 55%, #3a2314 100%);
+  position: relative;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10mm;
+}
+.clip-bar::after {
+  content: "";
+  position: absolute;
+  bottom: -3px; left: 0; right: 0;
+  height: 3px;
+  background: rgba(0,0,0,0.25);
+}
+.clip-screw {
+  width: 5mm; height: 5mm;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%, #d8d2c4, #8a8378 60%, #55504a);
+  box-shadow: inset 0 0 0 0.6mm rgba(0,0,0,0.25);
+}
+.clip-mark {
+  font-family: "Bebas Neue", sans-serif;
+  font-size: 15px;
+  letter-spacing: 5px;
+  color: var(--cream-lt);
+  opacity: 0.85;
+}
+
+.index-body {
+  flex: 1;
+  padding: 14mm 20mm 10mm;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+
+/* double border frame on index page */
+.index-body::before {
+  content: "";
+  position: absolute;
+  top: 6mm; left: 10mm; right: 10mm; bottom: 6mm;
+  border: 2px solid var(--gold);
+  pointer-events: none;
+  z-index: 0;
+}
+.index-body::after {
+  content: "";
+  position: absolute;
+  top: 8mm; left: 12mm; right: 12mm; bottom: 8mm;
+  border: 0.5px solid var(--gold);
+  opacity: 0.35;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.index-content {
+  position: relative;
+  z-index: 1;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.index-header {
+  text-align: center;
+  margin-bottom: 10mm;
+}
+
+.index-menu-word {
+  font-family: "Bebas Neue", sans-serif;
+  font-size: 72px;
+  letter-spacing: 12px;
+  color: var(--wood);
+  line-height: 0.9;
+}
+
+.index-sub {
+  font-family: "Cormorant Garamond", serif;
+  font-style: italic;
+  font-size: 14px;
+  color: var(--gold-dk);
+  letter-spacing: 3px;
+  margin-top: 4px;
+}
+
+.index-rule {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 6mm auto;
+  width: 70%;
+}
+.index-rule span { flex: 1; height: 1.5px; background: linear-gradient(90deg, transparent, var(--wood), transparent); }
+
+.index-groups {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 8mm;
+  flex: 1;
+}
+
+.index-group {}
+
+.index-page-label {
+  font-family: "Bebas Neue", sans-serif;
+  font-size: 22px;
+  letter-spacing: 2px;
+  color: var(--rust);
+  border-bottom: 2.5px solid var(--wood);
+  padding-bottom: 4px;
+  margin-bottom: 5mm;
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+}
+.index-page-label .pg-num {
+  font-size: 32px;
+  color: var(--wood);
+  opacity: 0.4;
+}
+
+.index-items {
+  font-family: "Cormorant Garamond", serif;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--ink);
+  line-height: 2.2;
+}
+.index-items div {
+  padding-left: 14px;
+  position: relative;
+}
+.index-items div::before {
+  content: "›";
+  position: absolute;
+  left: 0;
+  color: var(--rust);
+  font-size: 17px;
+  font-weight: 700;
+}
+
+.index-footer {
+  text-align: center;
+  margin-top: auto;
+  padding-top: 6mm;
+  position: relative;
+  z-index: 1;
+}
+.index-footer p {
+  font-family: "Cormorant Garamond", serif;
+  font-style: italic;
+  font-size: 12px;
+  color: var(--muted);
+  letter-spacing: 1.5px;
+}
+
+/* ══════════════════════════════════════════════
+   CONTENT PAGES (Masagran-inspired)
+   ══════════════════════════════════════════════ */
+.page {
+  width: 210mm;
+  min-height: 297mm;
+  margin: 28px auto;
+  position: relative;
+  box-shadow: 0 6px 40px rgba(0,0,0,0.25);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  background: var(--cream);
+}
+
+.page-body {
+  position: relative;
+  flex: 1;
+  padding: 8mm 28mm 6mm 12mm;
+  display: flex;
+  flex-direction: column;
+}
+
+/* double border frame on content pages */
+.page-frame {
+  position: absolute;
+  top: 4mm; left: 6mm; right: 22mm; bottom: 4mm;
+  border: 2px solid var(--gold);
+  pointer-events: none;
+  z-index: 0;
+}
+.page-frame::after {
+  content: "";
+  position: absolute;
+  inset: 2mm;
+  border: 0.5px solid var(--gold);
+  opacity: 0.3;
+  pointer-events: none;
+}
+
+/* vertical side strip — navigation */
+.side-strip {
+  position: absolute;
+  top: 12mm; bottom: 0; right: 0;
+  width: 16mm;
+  background: var(--kraft);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  z-index: 2;
+}
+.side-strip::before {
+  content: "";
+  position: absolute;
+  top: 0; left: 0; width: 100%; height: 6mm;
+  background: linear-gradient(180deg, rgba(74,46,27,0.18), transparent);
+}
+.side-strip span {
+  display: block;
+  writing-mode: vertical-rl;
+  transform: rotate(180deg);
+  font-family: "Poppins", sans-serif;
+  font-weight: 600;
+  font-size: 9px;
+  letter-spacing: 3px;
+  color: var(--wood);
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+/* page header with small logo */
+.page-header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  margin-bottom: 5mm;
+  position: relative;
+  z-index: 1;
+}
+.page-header-logo {
+  width: 32px;
+  height: auto;
+  opacity: 0.6;
+}
+.page-header-text {
+  font-family: "Bebas Neue", sans-serif;
+  font-size: 14px;
+  letter-spacing: 5px;
+  color: var(--wood);
+  opacity: 0.65;
+}
+
+/* columns */
+.k-columns {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0 10mm;
+  flex: 1;
+  position: relative;
+  z-index: 1;
+}
+
+/* sections */
+.k-section { margin-bottom: 14px; }
+
+/* ── MASAGRAN-STYLE BORDERED HEADER ── */
+.k-title {
+  font-family: "Bebas Neue", sans-serif;
+  font-size: 22px;
+  letter-spacing: 2px;
+  color: var(--rust);
+  text-transform: uppercase;
+  text-align: center;
+  padding: 6px 14px;
+  margin-bottom: 6px;
+  border: 2.5px solid var(--wood);
+  position: relative;
+  background: var(--cream);
+}
+
+.k-subtitle {
+  font-family: "Poppins", sans-serif;
+  font-size: 7.5px;
+  font-weight: 500;
+  color: var(--muted);
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  text-align: center;
+  margin-bottom: 5px;
+  font-style: italic;
+}
+
+/* items */
+.k-item {
+  display: flex;
+  align-items: baseline;
+  gap: 3px;
+  margin: 3.5px 0;
+}
+.k-name {
+  font-family: "Poppins", sans-serif;
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--ink);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.k-dots {
+  flex: 1;
+  border-bottom: 0.8px dotted var(--dots);
+  margin-bottom: 2.5px;
+  min-width: 4px;
+}
+.k-price {
+  font-family: "Poppins", sans-serif;
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--rust);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.k-tag {
+  font-family: "Poppins", sans-serif;
+  font-size: 6px;
+  font-weight: 600;
+  color: var(--wood);
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  border: 0.8px solid var(--gold);
+  padding: 1.5px 5px;
+  border-radius: 2px;
+  margin-left: 2px;
+  flex-shrink: 0;
+}
+
+/* footer */
+.k-footer {
+  text-align: center;
+  margin-top: 6px;
+  padding-top: 6px;
+  position: relative;
+  z-index: 1;
+}
+.k-footer::before {
+  content: "";
+  position: absolute;
+  top: 0; left: 10%; right: 10%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--gold), transparent);
+}
+.k-footer p {
+  font-family: "Cormorant Garamond", serif;
+  font-size: 12px;
+  font-style: italic;
+  font-weight: 600;
+  color: var(--muted);
+  letter-spacing: 1.5px;
+  line-height: 1.6;
+}
+.k-footer .heart { color: var(--rust); font-style: normal; }
+
+/* ══════════════ PRINT ══════════════ */
+@media print {
+  html, body {
+    background: var(--cream) !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+  .cover-page, .page {
+    margin: 0 !important;
+    box-shadow: none !important;
+    page-break-after: always !important;
+    break-after: page !important;
+  }
+  .page:last-child { page-break-after: auto !important; break-after: auto !important; }
+}
+@page { size: A4 portrait; margin: 0; }
+
+</style>
+</head>
+<body>
+
+<!-- ══════════════ COVER PAGE — BOCA SPLIT STYLE ══════════════ -->
+<div class="cover-page">
+<div class="cover-halves">
+
+  <!-- LEFT — kraft panel with Panache logo -->
+  <div class="cover-left">
+    <img class="cover-logo" src="panache_logo.jpg" alt="Panache Restaurant Logo">
+    <div class="cover-divider"><span></span><em>&#9670;</em><span></span></div>
+    <p class="cover-tagline">Where every meal tells a story of the mountains — kumaoni warmth, indian classics, and a little continental flair, plated with care.</p>
+    <div class="cover-resort">Bhimtal &middot; Uttarakhand</div>
+  </div>
+
+  <!-- SPINE — wooden hinge -->
+  <div class="spine-strip">
+    <div class="clip-screw"></div>
+    <div class="clip-screw"></div>
+    <div class="clip-screw"></div>
+  </div>
+
+  <!-- RIGHT — cream panel with menu index -->
+  <div class="cover-right">
+    <div class="cover-right-location">The Full Menu</div>
+    <div class="cover-right-sub">Everything on offer, at a glance</div>
+    <div class="cover-rule-right"><em>Inside</em><span></span></div>
+
+    <div class="cover-idx-group">
+      <div class="cover-idx-label"><span class="pg-num">01</span> Page One</div>
+      <div class="cover-idx-list">
+        <div>Breakfast</div>
+        <div>South Indian</div>
+        <div>Egg to Order</div>
+        <div>Soup</div>
+        <div>Salad</div>
+        <div>Starters — Veg</div>
+        <div>Starters — Non-Veg</div>
+        <div>Momos</div>
+      </div>
+    </div>
+
+    <div class="cover-idx-group">
+      <div class="cover-idx-label"><span class="pg-num">02</span> Page Two</div>
+      <div class="cover-idx-list">
+        <div>Choice of Paneer</div>
+        <div>Seasonal Vegetables</div>
+        <div>Choices of Vegetable</div>
+        <div>Non Veg</div>
+        <div>Choice of Dal</div>
+        <div>Choice of Mutton</div>
+        <div>Kumaoni (Pahadi)</div>
+        <div>Indian Bread</div>
+        <div>Rice</div>
+      </div>
+    </div>
+
+    <div class="cover-idx-group">
+      <div class="cover-idx-label"><span class="pg-num">03</span> Page Three</div>
+      <div class="cover-idx-list">
+        <div>Italian</div>
+        <div>Burger</div>
+        <div>Sandwich</div>
+        <div>Dessert</div>
+        <div>Beverages</div>
+        <div>Sides</div>
+        <div>Mocktail Zone</div>
+      </div>
+    </div>
+
+    <div class="cover-right-footer">Prices in &#8377; &middot; Taxes as applicable</div>
+  </div>
+
+</div>
+</div>
+
+<!-- ══════════════ PAGE 1 ══════════════ -->
+<div class="page">
+  <div class="clip-bar">
+    <div class="clip-screw"></div>
+    <span class="clip-mark">PANACHE &nbsp;&middot;&nbsp; SHIVALAYA RESORTS</span>
+    <div class="clip-screw"></div>
+  </div>
+  <div class="page-body">
+    <div class="page-frame"></div>
+    <div class="page-header">
+      <span class="page-header-text">PANACHE &nbsp;•&nbsp; PAGE ONE</span>
+    </div>
+    <div class="k-columns">
+      <div>
+  <div class="k-section">
+    <div class="k-title">Breakfast</div>
+    <div class="k-item"><span class="k-name">Cereals with Milk</span><span class="k-dots"></span><span class="k-price">₹160</span></div>
+    <div class="k-item"><span class="k-name">Canned Juice</span><span class="k-dots"></span><span class="k-price">₹120</span></div>
+    <div class="k-item"><span class="k-name">Pancake</span><span class="k-dots"></span><span class="k-price">₹250</span></div>
+    <div class="k-item"><span class="k-name">Puri Bhaji</span><span class="k-dots"></span><span class="k-price">₹250</span></div>
+    <div class="k-item"><span class="k-name">Pav Bhajhi</span><span class="k-dots"></span><span class="k-price">₹280</span></div>
+    <div class="k-item"><span class="k-name">Tawa Paratha with Stuffing of Choice (2 pcs)</span><span class="k-dots"></span><span class="k-price">₹300</span></div>
+    <div class="k-item"><span class="k-name">Tandoori Paratha with Stuffing of Choice (2 pcs)</span><span class="k-dots"></span><span class="k-price">₹350</span></div>
+    <div class="k-item"><span class="k-name">Chole Bhature</span><span class="k-dots"></span><span class="k-price">₹250</span></div>
+    <div class="k-item"><span class="k-name">Poha / Vermicelli Upma / Rawa Choice</span><span class="k-dots"></span><span class="k-price">₹150</span></div>
+    <div class="k-item"><span class="k-name">Cutlet / Aloo Bonda / Bread Pakora / Bread Roll (2 pcs)</span><span class="k-dots"></span><span class="k-price">₹150</span></div>
+  </div>
+
+  <div class="k-section">
+    <div class="k-title">South Indian</div>
+    <div class="k-subtitle">Served with Sambhar &amp; Coconut Chutney</div>
+    <div class="k-item"><span class="k-name">Plain Dosa</span><span class="k-dots"></span><span class="k-price">₹250</span></div>
+    <div class="k-item"><span class="k-name">Onion / Masala Dosa</span><span class="k-dots"></span><span class="k-price">₹300</span></div>
+    <div class="k-item"><span class="k-name">Paneer / Cheese Dosa</span><span class="k-dots"></span><span class="k-price">₹400</span></div>
+    <div class="k-item"><span class="k-name">Utthapam / Idli / Medu Vada</span><span class="k-dots"></span><span class="k-price">₹250</span></div>
+  </div>
+
+  <div class="k-section">
+    <div class="k-title">Egg to Order</div>
+    <div class="k-item"><span class="k-name">Cheese Omelette</span><span class="k-dots"></span><span class="k-price">₹250</span></div>
+    <div class="k-item"><span class="k-name">Bread Omelette</span><span class="k-dots"></span><span class="k-price">₹200</span></div>
+    <div class="k-item"><span class="k-name">Boiled Egg (2 pcs)</span><span class="k-dots"></span><span class="k-price">₹100</span></div>
+    <div class="k-item"><span class="k-name">Egg Bhurji</span><span class="k-dots"></span><span class="k-price">₹180</span></div>
+    <div class="k-item"><span class="k-name">Sunny Side Up / Half Fry / Egg Poach (2 pcs)</span><span class="k-dots"></span><span class="k-price">₹150</span></div>
+    <div class="k-item"><span class="k-name">Scrambled Egg (2 pcs)</span><span class="k-dots"></span><span class="k-price">₹180</span></div>
+  </div>
+
+  <div class="k-section">
+    <div class="k-title">Soup</div>
+    <div class="k-item"><span class="k-name">Cream of Tomato</span><span class="k-dots"></span><span class="k-price">₹300</span></div>
+    <div class="k-item"><span class="k-name">Manchow Soup</span><span class="k-dots"></span><span class="k-price">₹250</span></div>
+    <div class="k-item"><span class="k-name">Dhaniya Shorba</span><span class="k-dots"></span><span class="k-price">₹250</span></div>
+    <div class="k-item"><span class="k-name">Sweet Corn</span><span class="k-dots"></span><span class="k-price">₹250</span></div>
+    <div class="k-item"><span class="k-name">Minestrone</span><span class="k-dots"></span><span class="k-price">₹350</span></div>
+    <div class="k-item"><span class="k-name">Chicken Clear Soup</span><span class="k-dots"></span><span class="k-price">₹250</span></div>
+    <div class="k-item"><span class="k-name">Chicken Coriander Soup</span><span class="k-dots"></span><span class="k-price">₹250</span></div>
+  </div>
+      </div>
+      <div>
+  <div class="k-section">
+    <div class="k-title">Salad</div>
+    <div class="k-item"><span class="k-name">Green Salad</span><span class="k-dots"></span><span class="k-price">₹150</span></div>
+    <div class="k-item"><span class="k-name">Russian / Kimchi / Finger Salad</span><span class="k-dots"></span><span class="k-price">₹250</span></div>
+    <div class="k-item"><span class="k-name">Protein Salad</span><span class="k-dots"></span><span class="k-price">₹250</span></div>
+  </div>
+
+  <div class="k-section">
+    <div class="k-title">Starters — Veg</div>
+    <div class="k-item"><span class="k-name">Chilli Paneer</span><span class="k-dots"></span><span class="k-price">₹400</span></div>
+    <div class="k-item"><span class="k-name">Honey Chilli Potato</span><span class="k-dots"></span><span class="k-price">₹300</span></div>
+    <div class="k-item"><span class="k-name">Cheese Balls</span><span class="k-dots"></span><span class="k-price">₹300</span></div>
+    <div class="k-item"><span class="k-name">Crispy Corn</span><span class="k-dots"></span><span class="k-price">₹400</span></div>
+    <div class="k-item"><span class="k-name">Veg Spring Roll</span><span class="k-dots"></span><span class="k-price">₹350</span></div>
+    <div class="k-item"><span class="k-name">Veg Kathi Roll</span><span class="k-dots"></span><span class="k-price">₹350</span></div>
+    <div class="k-item"><span class="k-name">Mushroom Tikka</span><span class="k-dots"></span><span class="k-price">₹500</span></div>
+    <div class="k-item"><span class="k-name">Paneer Tikka</span><span class="k-dots"></span><span class="k-price">₹600</span></div>
+    <div class="k-item"><span class="k-name">Soya Chaap / Soya Malai Chaap</span><span class="k-dots"></span><span class="k-price">₹300</span></div>
+  </div>
+
+  <div class="k-section">
+    <div class="k-title">Starters — Non-Veg</div>
+    <div class="k-item"><span class="k-name">Non-Veg Spring Roll</span><span class="k-dots"></span><span class="k-price">₹500</span></div>
+    <div class="k-item"><span class="k-name">Non-Veg Kathi Roll</span><span class="k-dots"></span><span class="k-price">₹500</span></div>
+    <div class="k-item"><span class="k-name">Chilli Chicken / Chicken 65</span><span class="k-dots"></span><span class="k-price">₹600</span></div>
+    <div class="k-item"><span class="k-name">Chicken Seekh Kebab</span><span class="k-dots"></span><span class="k-price">₹650</span></div>
+    <div class="k-item"><span class="k-name">Chicken Malai Tikka</span><span class="k-dots"></span><span class="k-price">₹650</span></div>
+    <div class="k-item"><span class="k-name">Chicken Tikka</span><span class="k-dots"></span><span class="k-price">₹600</span></div>
+    <div class="k-item"><span class="k-name">Bhatti Murg</span><span class="k-dots"></span><span class="k-price">₹800</span></div>
+    <div class="k-item"><span class="k-name">Chicken Haryali Tikka</span><span class="k-dots"></span><span class="k-price">₹650</span></div>
+  </div>
+
+  <div class="k-section">
+    <div class="k-title">Momos</div>
+    <div class="k-item"><span class="k-name">Veg Momo / Ragi</span><span class="k-dots"></span><span class="k-price">₹300</span></div>
+    <div class="k-item"><span class="k-name">Mushroom Momo / Ragi</span><span class="k-dots"></span><span class="k-price">₹400</span></div>
+    <div class="k-item"><span class="k-name">Paneer Momo / Ragi</span><span class="k-dots"></span><span class="k-price">₹400</span></div>
+    <div class="k-item"><span class="k-name">Chicken Momo / Ragi</span><span class="k-dots"></span><span class="k-price">₹400</span></div>
+    <div class="k-item"><span class="k-name">Fried Momo</span><span class="k-dots"></span><span class="k-price">₹400</span></div>
+  </div>
+      </div>
+    </div>
+    <div class="k-footer">
+      <p>Thank you for dining with us <span class="heart">&#10084;</span> &middot; Crafted with care in the heart of the hills</p>
+    </div>
+  </div>
+  <div class="side-strip"><span>BREAKFAST  •  SOUTH INDIAN  •  EGG TO ORDER  •  SOUP  •  SALAD  •  STARTERS  •  MOMOS</span></div>
+</div>
+
+<!-- ══════════════ PAGE 2 ══════════════ -->
+<div class="page">
+  <div class="clip-bar">
+    <div class="clip-screw"></div>
+    <span class="clip-mark">PANACHE &nbsp;&middot;&nbsp; SHIVALAYA RESORTS</span>
+    <div class="clip-screw"></div>
+  </div>
+  <div class="page-body">
+    <div class="page-frame"></div>
+    <div class="page-header">
+      <span class="page-header-text">PANACHE &nbsp;•&nbsp; PAGE TWO</span>
+    </div>
+    <div class="k-columns">
+      <div>
+  <div class="k-section">
+    <div class="k-title">Choice of Paneer</div>
+    <div class="k-item"><span class="k-name">Kadahi Paneer</span><span class="k-dots"></span><span class="k-price">₹550</span></div>
+    <div class="k-item"><span class="k-name">Shahi Paneer</span><span class="k-dots"></span><span class="k-price">₹550</span></div>
+    <div class="k-item"><span class="k-name">Paneer Butter Masala</span><span class="k-dots"></span><span class="k-price">₹550</span></div>
+    <div class="k-item"><span class="k-name">Paneer Lababdar</span><span class="k-dots"></span><span class="k-price">₹550</span></div>
+    <div class="k-item"><span class="k-name">Palak Paneer</span><span class="k-dots"></span><span class="k-price">₹550</span></div>
+    <div class="k-item"><span class="k-name">Paneer Tikka Masala</span><span class="k-dots"></span><span class="k-price">₹650</span></div>
+  </div>
+
+  <div class="k-section">
+    <div class="k-title">Seasonal Vegetables</div>
+    <div class="k-item"><span class="k-name">Bhindi Do Pyaza</span><span class="k-dots"></span><span class="k-price">₹350</span></div>
+    <div class="k-item"><span class="k-name">Aloo Gobhi Adrakhi</span><span class="k-dots"></span><span class="k-price">₹350</span></div>
+    <div class="k-item"><span class="k-name">Achari Baigan</span><span class="k-dots"></span><span class="k-price">₹350</span></div>
+    <div class="k-item"><span class="k-name">Dum Aloo Kashmiri</span><span class="k-dots"></span><span class="k-price">₹400</span></div>
+    <div class="k-item"><span class="k-name">Matar Mushroom</span><span class="k-dots"></span><span class="k-price">₹550</span></div>
+    <div class="k-item"><span class="k-name">Mushroom Butter Masala</span><span class="k-dots"></span><span class="k-price">₹550</span></div>
+    <div class="k-item"><span class="k-name">Manchurian Gravy</span><span class="k-dots"></span><span class="k-price">₹400</span></div>
+  </div>
+
+  <div class="k-section">
+    <div class="k-title">Choices of Vegetable</div>
+    <div class="k-item"><span class="k-name">Mix Veg / Sabz Miloni</span><span class="k-dots"></span><span class="k-price">₹450</span></div>
+    <div class="k-item"><span class="k-name">Veg Jaipuri</span><span class="k-dots"></span><span class="k-price">₹450</span></div>
+  </div>
+
+  <div class="k-section">
+    <div class="k-title">Non Veg</div>
+    <div class="k-item"><span class="k-name">Kadhai Chicken</span><span class="k-dots"></span><span class="k-price">₹650</span></div>
+    <div class="k-item"><span class="k-name">Chicken Curry</span><span class="k-dots"></span><span class="k-price">₹650</span></div>
+    <div class="k-item"><span class="k-name">Kali Mirch Chicken</span><span class="k-dots"></span><span class="k-price">₹700</span></div>
+    <div class="k-item"><span class="k-name">Butter Chicken</span><span class="k-dots"></span><span class="k-price">₹700</span></div>
+    <div class="k-item"><span class="k-name">Handi Chicken</span><span class="k-dots"></span><span class="k-price">₹650</span></div>
+    <div class="k-item"><span class="k-name">Rogan Josh Chicken</span><span class="k-dots"></span><span class="k-price">₹650</span></div>
+    <div class="k-item"><span class="k-name">Panache Chicken</span><span class="k-tag">CHEF'S SPECIAL</span><span class="k-dots"></span><span class="k-price">₹750</span></div>
+  </div>
+
+  <div class="k-section">
+    <div class="k-title">Choice of Dal</div>
+    <div class="k-item"><span class="k-name">Dal Tadka / Dal Fry</span><span class="k-dots"></span><span class="k-price">₹400</span></div>
+    <div class="k-item"><span class="k-name">Dal Makhani</span><span class="k-dots"></span><span class="k-price">₹500</span></div>
+    <div class="k-item"><span class="k-name">Dal Sultani (Chef's Special)</span><span class="k-dots"></span><span class="k-price">₹400</span></div>
+    <div class="k-item"><span class="k-name">Dal Panchmeel</span><span class="k-dots"></span><span class="k-price">₹400</span></div>
+    <div class="k-item"><span class="k-name">Rajma Rasila</span><span class="k-dots"></span><span class="k-price">₹400</span></div>
+  </div>
+      </div>
+      <div>
+  <div class="k-section">
+    <div class="k-title">Choice of Mutton</div>
+    <div class="k-item"><span class="k-name">Panache Mutton</span><span class="k-tag">CHEF'S SPECIAL</span><span class="k-dots"></span><span class="k-price">₹1000</span></div>
+    <div class="k-item"><span class="k-name">Handi Mutton</span><span class="k-dots"></span><span class="k-price">₹1000</span></div>
+    <div class="k-item"><span class="k-name">Rogan Josh Mutton</span><span class="k-dots"></span><span class="k-price">₹1000</span></div>
+  </div>
+
+  <div class="k-section">
+    <div class="k-title">Kumaoni (Pahadi)</div>
+    <div class="k-item"><span class="k-name">Bhat Ki Chudkani / Gahot Ki Dal</span><span class="k-dots"></span><span class="k-price">₹550</span></div>
+    <div class="k-item"><span class="k-name">Mooli Thechuani / Aloo Gutke / Bhat Ke Dupke / Palak Kafa</span><span class="k-dots"></span><span class="k-price">₹350</span></div>
+    <div class="k-item"><span class="k-name">Mandua Ki Roti</span><span class="k-dots"></span><span class="k-price">₹60</span></div>
+    <div class="k-item"><span class="k-name">Boondi Raita</span><span class="k-dots"></span><span class="k-price">₹150</span></div>
+    <div class="k-item"><span class="k-name">Kukumber Raita</span><span class="k-dots"></span><span class="k-price">₹150</span></div>
+    <div class="k-item"><span class="k-name">Kumaoni Raita</span><span class="k-dots"></span><span class="k-price">₹150</span></div>
+    <div class="k-item"><span class="k-name">Jhungar Ki Kheer</span><span class="k-dots"></span><span class="k-price">₹200</span></div>
+    <div class="k-item"><span class="k-name">Kumaoni Badi Ki Sabzi</span><span class="k-dots"></span><span class="k-price">₹350</span></div>
+    <div class="k-item"><span class="k-name">Kumaoni Chicken</span><span class="k-dots"></span><span class="k-price">₹700</span></div>
+    <div class="k-item"><span class="k-name">Kumaoni Mutton</span><span class="k-dots"></span><span class="k-price">₹1200</span></div>
+    <div class="k-item"><span class="k-name">Plain Khichdi</span><span class="k-dots"></span><span class="k-price">₹150</span></div>
+    <div class="k-item"><span class="k-name">Moong Dal Khichdi</span><span class="k-dots"></span><span class="k-price">₹150</span></div>
+  </div>
+
+  <div class="k-section">
+    <div class="k-title">Indian Bread</div>
+    <div class="k-item"><span class="k-name">Tawa Roti</span><span class="k-dots"></span><span class="k-price">₹25</span></div>
+    <div class="k-item"><span class="k-name">Butter Tawa Roti</span><span class="k-dots"></span><span class="k-price">₹30</span></div>
+    <div class="k-item"><span class="k-name">Butter Tandoori Roti</span><span class="k-dots"></span><span class="k-price">₹50</span></div>
+    <div class="k-item"><span class="k-name">Missi Roti</span><span class="k-dots"></span><span class="k-price">₹60</span></div>
+    <div class="k-item"><span class="k-name">Butter Missi Roti</span><span class="k-dots"></span><span class="k-price">₹70</span></div>
+    <div class="k-item"><span class="k-name">Plain Naan</span><span class="k-dots"></span><span class="k-price">₹60</span></div>
+    <div class="k-item"><span class="k-name">Butter Plain Naan</span><span class="k-dots"></span><span class="k-price">₹70</span></div>
+    <div class="k-item"><span class="k-name">Garlic Naan</span><span class="k-dots"></span><span class="k-price">₹80</span></div>
+    <div class="k-item"><span class="k-name">Butter Garlic Naan</span><span class="k-dots"></span><span class="k-price">₹90</span></div>
+    <div class="k-item"><span class="k-name">Laccha Paratha</span><span class="k-dots"></span><span class="k-price">₹90</span></div>
+    <div class="k-item"><span class="k-name">Butter Chiplets</span><span class="k-dots"></span><span class="k-price">₹50</span></div>
+  </div>
+
+  <div class="k-section">
+    <div class="k-title">Rice</div>
+    <div class="k-item"><span class="k-name">Steamed / Jeera Rice</span><span class="k-dots"></span><span class="k-price">₹250</span></div>
+    <div class="k-item"><span class="k-name">Veg Fried Rice</span><span class="k-dots"></span><span class="k-price">₹350</span></div>
+    <div class="k-item"><span class="k-name">Veg Briyani</span><span class="k-dots"></span><span class="k-price">₹500</span></div>
+    <div class="k-item"><span class="k-name">Chicken Biryani</span><span class="k-dots"></span><span class="k-price">₹750</span></div>
+    <div class="k-item"><span class="k-name">Chicken Fried Rice</span><span class="k-dots"></span><span class="k-price">₹550</span></div>
+    <div class="k-item"><span class="k-name">Schezwan Chicken Fried Rice</span><span class="k-dots"></span><span class="k-price">₹650</span></div>
+  </div>
+      </div>
+    </div>
+    <div class="k-footer">
+      <p>Thank you for dining with us <span class="heart">&#10084;</span> &middot; Crafted with care in the heart of the hills</p>
+    </div>
+  </div>
+  <div class="side-strip"><span>PANEER  •  VEG  •  NON VEG  •  DAL  •  MUTTON  •  KUMAONI  •  BREADS  •  RICE</span></div>
+</div>
+
+<!-- ══════════════ PAGE 3 ══════════════ -->
+<div class="page">
+  <div class="clip-bar">
+    <div class="clip-screw"></div>
+    <span class="clip-mark">PANACHE &nbsp;&middot;&nbsp; SHIVALAYA RESORTS</span>
+    <div class="clip-screw"></div>
+  </div>
+  <div class="page-body">
+    <div class="page-frame"></div>
+    <div class="page-header">
+      <span class="page-header-text">PANACHE &nbsp;•&nbsp; PAGE THREE</span>
+    </div>
+    <div class="k-columns">
+      <div>
+  <div class="k-section">
+    <div class="k-title">Italian</div>
+    <div class="k-item"><span class="k-name">Alfredo Sauce Pasta</span><span class="k-dots"></span><span class="k-price">₹550</span></div>
+    <div class="k-item"><span class="k-name">Arrabita Sauce Pasta</span><span class="k-dots"></span><span class="k-price">₹550</span></div>
+    <div class="k-item"><span class="k-name">Mixed Sauce Pasta</span><span class="k-dots"></span><span class="k-price">₹550</span></div>
+    <div class="k-item"><span class="k-name">Mushroom Pizza</span><span class="k-dots"></span><span class="k-price">₹450</span></div>
+    <div class="k-item"><span class="k-name">Corn Pizza</span><span class="k-dots"></span><span class="k-price">₹450</span></div>
+    <div class="k-item"><span class="k-name">Farmhouse Pizza</span><span class="k-dots"></span><span class="k-price">₹550</span></div>
+    <div class="k-item"><span class="k-name">Paneer Peppery</span><span class="k-dots"></span><span class="k-price">₹550</span></div>
+    <div class="k-item"><span class="k-name">Pizza with Topping of Choice</span><span class="k-dots"></span><span class="k-price">₹550</span></div>
+    <div class="k-item"><span class="k-name">Margeretta Pizza</span><span class="k-dots"></span><span class="k-price">₹550</span></div>
+  </div>
+
+  <div class="k-section">
+    <div class="k-title">Burger</div>
+    <div class="k-item"><span class="k-name">Classic Veg Burger</span><span class="k-dots"></span><span class="k-price">₹250</span></div>
+    <div class="k-item"><span class="k-name">Paneer Burger</span><span class="k-dots"></span><span class="k-price">₹250</span></div>
+    <div class="k-item"><span class="k-name">Chicken Burger</span><span class="k-dots"></span><span class="k-price">₹280</span></div>
+  </div>
+
+  <div class="k-section">
+    <div class="k-title">Sandwich</div>
+    <div class="k-item"><span class="k-name">Veg Plain Sandwich</span><span class="k-dots"></span><span class="k-price">₹150</span></div>
+    <div class="k-item"><span class="k-name">Chicken Plain Sandwich</span><span class="k-dots"></span><span class="k-price">₹200</span></div>
+    <div class="k-item"><span class="k-name">Grill / Club Sandwich</span><span class="k-dots"></span><span class="k-price">₹250</span></div>
+    <div class="k-item"><span class="k-name">Chicken Grill Sandwich</span><span class="k-dots"></span><span class="k-price">₹350</span></div>
+    <div class="k-item"><span class="k-name">Bombay Sandwich</span><span class="k-dots"></span><span class="k-price">₹250</span></div>
+  </div>
+
+  <div class="k-section">
+    <div class="k-title">Dessert</div>
+    <div class="k-item"><span class="k-name">Kesari Kheer / Phirni</span><span class="k-dots"></span><span class="k-price">₹150</span></div>
+    <div class="k-item"><span class="k-name">Ice Cream</span><span class="k-dots"></span><span class="k-price">₹150</span></div>
+    <div class="k-item"><span class="k-name">Gulab Jamun (2 pcs)</span><span class="k-dots"></span><span class="k-price">₹150</span></div>
+    <div class="k-item"><span class="k-name">Fruit Custard</span><span class="k-dots"></span><span class="k-price">₹150</span></div>
+    <div class="k-item"><span class="k-name">Malpua with Rabri / Shahi Tukda</span><span class="k-dots"></span><span class="k-price">₹200</span></div>
+  </div>
+
+  <div class="k-section">
+    <div class="k-title">Beverages</div>
+    <div class="k-item"><span class="k-name">Tea</span><span class="k-dots"></span><span class="k-price">₹80</span></div>
+    <div class="k-item"><span class="k-name">Coffee</span><span class="k-dots"></span><span class="k-price">₹120</span></div>
+    <div class="k-item"><span class="k-name">Cold Coffee</span><span class="k-dots"></span><span class="k-price">₹200</span></div>
+    <div class="k-item"><span class="k-name">Hot Chocolate</span><span class="k-dots"></span><span class="k-price">₹150</span></div>
+    <div class="k-item"><span class="k-name">Lassi Sweet / Salt</span><span class="k-dots"></span><span class="k-price">₹150</span></div>
+    <div class="k-item"><span class="k-name">Butter Milk</span><span class="k-dots"></span><span class="k-price">₹150</span></div>
+    <div class="k-item"><span class="k-name">Aerated Drinks (200 ml)</span><span class="k-dots"></span><span class="k-price">₹50</span></div>
+    <div class="k-item"><span class="k-name">Soda</span><span class="k-dots"></span><span class="k-price">₹50</span></div>
+  </div>
+      </div>
+      <div>
+  <div class="k-section">
+    <div class="k-title">Sides</div>
+    <div class="k-item"><span class="k-name">French Fries</span><span class="k-dots"></span><span class="k-price">₹200</span></div>
+    <div class="k-item"><span class="k-name">Chilli Cheese Toast</span><span class="k-dots"></span><span class="k-price">₹250</span></div>
+    <div class="k-item"><span class="k-name">Paneer Pakoda</span><span class="k-dots"></span><span class="k-price">₹350</span></div>
+    <div class="k-item"><span class="k-name">Chicken Pakoda</span><span class="k-dots"></span><span class="k-price">₹450</span></div>
+    <div class="k-item"><span class="k-name">Fish Pakoda</span><span class="k-dots"></span><span class="k-price">₹350</span></div>
+    <div class="k-item"><span class="k-name">Masala Maggi</span><span class="k-dots"></span><span class="k-price">₹150</span></div>
+    <div class="k-item"><span class="k-name">Mix Veg Pakora</span><span class="k-dots"></span><span class="k-price">₹250</span></div>
+    <div class="k-item"><span class="k-name">Egg Maggi</span><span class="k-dots"></span><span class="k-price">₹200</span></div>
+    <div class="k-item"><span class="k-name">Peanut Masala</span><span class="k-dots"></span><span class="k-price">₹150</span></div>
+    <div class="k-item"><span class="k-name">Masala Papad</span><span class="k-dots"></span><span class="k-price">₹120</span></div>
+    <div class="k-item"><span class="k-name">Aloo Chat</span><span class="k-dots"></span><span class="k-price">₹150</span></div>
+    <div class="k-item"><span class="k-name">Veg Hakka Noodles</span><span class="k-dots"></span><span class="k-price">₹300</span></div>
+    <div class="k-item"><span class="k-name">Crispy Chidwa</span><span class="k-dots"></span><span class="k-price">₹200</span></div>
+  </div>
+
+  <div class="k-section">
+    <div class="k-title">Mocktail Zone</div>
+    <div class="k-item"><span class="k-name">Electric Blue</span><span class="k-dots"></span><span class="k-price">₹150</span></div>
+    <div class="k-item"><span class="k-name">Virgin Mojito</span><span class="k-dots"></span><span class="k-price">₹200</span></div>
+    <div class="k-item"><span class="k-name">Homemade Lemonade</span><span class="k-dots"></span><span class="k-price">₹150</span></div>
+    <div class="k-item"><span class="k-name">Mint Julep</span><span class="k-dots"></span><span class="k-price">₹200</span></div>
+    <div class="k-item"><span class="k-name">Ice Tea</span><span class="k-dots"></span><span class="k-price">₹200</span></div>
+    <div class="k-item"><span class="k-name">Buransh Juice</span><span class="k-dots"></span><span class="k-price">₹150</span></div>
+    <div class="k-item"><span class="k-name">Oreo Shake</span><span class="k-dots"></span><span class="k-price">₹200</span></div>
+    <div class="k-item"><span class="k-name">Elaichi Milk Shake</span><span class="k-dots"></span><span class="k-price">₹200</span></div>
+    <div class="k-item"><span class="k-name">Kesar Milk</span><span class="k-dots"></span><span class="k-price">₹200</span></div>
+    <div class="k-item"><span class="k-name">Plain Milk</span><span class="k-dots"></span><span class="k-price">₹80</span></div>
+    <div class="k-item"><span class="k-name">Coldrinks (750 ml)</span><span class="k-dots"></span><span class="k-price">₹80</span></div>
+  </div>
+      </div>
+    </div>
+    <div class="k-footer">
+      <p>Thank you for dining with us <span class="heart">&#10084;</span> &middot; Crafted with care in the heart of the hills</p>
+    </div>
+  </div>
+  <div class="side-strip"><span>ITALIAN  •  BURGER  •  SANDWICH  •  DESSERT  •  BEVERAGES  •  SIDES  •  MOCKTAILS</span></div>
+</div>
+
+</body>
+</html>

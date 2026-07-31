@@ -1,0 +1,25 @@
+{
+  "name": "panache-ordering-system",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Interactive ordering system for Panache restaurant at Shivalaya resort",
+  "scripts": {
+    "dev:menu": "pnpm --filter customer-menu dev",
+    "dev:desk": "pnpm --filter front-desk dev",
+    "dev:owner": "pnpm --filter owner-dashboard dev",
+    "build:menu": "pnpm --filter customer-menu build",
+    "build:desk": "pnpm --filter front-desk build",
+    "build:owner": "pnpm --filter owner-dashboard build",
+    "build": "pnpm -r build",
+    "test": "node --test tests/**/*.test.mjs",
+    "check": "pnpm test && pnpm build",
+    "dev": "pnpm -r --parallel dev"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ]
+}
