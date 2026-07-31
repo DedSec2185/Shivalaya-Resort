@@ -449,12 +449,47 @@
     }
     footer strong { color: var(--gold-light); }
 
-    /* ── PRINT ── */
+    /* ── PRINT & PDF EXPORT STYLING ── */
+    * {
+      -webkit-print-color-adjust: exact !important;
+      print-color-adjust: exact !important;
+      color-adjust: exact !important;
+    }
+
     @media print {
-      body { background: #fff; color: #111; }
-      .hero { background: #f5f5f5; }
-      .card, .toc-card, .arch-box { background: #f9f9f9; border-color: #ddd; }
-      .section-header { border-color: #ddd; }
+      body {
+        background: #0F1A0F !important;
+        color: #F5EEDC !important;
+      }
+      .hero {
+        background: linear-gradient(135deg, #0a150a 0%, #1A2E1A 40%, #152510 100%) !important;
+      }
+      .card, .toc-card, .arch-box {
+        background: #1E2D1E !important;
+        border-color: rgba(201,168,76,0.3) !important;
+      }
+      .url-box {
+        background: #000000 !important;
+        color: #E6CD8B !important;
+      }
+      .url-box a {
+        color: #E6CD8B !important;
+      }
+      .alert-warn {
+        background: rgba(230,147,74,0.18) !important;
+        color: #FFB878 !important;
+      }
+      .alert-info {
+        background: rgba(74,158,204,0.18) !important;
+        color: #88CCEE !important;
+      }
+      .alert-success {
+        background: rgba(74,187,106,0.18) !important;
+        color: #88DDAA !important;
+      }
+      p, li, span, td, div {
+        color: inherit;
+      }
     }
   </style>
 </head>
