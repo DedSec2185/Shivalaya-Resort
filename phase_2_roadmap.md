@@ -1,31 +1,90 @@
-# Phase 2 Architecture & Roadmap Blueprint
+# Phase 2 & 3 Architecture & Master Blueprint
 
-This document serves as the technical master plan for Phase 2 of the Shivalaya Panache Restaurant Management Suite. It records all strategic decisions, deployment pipelines, and integration strategies discussed.
+This document serves as the technical master plan for Phase 2 (Backend Integration) and Phase 3 (Production Go-Live) of the Shivalaya Panache Restaurant Management Suite. It records all strategic decisions, deployment pipelines, database structures, and operational workflows.
 
-## 1. Production Deployment (Vercel + GitHub)
-- **CI/CD Pipeline:** GitHub `main` branch is connected to Vercel. Running `git push` automatically triggers a production build.
-- **Environment Variables:** Supabase credentials (`VITE_SUPABASE_URL` and `VITE_SUPABASE_ANON_KEY`) must be manually added to Vercel Settings > Environment Variables for all three apps to prevent "white screen" build failures.
-- **Strict Linting:** Vercel builds will fail if there are unused variables or missing dependencies in `package.json`. Code must be clean before pushing.
+## 1. Single Database Architecture (Supabase)
+We use **one single Supabase Postgres database** — not three separate databases. All three apps are just different "windows" into the same tables.
+- **Customer App**: Writes orders.
+- **Front Desk App**: Reads orders and updates status.
+- **Owner Dashboard**: Reads everything (reports, menus, folios) and edits menu items.
 
-## 2. Domain & Subdomain Strategy
-The resort's primary domain (e.g., `shivalayapanache.com`) will be routed using subdomains for the 3 apps:
-1. **`menu.shivalayapanache.com`** → Customer Menu (Used for QR codes on tables/rooms)
-2. **`desk.shivalayapanache.com`** → Front Desk Dashboard (Receptionists)
-3. **`admin.shivalayapanache.com`** → Owner's Ledger (Management)
+### Core Tables:
+- `restaurants`
+- `rooms` / `tables`
+- `menu_items`
+- `staff` (multi-profile)
+- `orders`
 
-*Security Note:* Supabase **CORS (Cross-Origin Resource Sharing)** settings must be updated to explicitly whitelist these three exact subdomains, otherwise database access will be blocked in production.
+*Why this avoids sync errors:* There's no "app A tells app B" logic. Every app talks directly to Supabase. Supabase's Realtime engine watches the `orders` table and pushes changes to whoever is subscribed. There's only one source of truth.
 
-## 3. Database & Real-Time Sync (Supabase)
-- **Real-Time WebSockets:** Supabase Realtime will be used to instantly push new orders from the Customer Menu to the Front Desk Kanban board without refreshing.
-- **Menu Availability Toggles:** 
-  - A boolean column `is_available` in the `menu_items` table.
-  - Toggling it in the Owner Dashboard instantly pushes a WebSocket update to all active Customer Menu sessions to mark items as "Out of Stock".
-- **Time-Based Menu Availability:**
-  - Database columns `available_from_time` and `available_until_time` will dictate when categories (like Breakfast) appear.
-  - The frontend hides the UI, and the backend explicitly rejects orders placed outside these hours to prevent stale-session ordering.
+## 2. Real-Time Connection Mechanism
+This uses **Supabase Realtime**, which is Postgres's native replication stream exposed over WebSockets.
+- **Flow:** Customer places order → `INSERT` into `orders` table (via Supabase client SDK) → Postgres commits the row → Supabase Realtime detects the change → Pushes instantly (< 200ms) to Front Desk, Customer tracking page, and Owner Dashboard.
+- Every app opens one WebSocket connection on load and just listens (push-based, no polling).
 
-## 4. Property Management System (PMS) Integration
-For checking out guests and calculating total hotel room bills, the Guest Folio (Room-wise food billing) will integrate with the resort's PMS via one of three methods:
-1. **API Integration (Preferred):** Create a secure endpoint via Supabase Edge Functions. The resort's PMS pings our API for "Room 101" during checkout, and we return the total unpaid food balance.
-2. **Direct DB View:** Create a secure, read-only PostgreSQL view for the custom PMS developers to query the food balance directly.
-3. **Manual Export:** A CSV/Excel export button on the Owner's Ledger that generates a daily room billing report for manual import into legacy PMS software.
+## 3. Domain, Subdomains, and Hosting
+Since the resort already has a domain (e.g., `shivalayaresorts.com`), we just add subdomains that point to our Vercel-hosted apps:
+1. **`order.shivalayaresorts.com`** → Customer Menu App (Mobile-first, QR Code linked)
+2. **`staff.shivalayaresorts.com`** → Front Desk App (Desktop-first)
+3. **`owner.shivalayaresorts.com`** → Owner Dashboard (Mobile-first, desktop-friendly)
+
+**Remote Setup Process:**
+- Deploy apps to Vercel (xxxx.vercel.app URLs).
+- Ask the client to add 3 CNAME records in their domain registrar (GoDaddy/Namecheap) pointing to Vercel.
+- Vercel auto-issues free SSL (https) once verified. No server management required.
+- Supabase **CORS** settings must explicitly whitelist these three subdomains.
+
+## 4. Remote Handover & Support
+Because everything is cloud-hosted (Vercel + Supabase), the remote deployment and support burden is practically zero.
+- **Receptionist Desktop Setup:** Open Chrome on the reception PC, go to `staff.shivalayaresorts.com`, log in with PIN. Optionally "Install as App" (PWA) so it opens like a native app. No local repository, files, or Node.js installation needed.
+- **Onboarding:** One 20-30 min screen-share call (Zoom/Meet) to explain logins and workflows.
+- **Ongoing Support:** Bugs are fixed via Vercel deployments (Frontend) or Supabase (Backend) directly from your laptop. Changes go live instantly for the client on refresh.
+
+## 5. Staff Multi-Profile System
+A single `staff` table manages both receptionists and owners.
+```sql
+staff (
+  id UUID, restaurant_id UUID, 
+  name TEXT, phone TEXT, email TEXT, 
+  pin_hash TEXT, role TEXT, active BOOLEAN, created_at TIMESTAMP
+)
+```
+- Profiles like "Reception 1" and "Owner - Mr. Sharma" are created with default PINs.
+- Staff sees a profile picker (like Netflix), taps their name, and enters their PIN.
+- Provides accountability: Every order status change logs `changed_by = staff.name`.
+
+## 6. Room-Based Order History & Checkout (Guest Folio)
+Room/Table numbers are **mandatory dropdowns** (not free text), populated from a `rooms` table.
+```sql
+orders (
+  id, restaurant_id, room_number, -- MANDATORY
+  service_type, -- room_service | dine_in | pickup
+  guest_name, guest_phone, items JSONB, subtotal, total, status, created_at
+)
+```
+- **Checkout Flow:** Owner/Reception searches by Room Number (e.g., '302'). The system runs a query `SELECT * FROM orders WHERE room_number = '302'` and calculates the grand total of all food ordered during their stay.
+- **PMS Integration Options:** We can provide this exact total to their Property Management System via API endpoints, Direct DB views, or Manual CSV export.
+
+## 7. Customer Order Tracking
+- After placing an order, customers are redirected to `/order/{order_id}`.
+- This is bookmarked in `localStorage` so they can return to it.
+- This page opens a Supabase subscription scoped to that specific `order_id`.
+- When the receptionist clicks "Confirm", the `UPDATE` is instantly pushed via WebSocket to the customer's phone, updating the visual timeline (Received → Confirmed → Preparing → Served).
+
+## 8. Menu Management & Availability
+- **Owner Edits:** CRUD operations on `menu_items` via Owner Dashboard Menu Manager. Changes reflect instantly on the customer app without a refresh.
+- **Manual Toggles:** A boolean `is_available` column allows instant "Out of Stock" marking.
+- **Time-Based Availability:** Database columns `available_from_time` and `available_until_time` determine when categories (e.g., Breakfast) appear on the Customer Menu.
+
+## 9. Automated Owner Email Reports
+- We use a transactional email service (Resend or SendGrid) wired into Supabase Edge Functions.
+- Owner clicks "Email Me This Report", the Edge Function generates a PDF/HTML summary, and emails it to the owner's saved email address.
+- Can be automated via a daily `pg_cron` job (e.g., daily summary at 11 PM).
+
+## 10. Step-by-Step Production Go-Live (Phase 3)
+1. **Supabase (30 min):** Create project, run SQL migrations (tables, indexes, RLS), seed 150 menu items, create staff profiles.
+2. **Vercel (20 min):** Push code to GitHub, connect to Vercel, add `.env` variables, get 3 live URLs.
+3. **Domain & DNS (15 min + propagation):** Client adds CNAME records, Vercel verifies SSL.
+4. **Email Service (15 min):** Verify sending domain (e.g. `reports@youragency.com`) in Resend, wire Edge Function.
+5. **Final Testing (1-2 hr):** Place test orders across live URLs, verify WebSocket real-time connections, test on mobile devices.
+6. **Go Live:** Print QR codes for tables/rooms pointing to `order.shivalayaresorts.com`, staff logs in, owner gets access.
