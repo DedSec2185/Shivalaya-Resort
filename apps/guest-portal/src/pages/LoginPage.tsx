@@ -16,6 +16,7 @@ export default function LoginPage() {
   const { directLogin, loginDemo } = useGuestAuth()
 
   const from = (location.state as { from?: string })?.from || '/'
+  const safeFrom = from && from !== '/login' ? from : '/'
   const redirectMessage = (location.state as { message?: string })?.message || ''
 
   const [guestRole, setGuestRole] = useState<'resident' | 'dining'>('resident')
@@ -86,7 +87,7 @@ export default function LoginPage() {
       sessionStorage.setItem('qr_room', roomNumber.trim())
     }
 
-    navigate(from, { replace: true })
+    navigate(safeFrom, { replace: true })
   }
 
   // ── 1-Tap Quick Demo Helper ──────────────────────────────
@@ -110,7 +111,7 @@ export default function LoginPage() {
       sessionStorage.setItem('qr_type', 'dine_in')
       sessionStorage.setItem('qr_table', 'T-04')
     }
-    navigate(from, { replace: true })
+    navigate(safeFrom, { replace: true })
   }
 
   return (
@@ -130,39 +131,58 @@ export default function LoginPage() {
       <div style={{ position: 'absolute', top: '-10%', right: '-20%', width: '400px', height: '400px', background: 'radial-gradient(circle, rgba(217,189,117,0.12) 0%, transparent 70%)', pointerEvents: 'none' }} />
       <div style={{ position: 'absolute', bottom: '0%', left: '-20%', width: '400px', height: '400px', background: 'radial-gradient(circle, rgba(44,74,34,0.15) 0%, transparent 70%)', pointerEvents: 'none' }} />
 
-      {/* ── Topnav Header ── */}
+      {/* ── Sticky Topnav Header ── */}
       <div 
         style={{
-          padding: '16px 20px',
+          padding: '14px 20px',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
-          position: 'relative',
-          zIndex: 10
+          position: 'sticky',
+          top: 0,
+          zIndex: 100,
+          background: 'rgba(13, 23, 11, 0.95)',
+          backdropFilter: 'blur(16px)',
+          borderBottom: '1px solid rgba(217, 189, 117, 0.2)'
         }}
       >
         <button
-          onClick={() => navigate(from)}
+          type="button"
+          onClick={() => {
+            if (window.history.length > 1 && safeFrom !== '/') {
+              navigate(-1)
+            } else {
+              navigate(safeFrom)
+            }
+          }}
           style={{
             background: 'rgba(255, 255, 255, 0.08)',
-            border: '1px solid rgba(217, 189, 117, 0.25)',
+            border: '1px solid rgba(217, 189, 117, 0.35)',
             borderRadius: '100px',
             color: 'var(--brass-light)',
-            padding: '8px 14px',
+            padding: '8px 16px',
             display: 'flex',
             alignItems: 'center',
             gap: '6px',
-            fontSize: '12.5px',
-            fontWeight: 600,
-            cursor: 'pointer'
+            fontSize: '13px',
+            fontWeight: 700,
+            cursor: 'pointer',
+            boxShadow: '0 2px 8px rgba(0,0,0,0.2)'
           }}
         >
-          <ChevronLeft size={16} />
+          <ChevronLeft size={17} />
           <span>Return</span>
         </button>
 
-        <div style={{ fontSize: '10px', color: 'var(--brass-light)', letterSpacing: '2px', textTransform: 'uppercase', fontWeight: 700 }}>
-          Fast Access Pass
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <img 
+            src="https://shivalayaresort.com/wp-content/uploads/2024/11/Shivalaya-Resort-Logo-t.png" 
+            alt="Shivalaya Logo" 
+            style={{ width: '22px', height: '22px', objectFit: 'contain', filter: 'brightness(1.2)' }}
+          />
+          <span style={{ fontSize: '10px', color: 'var(--brass-light)', letterSpacing: '2px', textTransform: 'uppercase', fontWeight: 800 }}>
+            Fast Access Pass
+          </span>
         </div>
       </div>
 
@@ -668,6 +688,32 @@ export default function LoginPage() {
                 <span>Demo Table T-04</span>
               </button>
             </div>
+
+            {/* Direct Exit Link */}
+            <button
+              type="button"
+              onClick={() => navigate(safeFrom)}
+              style={{
+                width: '100%',
+                marginTop: '14px',
+                padding: '10px',
+                background: 'transparent',
+                border: 'none',
+                color: 'var(--brass)',
+                fontSize: '13px',
+                fontWeight: 600,
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '6px',
+                textDecoration: 'underline',
+                textUnderlineOffset: '3px'
+              }}
+            >
+              <ChevronLeft size={15} />
+              <span>Continue Browsing Without Pass</span>
+            </button>
           </div>
         </div>
 

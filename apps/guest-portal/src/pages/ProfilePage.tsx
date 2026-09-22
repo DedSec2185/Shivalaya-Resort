@@ -1,15 +1,15 @@
 /**
  * ProfilePage — Guest account view
  *
- * Resort guests: name, room number, check-in badge, quick links
- * Walk-in guests: name entry prompt, phone, order history
- * Not logged in: redirects to /login
+ * Logged in: name, room/table number, contact, quick order links, logout
+ * Not logged in: Displays clean guest access card with 1-tap Sign In and Back to Menu
+ * NEVER crashes or renders blank.
  */
 
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useGuestAuth } from '../contexts/GuestAuthContext'
-import { User, BedDouble, Phone, Receipt, Compass, LogOut, ChevronRight, ChevronLeft, Edit3, Check, Mail } from 'lucide-react'
+import { User, BedDouble, Phone, Receipt, Compass, LogOut, ChevronRight, ChevronLeft, Edit3, Check, Mail, Key, UtensilsCrossed, ArrowRight } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 
 export default function ProfilePage() {
@@ -19,12 +19,6 @@ export default function ProfilePage() {
   const [editingName, setEditingName] = useState(false)
   const [nameInput, setNameInput]     = useState(guest?.name || '')
   const [savingName, setSavingName]   = useState(false)
-
-  // Redirect if not logged in
-  if (!isLoggedIn) {
-    navigate('/login', { state: { from: '/profile' } })
-    return null
-  }
 
   async function handleSaveName() {
     if (!nameInput.trim()) return
@@ -39,7 +33,7 @@ export default function ProfilePage() {
     navigate('/')
   }
 
-  // Container animation
+  // Animation variants
   const containerVars = {
     hidden: { opacity: 0 },
     show: {
@@ -55,189 +49,307 @@ export default function ProfilePage() {
   return (
     <div className="app-root" style={{ minHeight: '100dvh', background: 'var(--parchment)', display: 'flex', flexDirection: 'column' }}>
       {/* ── STICKY TOP BRAND HEADER ── */}
-      <div className="topnav" style={{ position: 'sticky', top: 0, zIndex: 100, display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '12px 18px', background: 'rgba(255, 252, 244, 0.95)', backdropFilter: 'blur(20px)', borderBottom: '1px solid rgba(217,189,117,0.2)' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '10px', cursor: 'pointer' }} onClick={() => navigate('/')}>
+      <div 
+        className="topnav" 
+        style={{ 
+          position: 'sticky', 
+          top: 0, 
+          zIndex: 100, 
+          display: 'flex', 
+          alignItems: 'center', 
+          justifyContent: 'space-between', 
+          padding: '12px 18px', 
+          background: 'rgba(255, 252, 244, 0.95)', 
+          backdropFilter: 'blur(20px)', 
+          borderBottom: '1px solid rgba(217,189,117,0.2)' 
+        }}
+      >
+        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
           <button 
             className="icon-btn" 
             aria-label="Go back" 
-            onClick={(e) => { e.stopPropagation(); navigate('/'); }}
-            style={{ width: '32px', height: '32px' }}
+            onClick={() => navigate(-1)}
+            style={{ width: '34px', height: '34px', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}
           >
-            <ChevronLeft size={18} />
+            <ChevronLeft size={20} />
           </button>
-          <img 
-            src="https://shivalayaresort.com/wp-content/uploads/2024/11/Shivalaya-Resort-Logo-t.png" 
-            alt="Shivalaya Resorts" 
-            style={{ width: '34px', height: '34px', objectFit: 'contain', filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.08))' }} 
-          />
-          <div>
-            <div style={{ fontFamily: 'Fraunces, serif', fontSize: '17px', fontWeight: 700, color: 'var(--forest-deep)', lineHeight: 1.1 }}>
-              SHIVALAYA
-            </div>
-            <div style={{ fontSize: '9.5px', color: 'var(--brass)', letterSpacing: '2px', textTransform: 'uppercase', fontWeight: 600 }}>
-              Guest Profile
+          <div 
+            onClick={() => navigate('/')} 
+            style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer' }}
+          >
+            <img 
+              src="https://shivalayaresort.com/wp-content/uploads/2024/11/Shivalaya-Resort-Logo-t.png" 
+              alt="Shivalaya Resorts" 
+              style={{ width: '32px', height: '32px', objectFit: 'contain', filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.08))' }} 
+            />
+            <div>
+              <div style={{ fontFamily: 'Fraunces, serif', fontSize: '16px', fontWeight: 700, color: 'var(--forest-deep)', lineHeight: 1.1 }}>
+                SHIVALAYA
+              </div>
+              <div style={{ fontSize: '9px', color: 'var(--brass)', letterSpacing: '1.5px', textTransform: 'uppercase', fontWeight: 700 }}>
+                Guest Identity
+              </div>
             </div>
           </div>
         </div>
+
+        <button
+          onClick={() => navigate('/menu')}
+          style={{
+            background: 'none',
+            border: 'none',
+            fontSize: '13px',
+            fontWeight: 600,
+            color: 'var(--forest-deep)',
+            cursor: 'pointer',
+            padding: '4px 8px'
+          }}
+        >
+          Menu
+        </button>
       </div>
 
-      <div className="app-scroll" style={{ flex: 1, paddingBottom: '100px' }}>
-        <motion.div 
-          initial="hidden" animate="show" variants={containerVars}
-          style={{ display: 'flex', flexDirection: 'column' }}
-        >
-      {/* ── PREMIUM HEADER & CARD ── */}
-      <motion.div variants={itemVars} style={{ padding: '24px 20px', position: 'relative' }}>
-        <div style={{
-          background: 'linear-gradient(135deg, var(--forest-deep) 0%, var(--forest) 100%)',
-          borderRadius: '24px', padding: '32px 24px',
-          boxShadow: '0 20px 40px rgba(26,46,19,0.15)',
-          position: 'relative', overflow: 'hidden', color: '#fff'
-        }}>
-          {/* Subtle patterns */}
-          <div style={{ position: 'absolute', top: -50, right: -50, width: 200, height: 200, background: 'radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%)', borderRadius: '50%' }} />
-          <div style={{ position: 'absolute', bottom: -50, left: -50, width: 150, height: 150, background: 'radial-gradient(circle, rgba(173,138,63,0.15) 0%, transparent 70%)', borderRadius: '50%' }} />
-
-          <div style={{ display: 'flex', alignItems: 'center', gap: '20px', position: 'relative', zIndex: 10 }}>
-            {/* Avatar */}
-            <motion.div 
-              whileHover={{ scale: 1.05, rotate: 5 }}
-              style={{ width: 80, height: 80, borderRadius: '50%', background: 'rgba(255,255,255,0.1)', border: '2px solid rgba(255,255,255,0.2)', backdropFilter: 'blur(10px)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, boxShadow: '0 10px 20px rgba(0,0,0,0.2)' }}
-            >
-              <User size={36} color="var(--parchment)" />
-            </motion.div>
-
-            {/* Guest Info */}
-            <div style={{ flex: 1, minWidth: 0 }}>
-              {editingName ? (
-                <div style={{ display: 'flex', gap: '8px', marginBottom: '8px' }}>
-                  <input
-                    value={nameInput}
-                    onChange={e => setNameInput(e.target.value)}
-                    autoFocus
-                    style={{ flex: 1, minWidth: 0, background: 'rgba(255,255,255,0.15)', border: '1px solid rgba(255,255,255,0.3)', borderRadius: '8px', padding: '8px 12px', color: '#fff', fontFamily: 'Fraunces, serif', fontSize: '20px', outline: 'none' }}
-                  />
-                  <button onClick={handleSaveName} disabled={savingName} style={{ background: 'var(--brass)', border: 'none', borderRadius: '8px', padding: '0 12px', color: '#fff', cursor: 'pointer' }}>
-                    <Check size={18} />
-                  </button>
-                </div>
-              ) : (
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
-                  <h1 style={{ margin: 0, fontFamily: 'Fraunces, serif', fontSize: '24px', fontWeight: 700, letterSpacing: '0.02em', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-                    {guest?.name || 'Guest'}
-                  </h1>
-                  {!isResortGuest && (
-                    <button onClick={() => setEditingName(true)} style={{ background: 'none', border: 'none', color: 'rgba(255,255,255,0.6)', cursor: 'pointer', padding: '4px' }}>
-                      <Edit3 size={16} />
-                    </button>
-                  )}
-                </div>
-              )}
-              
-              {/* Badges */}
-              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
-                {isResortGuest && guest?.roomNumber ? (
-                  <span style={{ fontSize: '11px', fontWeight: 700, background: 'rgba(173,138,63,0.9)', color: '#fff', padding: '4px 10px', borderRadius: '12px', display: 'flex', alignItems: 'center', gap: '4px', letterSpacing: '0.05em', boxShadow: '0 2px 8px rgba(173,138,63,0.4)' }}>
-                    <BedDouble size={12} /> ROOM {guest.roomNumber}
-                  </span>
-                ) : (
-                  <span style={{ fontSize: '11px', fontWeight: 700, background: 'rgba(255,255,255,0.15)', color: '#fff', padding: '4px 10px', borderRadius: '12px' }}>
-                    WALK-IN
-                  </span>
-                )}
-              </div>
-            </div>
-          </div>
-
-          {/* Contact Details Grid */}
-          <div style={{ marginTop: '28px', borderTop: '1px solid rgba(255,255,255,0.1)', paddingTop: '20px', display: 'flex', flexDirection: 'column', gap: '12px', position: 'relative', zIndex: 10 }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '12px', color: 'rgba(255,255,255,0.8)', fontSize: '13px' }}>
-              <Phone size={16} color="var(--brass-light)" />
-              <span style={{ fontFamily: 'IBM Plex Mono, monospace', letterSpacing: '0.05em' }}>+91 {guest?.phone}</span>
-            </div>
-            {isResortGuest && (
-              <div style={{ display: 'flex', alignItems: 'center', gap: '12px', color: 'rgba(255,255,255,0.8)', fontSize: '13px' }}>
-                <Mail size={16} color="var(--brass-light)" />
-                <span style={{ fontFamily: 'IBM Plex Mono, monospace', letterSpacing: '0.05em' }}>{guest?.email || <span style={{ fontStyle: 'italic', opacity: 0.7 }}>Added at check-in</span>}</span>
-              </div>
-            )}
-          </div>
-        </div>
-      </motion.div>
-
-      {/* ── WALK-IN NAME PROMPT ── */}
-      <AnimatePresence>
-        {!isResortGuest && !guest?.name && (
+      <div className="app-scroll" style={{ flex: 1, paddingBottom: '120px' }}>
+        {!isLoggedIn ? (
+          /* ── NOT LOGGED IN STATE (CLEAN, BEAUTIFUL, NEVER BLANK) ── */
           <motion.div 
-            initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} exit={{ opacity: 0, height: 0 }}
-            style={{ padding: '0 20px', overflow: 'hidden' }}
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            style={{ padding: '24px 20px', maxWidth: '480px', margin: '0 auto', display: 'flex', flexDirection: 'column', gap: '18px' }}
           >
-            <div style={{ background: 'rgba(173,138,63,0.08)', border: '1px solid rgba(173,138,63,0.2)', padding: '16px', borderRadius: '16px', marginBottom: '24px' }}>
-              <p style={{ margin: '0 0 12px', fontSize: '13px', color: 'var(--ink)', fontWeight: 600 }}>Please enter your name to assist our kitchen staff.</p>
-              <div style={{ display: 'flex', gap: '8px' }}>
-                <input value={nameInput} onChange={e => setNameInput(e.target.value)} placeholder="Your name" style={{ flex: 1, padding: '12px 16px', borderRadius: '12px', border: '1px solid var(--line)', background: '#fff', outline: 'none', fontSize: '14px' }} />
-                <button onClick={handleSaveName} style={{ background: 'var(--forest)', color: '#fff', border: 'none', borderRadius: '12px', padding: '0 20px', fontWeight: 600, cursor: 'pointer' }}>Save</button>
+            <div style={{
+              background: 'linear-gradient(135deg, var(--forest-deep) 0%, var(--forest) 100%)',
+              borderRadius: '24px', padding: '32px 24px',
+              boxShadow: '0 20px 40px rgba(26,46,19,0.18)',
+              color: '#fff', textAlign: 'center', position: 'relative', overflow: 'hidden'
+            }}>
+              <div style={{ width: 72, height: 72, borderRadius: '50%', background: 'rgba(255,255,255,0.12)', border: '2px solid rgba(217,189,117,0.3)', margin: '0 auto 16px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--brass-light)' }}>
+                <Key size={32} />
               </div>
+              <h2 style={{ fontFamily: 'Fraunces, serif', fontSize: '24px', fontWeight: 700, margin: '0 0 8px', color: '#F3EEDB' }}>
+                Guest Sanctuary Pass
+              </h2>
+              <p style={{ fontSize: '13.5px', color: 'rgba(243,238,219,0.8)', margin: '0 0 24px', lineHeight: 1.5 }}>
+                Sign in with your mobile number or suite room number to access room folio billing, track active orders, and reserve mountain experiences.
+              </p>
+
+              <button
+                type="button"
+                onClick={() => navigate('/login', { state: { from: '/profile' } })}
+                style={{
+                  width: '100%',
+                  padding: '14px',
+                  borderRadius: '14px',
+                  border: 'none',
+                  background: 'linear-gradient(135deg, var(--brass), var(--brass-light))',
+                  color: 'var(--forest-deep)',
+                  fontSize: '15px',
+                  fontWeight: 700,
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '8px',
+                  boxShadow: '0 8px 20px rgba(0,0,0,0.25)'
+                }}
+              >
+                <span>Enter Mobile Pass / Suite Sign In</span>
+                <ArrowRight size={16} />
+              </button>
+            </div>
+
+            {/* Quick Navigation Cards */}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginTop: '6px' }}>
+              <div 
+                onClick={() => navigate('/menu')}
+                style={{
+                  background: 'var(--card)',
+                  border: '1px solid rgba(0,0,0,0.06)',
+                  borderRadius: '16px',
+                  padding: '14px 18px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  cursor: 'pointer'
+                }}
+              >
+                <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                  <div style={{ width: '38px', height: '38px', borderRadius: '10px', background: 'rgba(44,74,34,0.08)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--forest)' }}>
+                    <UtensilsCrossed size={18} />
+                  </div>
+                  <div>
+                    <div style={{ fontSize: '14px', fontWeight: 700, color: 'var(--forest-deep)' }}>Panache Restaurant Menu</div>
+                    <div style={{ fontSize: '11.5px', color: 'var(--sage)' }}>Order food directly to your table or suite</div>
+                  </div>
+                </div>
+                <ChevronRight size={16} color="var(--sage)" />
+              </div>
+
+              <div 
+                onClick={() => navigate('/orders')}
+                style={{
+                  background: 'var(--card)',
+                  border: '1px solid rgba(0,0,0,0.06)',
+                  borderRadius: '16px',
+                  padding: '14px 18px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  cursor: 'pointer'
+                }}
+              >
+                <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                  <div style={{ width: '38px', height: '38px', borderRadius: '10px', background: 'rgba(173,138,63,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--brass)' }}>
+                    <Receipt size={18} />
+                  </div>
+                  <div>
+                    <div style={{ fontSize: '14px', fontWeight: 700, color: 'var(--forest-deep)' }}>View Orders & Tax Invoices</div>
+                    <div style={{ fontSize: '11.5px', color: 'var(--sage)' }}>Access 80mm GST food bills and tracking</div>
+                  </div>
+                </div>
+                <ChevronRight size={16} color="var(--sage)" />
+              </div>
+
+              <button
+                type="button"
+                onClick={() => navigate('/')}
+                style={{
+                  padding: '12px',
+                  background: 'transparent',
+                  border: '1.5px solid var(--parchment-deep)',
+                  borderRadius: '12px',
+                  color: 'var(--forest-deep)',
+                  fontSize: '13.5px',
+                  fontWeight: 600,
+                  cursor: 'pointer',
+                  marginTop: '8px'
+                }}
+              >
+                ← Return to Sanctuary Home
+              </button>
             </div>
           </motion.div>
-        )}
-      </AnimatePresence>
+        ) : (
+          /* ── LOGGED IN GUEST PROFILE ── */
+          <motion.div 
+            initial="hidden" animate="show" variants={containerVars}
+            style={{ display: 'flex', flexDirection: 'column' }}
+          >
+            {/* ── PREMIUM HEADER & CARD ── */}
+            <motion.div variants={itemVars} style={{ padding: '24px 20px', position: 'relative' }}>
+              <div style={{
+                background: 'linear-gradient(135deg, var(--forest-deep) 0%, var(--forest) 100%)',
+                borderRadius: '24px', padding: '32px 24px',
+                boxShadow: '0 20px 40px rgba(26,46,19,0.15)',
+                position: 'relative', overflow: 'hidden', color: '#fff'
+              }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '20px', position: 'relative', zIndex: 10 }}>
+                  {/* Avatar */}
+                  <motion.div 
+                    whileHover={{ scale: 1.05, rotate: 5 }}
+                    style={{ width: 72, height: 72, borderRadius: '50%', background: 'rgba(255,255,255,0.1)', border: '2px solid rgba(255,255,255,0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, boxShadow: '0 10px 20px rgba(0,0,0,0.2)' }}
+                  >
+                    <User size={34} color="var(--parchment)" />
+                  </motion.div>
 
-      {/* ── QUICK ACTIONS ── */}
-      <motion.div variants={itemVars} style={{ padding: '0 20px' }}>
-        <h3 style={{ fontSize: '11px', fontWeight: 800, color: 'var(--sage)', textTransform: 'uppercase', letterSpacing: '0.15em', marginBottom: '16px', marginLeft: '4px' }}>Quick Access</h3>
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-          {[
-            { icon: Receipt, label: 'My Food Orders', sub: 'Past & active dining orders', path: '/orders', tab: 'food' },
-            { icon: Compass, label: 'My Experiences', sub: 'Booked adventures & wellness', path: '/orders', tab: 'activity' },
-          ].map((item, i) => (
-            <motion.div 
-              key={i} whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}
-              onClick={() => navigate(item.path, { state: { tab: item.tab } })}
-              style={{ background: 'var(--card)', border: '1px solid rgba(0,0,0,0.04)', borderRadius: '20px', padding: '16px', display: 'flex', alignItems: 'center', gap: '16px', cursor: 'pointer', boxShadow: '0 4px 15px rgba(0,0,0,0.02)' }}
-            >
-              <div style={{ width: 48, height: 48, borderRadius: '14px', background: 'rgba(44,74,34,0.06)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--forest)' }}>
-                <item.icon size={22} />
-              </div>
-              <div style={{ flex: 1 }}>
-                <div style={{ fontWeight: 700, color: 'var(--ink)', fontSize: '15px', marginBottom: '2px' }}>{item.label}</div>
-                <div style={{ fontSize: '13px', color: 'var(--sage)' }}>{item.sub}</div>
-              </div>
-              <div style={{ width: 32, height: 32, borderRadius: '50%', background: 'var(--parchment)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                <ChevronRight size={16} color="var(--forest)" />
+                  {/* Guest Info */}
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    {editingName ? (
+                      <div style={{ display: 'flex', gap: '8px', marginBottom: '8px' }}>
+                        <input
+                          value={nameInput}
+                          onChange={e => setNameInput(e.target.value)}
+                          autoFocus
+                          style={{ flex: 1, minWidth: 0, background: 'rgba(255,255,255,0.15)', border: '1px solid rgba(255,255,255,0.3)', borderRadius: '8px', padding: '8px 12px', color: '#fff', fontFamily: 'Fraunces, serif', fontSize: '18px', outline: 'none' }}
+                        />
+                        <button onClick={handleSaveName} disabled={savingName} style={{ background: 'var(--brass)', border: 'none', borderRadius: '8px', padding: '0 12px', color: '#fff', cursor: 'pointer' }}>
+                          <Check size={16} />
+                        </button>
+                      </div>
+                    ) : (
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '6px' }}>
+                        <h1 style={{ margin: 0, fontFamily: 'Fraunces, serif', fontSize: '22px', fontWeight: 700, letterSpacing: '0.02em', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                          {guest?.name || 'Guest'}
+                        </h1>
+                        {!isResortGuest && (
+                          <button onClick={() => setEditingName(true)} style={{ background: 'none', border: 'none', color: 'rgba(255,255,255,0.6)', cursor: 'pointer', padding: '4px' }}>
+                            <Edit3 size={15} />
+                          </button>
+                        )}
+                      </div>
+                    )}
+                    
+                    {/* Badges */}
+                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
+                      {isResortGuest && guest?.roomNumber ? (
+                        <span style={{ fontSize: '11px', fontWeight: 700, background: 'rgba(173,138,63,0.9)', color: '#fff', padding: '4px 10px', borderRadius: '12px', display: 'flex', alignItems: 'center', gap: '4px', letterSpacing: '0.05em' }}>
+                          <BedDouble size={12} /> SUITE {guest.roomNumber}
+                        </span>
+                      ) : (
+                        <span style={{ fontSize: '11px', fontWeight: 700, background: 'rgba(255,255,255,0.15)', color: '#fff', padding: '4px 10px', borderRadius: '12px' }}>
+                          WALK-IN DINER
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                </div>
+
+                {/* Contact Details */}
+                <div style={{ marginTop: '24px', borderTop: '1px solid rgba(255,255,255,0.1)', paddingTop: '16px', display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '10px', color: 'rgba(255,255,255,0.85)', fontSize: '13px' }}>
+                    <Phone size={15} color="var(--brass-light)" />
+                    <span style={{ fontFamily: 'IBM Plex Mono, monospace' }}>+91 {guest?.phone}</span>
+                  </div>
+                </div>
               </div>
             </motion.div>
-          ))}
-        </div>
-      </motion.div>
 
-      {/* ── INFO CARD ── */}
-      {isResortGuest && (
-        <motion.div variants={itemVars} style={{ padding: '24px 20px' }}>
-          <div style={{ background: 'rgba(173,138,63,0.05)', border: '1px dashed rgba(173,138,63,0.3)', borderRadius: '16px', padding: '20px', textAlign: 'center' }}>
-            <div style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', width: 32, height: 32, borderRadius: '50%', background: 'rgba(173,138,63,0.1)', color: 'var(--brass)', marginBottom: '12px' }}>
-              <BedDouble size={16} />
-            </div>
-            <h4 style={{ margin: '0 0 8px', fontSize: '14px', color: 'var(--forest-deep)' }}>Seamless Room Billing</h4>
-            <p style={{ margin: 0, fontSize: '13px', color: 'var(--ink-soft)', lineHeight: 1.5 }}>
-              All your orders and bookings are automatically credited to Room {guest?.roomNumber}. No cash required until checkout.
-            </p>
-          </div>
-        </motion.div>
-      )}
+            {/* ── QUICK ACTIONS ── */}
+            <motion.div variants={itemVars} style={{ padding: '0 20px' }}>
+              <h3 style={{ fontSize: '11px', fontWeight: 800, color: 'var(--sage)', textTransform: 'uppercase', letterSpacing: '0.15em', marginBottom: '14px', marginLeft: '4px' }}>Quick Access</h3>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                {[
+                  { icon: Receipt, label: 'My Food Orders & Bills', sub: 'Track and print 80mm GST food bills', path: '/orders', tab: 'food' },
+                  { icon: Compass, label: 'My Himalayan Experiences', sub: 'Bird cage, bonfire & adventure bookings', path: '/orders', tab: 'activity' },
+                ].map((item, i) => (
+                  <motion.div 
+                    key={i} whileHover={{ scale: 1.01 }} whileTap={{ scale: 0.98 }}
+                    onClick={() => navigate(item.path, { state: { tab: item.tab } })}
+                    style={{ background: 'var(--card)', border: '1px solid rgba(0,0,0,0.05)', borderRadius: '16px', padding: '16px', display: 'flex', alignItems: 'center', gap: '16px', cursor: 'pointer', boxShadow: '0 4px 12px rgba(0,0,0,0.02)' }}
+                  >
+                    <div style={{ width: 44, height: 44, borderRadius: '12px', background: 'rgba(44,74,34,0.06)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--forest)' }}>
+                      <item.icon size={20} />
+                    </div>
+                    <div style={{ flex: 1 }}>
+                      <div style={{ fontWeight: 700, color: 'var(--ink)', fontSize: '14.5px', marginBottom: '2px' }}>{item.label}</div>
+                      <div style={{ fontSize: '12px', color: 'var(--sage)' }}>{item.sub}</div>
+                    </div>
+                    <ChevronRight size={16} color="var(--sage)" />
+                  </motion.div>
+                ))}
+              </div>
+            </motion.div>
 
-      {/* ── LOGOUT ── */}
-      <motion.div variants={itemVars} style={{ padding: '0 20px', marginTop: 'auto', paddingTop: '40px' }}>
-        <button 
-          onClick={handleLogout}
-          style={{ width: '100%', padding: '16px', background: 'transparent', border: '1px solid rgba(154,69,48,0.3)', borderRadius: '16px', color: 'var(--rust)', fontWeight: 700, fontSize: '15px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', cursor: 'pointer' }}
-        >
-          <LogOut size={18} />
-          Sign Out of Device
-        </button>
-      </motion.div>
-    </motion.div>
-  </div>
-</div>
-)
+            {/* ── LOGOUT & RETURN BUTTONS ── */}
+            <motion.div variants={itemVars} style={{ padding: '24px 20px', display: 'flex', flexDirection: 'column', gap: '10px' }}>
+              <button 
+                onClick={() => navigate('/menu')}
+                style={{ width: '100%', padding: '14px', background: 'rgba(44,74,34,0.08)', border: '1px solid rgba(44,74,34,0.2)', borderRadius: '14px', color: 'var(--forest-deep)', fontWeight: 700, fontSize: '14px', cursor: 'pointer' }}
+              >
+                ← Back to Panache Menu
+              </button>
+
+              <button 
+                onClick={handleLogout}
+                style={{ width: '100%', padding: '14px', background: 'transparent', border: '1px solid rgba(154,69,48,0.25)', borderRadius: '14px', color: 'var(--rust)', fontWeight: 700, fontSize: '14px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', cursor: 'pointer' }}
+              >
+                <LogOut size={16} />
+                Sign Out of Pass
+              </button>
+            </motion.div>
+          </motion.div>
+        )}
+      </div>
+    </div>
+  )
 }

@@ -73,7 +73,23 @@ export default function ExperiencesPage() {
         }}
       >
         <div className="desktop-container" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-          <div className="brand-mini" onClick={() => navigate('/')} style={{ cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '10px' }}>
+          <div className="brand-mini" onClick={() => navigate('/')} style={{ cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <button
+              type="button"
+              className="icon-btn"
+              aria-label="Return home"
+              onClick={(e) => {
+                e.stopPropagation()
+                if (window.history.length > 1) {
+                  navigate(-1)
+                } else {
+                  navigate('/')
+                }
+              }}
+              style={{ width: '32px', height: '32px', borderRadius: '50%', background: 'rgba(44,74,34,0.08)' }}
+            >
+              <ChevronLeft size={18} color="var(--forest-deep)" />
+            </button>
             <img 
               src="https://shivalayaresort.com/wp-content/uploads/2024/11/Shivalaya-Resort-Logo-t.png" 
               alt="Shivalaya Logo" 

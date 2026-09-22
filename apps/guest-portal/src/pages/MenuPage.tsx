@@ -10,7 +10,7 @@ import VariantPicker from '../components/VariantPicker'
 import { useMenu, MenuItem } from '../hooks/useMenu'
 import { useCart } from '../store/useCart'
 import { useGuestAuth } from '../contexts/GuestAuthContext'
-import { User } from 'lucide-react'
+import { User, ChevronLeft } from 'lucide-react'
 
 // Skeleton loader — shown while menu is fetching
 function SkeletonLoader() {
@@ -209,7 +209,23 @@ export default function MenuPage() {
           {/* Sticky Top Nav */}
           <div className="topnav" style={{ padding: '12px 0' }}>
             <div className="desktop-container" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-              <div className="brand-mini" onClick={() => navigate('/')} style={{ cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '10px' }}>
+              <div className="brand-mini" onClick={() => navigate('/')} style={{ cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <button
+                  type="button"
+                  className="icon-btn"
+                  aria-label="Return home"
+                  onClick={(e) => {
+                    e.stopPropagation()
+                    if (window.history.length > 1) {
+                      navigate(-1)
+                    } else {
+                      navigate('/')
+                    }
+                  }}
+                  style={{ width: '32px', height: '32px', borderRadius: '50%', background: 'rgba(44,74,34,0.08)' }}
+                >
+                  <ChevronLeft size={18} color="var(--forest-deep)" />
+                </button>
                 <img src="/panache_logo.jpg" alt="Panache Logo" className="monogram-img" />
                 <div className="brand-mini-text">Panache</div>
               </div>

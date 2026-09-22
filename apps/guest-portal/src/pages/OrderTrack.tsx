@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useParams, useNavigate, useLocation } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
-import { Printer } from 'lucide-react'
+import { Printer, ChevronLeft } from 'lucide-react'
 import CustomerBillModal from '../components/CustomerBillModal'
 
 interface Order {
@@ -187,10 +187,27 @@ export default function OrderTrack() {
       <div className="app-root" style={{ background: 'var(--bg)', display: 'flex', flexDirection: 'column' }}>
             
             {/* Top Navigation */}
-            <div className="topnav" style={{ flexShrink: 0 }}>
-              <div className="brand-mini" onClick={() => navigate('/')} style={{ cursor: 'pointer' }}>
-                <img src="/panache_logo.jpg" alt="Panache Logo" className="monogram-img" />
-                <div className="brand-mini-text">Panache</div>
+            <div className="topnav" style={{ flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <button
+                  type="button"
+                  className="icon-btn"
+                  aria-label="Back"
+                  onClick={() => {
+                    if (window.history.length > 1) {
+                      navigate(-1)
+                    } else {
+                      navigate('/orders')
+                    }
+                  }}
+                  style={{ width: '34px', height: '34px', borderRadius: '50%', background: 'rgba(44,74,34,0.08)' }}
+                >
+                  <ChevronLeft size={20} color="var(--forest-deep)" />
+                </button>
+                <div className="brand-mini" onClick={() => navigate('/')} style={{ cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <img src="/panache_logo.jpg" alt="Panache Logo" className="monogram-img" />
+                  <div className="brand-mini-text">Panache</div>
+                </div>
               </div>
               <div className="nav-actions">
                 <button className="icon-btn" onClick={() => navigate('/menu')} aria-label="Menu">

@@ -19,7 +19,7 @@ import PageTransition from './components/PageTransition'
 
 function AppLayout() {
   const location = useLocation()
-  const hideNav = location.pathname.startsWith('/order/')
+  const hideNav = location.pathname.startsWith('/order/') || location.pathname === '/login'
   
   return (
     <div className="mobile-app-container">
