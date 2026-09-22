@@ -1,0 +1,1070 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Shivalaya Resorts — WhatsApp Automation & Meta Setup Guide</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,400;1,9..144,600&family=Inter:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --forest-deep: #142510;
+    --forest: #1A2E13;
+    --forest-mid: #2C4A22;
+    --parchment: #F7F4EE;
+    --parchment-card: #FFFFFF;
+    --parchment-tint: #F3EEDB;
+    --parchment-border: #E5DFC9;
+    --brass: #AD8A3F;
+    --brass-light: #D9BD75;
+    --brass-dark: #8C6D2B;
+    --ink: #1B2119;
+    --ink-soft: #485244;
+    --ink-muted: #6B7B63;
+    --whatsapp: #25D366;
+    --whatsapp-dark: #075E54;
+    --whatsapp-bubble: #DCF8C6;
+    --danger: #C0392B;
+    --danger-bg: #FDEDEC;
+    --warning-bg: #FEF9E7;
+    --warning-border: #F7DC6F;
+    --success-bg: #E8F8F5;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background-color: var(--parchment);
+    color: var(--ink);
+    line-height: 1.65;
+    font-size: 15px;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* Top Action Bar (Hidden in Print) */
+  .top-action-bar {
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    background: rgba(20, 37, 16, 0.95);
+    backdrop-filter: blur(12px);
+    color: #fff;
+    padding: 12px 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid rgba(217, 189, 117, 0.3);
+    box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+  }
+
+  .action-bar-brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-family: 'Fraunces', serif;
+    font-size: 16px;
+    color: var(--brass-light);
+  }
+
+  .action-bar-brand img {
+    height: 30px;
+    width: 30px;
+    border-radius: 50%;
+    border: 1px solid var(--brass-light);
+  }
+
+  .action-bar-buttons {
+    display: flex;
+    gap: 12px;
+  }
+
+  .btn-print {
+    background: linear-gradient(135deg, var(--brass), var(--brass-dark));
+    color: #fff;
+    border: none;
+    padding: 8px 18px;
+    font-size: 13.5px;
+    font-weight: 600;
+    border-radius: 8px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.2s;
+    box-shadow: 0 2px 8px rgba(173, 138, 63, 0.3);
+  }
+
+  .btn-print:hover {
+    background: var(--brass-light);
+    color: var(--forest-deep);
+    transform: translateY(-1px);
+  }
+
+  /* Container */
+  .document-wrapper {
+    max-width: 960px;
+    margin: 40px auto 80px;
+    background: var(--parchment-card);
+    border: 1px solid var(--parchment-border);
+    border-radius: 16px;
+    box-shadow: 0 12px 48px rgba(26, 46, 19, 0.08);
+    overflow: hidden;
+  }
+
+  /* Header Cover Banner */
+  .doc-header {
+    background: linear-gradient(145deg, var(--forest-deep) 0%, var(--forest) 100%);
+    color: #fff;
+    padding: 56px 48px 44px;
+    position: relative;
+    border-bottom: 3px solid var(--brass);
+  }
+
+  .doc-header::after {
+    content: '';
+    position: absolute;
+    right: 32px;
+    bottom: -20px;
+    width: 140px;
+    height: 140px;
+    background: radial-gradient(circle, rgba(217, 189, 117, 0.12) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  .header-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(217, 189, 117, 0.15);
+    border: 1px solid rgba(217, 189, 117, 0.4);
+    padding: 4px 14px;
+    border-radius: 50px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11.5px;
+    color: var(--brass-light);
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    margin-bottom: 18px;
+  }
+
+  .doc-title {
+    font-family: 'Fraunces', Georgia, serif;
+    font-size: 34px;
+    font-weight: 700;
+    line-height: 1.25;
+    color: #FBF9F5;
+    margin-bottom: 12px;
+  }
+
+  .doc-title span {
+    color: var(--brass-light);
+    font-style: italic;
+  }
+
+  .doc-subtitle {
+    font-size: 16px;
+    color: rgba(243, 238, 219, 0.85);
+    max-width: 740px;
+    line-height: 1.6;
+    margin-bottom: 24px;
+  }
+
+  .doc-meta-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 16px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(217, 189, 117, 0.2);
+    border-radius: 10px;
+    padding: 16px 20px;
+  }
+
+  .doc-meta-item .label {
+    font-size: 10.5px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--brass-light);
+    font-family: 'IBM Plex Mono', monospace;
+  }
+
+  .doc-meta-item .val {
+    font-size: 14px;
+    font-weight: 600;
+    color: #FFFFFF;
+    margin-top: 2px;
+  }
+
+  /* Body Content */
+  .doc-body {
+    padding: 48px;
+  }
+
+  h2 {
+    font-family: 'Fraunces', serif;
+    font-size: 24px;
+    color: var(--forest-deep);
+    margin: 40px 0 16px;
+    padding-bottom: 8px;
+    border-bottom: 1.5px solid var(--parchment-border);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  h2:first-of-type { margin-top: 0; }
+
+  h2 .step-num {
+    background: var(--brass);
+    color: #fff;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 13px;
+    font-weight: 700;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  h3 {
+    font-family: 'Fraunces', serif;
+    font-size: 19px;
+    color: var(--forest);
+    margin: 24px 0 12px;
+  }
+
+  p {
+    margin-bottom: 16px;
+    color: var(--ink-soft);
+  }
+
+  /* Callout Boxes */
+  .callout {
+    border-radius: 12px;
+    padding: 20px 24px;
+    margin: 20px 0;
+    border-left: 4px solid;
+  }
+
+  .callout-warning {
+    background: var(--warning-bg);
+    border-color: #E67E22;
+    color: #7D4C13;
+  }
+
+  .callout-info {
+    background: #EBF5FB;
+    border-color: #2980B9;
+    color: #1A5276;
+  }
+
+  .callout-success {
+    background: var(--success-bg);
+    border-color: #27AE60;
+    color: #196F3D;
+  }
+
+  .callout-title {
+    font-weight: 700;
+    font-size: 15px;
+    margin-bottom: 6px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  /* Tables */
+  .table-custom {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0 28px;
+    font-size: 14px;
+    border-radius: 10px;
+    overflow: hidden;
+    border: 1px solid var(--parchment-border);
+  }
+
+  .table-custom th {
+    background: var(--parchment-tint);
+    color: var(--forest-deep);
+    font-family: 'Fraunces', serif;
+    font-weight: 600;
+    text-align: left;
+    padding: 12px 18px;
+    border-bottom: 1.5px solid var(--parchment-border);
+  }
+
+  .table-custom td {
+    padding: 12px 18px;
+    border-bottom: 1px solid var(--parchment-border);
+    vertical-align: top;
+    color: var(--ink-soft);
+  }
+
+  .table-custom tr:nth-child(even) td {
+    background: rgba(247, 244, 238, 0.4);
+  }
+
+  .table-custom tr:last-child td {
+    border-bottom: none;
+  }
+
+  .badge-utility {
+    background: #E8F8F5;
+    color: #117A65;
+    border: 1px solid #A3E4D7;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 4px;
+    display: inline-block;
+  }
+
+  /* WhatsApp Template Showcase */
+  .template-card {
+    background: #FFFFFF;
+    border: 1.5px solid var(--parchment-border);
+    border-radius: 14px;
+    margin: 28px 0 40px;
+    box-shadow: 0 4px 20px rgba(26, 46, 19, 0.05);
+    overflow: hidden;
+    page-break-inside: avoid;
+  }
+
+  .template-card-header {
+    background: var(--forest-deep);
+    color: #fff;
+    padding: 16px 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 2px solid var(--brass);
+  }
+
+  .template-title {
+    font-family: 'Fraunces', serif;
+    font-size: 17px;
+    font-weight: 600;
+    color: var(--brass-light);
+  }
+
+  .template-tag {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12px;
+    background: rgba(217, 189, 117, 0.2);
+    color: #FFFFFF;
+    padding: 3px 10px;
+    border-radius: 6px;
+    border: 1px solid rgba(217, 189, 117, 0.4);
+  }
+
+  .template-grid {
+    display: grid;
+    grid-template-columns: 1.1fr 1fr;
+    gap: 0;
+  }
+
+  @media (max-width: 768px) {
+    .template-grid { grid-template-columns: 1fr; }
+  }
+
+  .template-details-col {
+    padding: 24px;
+    border-right: 1px solid var(--parchment-border);
+  }
+
+  .template-preview-col {
+    padding: 24px;
+    background: #EFEAE2;
+    background-image: radial-gradient(#D5CBB9 1px, transparent 1px);
+    background-size: 18px 18px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
+
+  /* WhatsApp Mockup Phone Bubble */
+  .whatsapp-bubble-wrap {
+    width: 100%;
+    max-width: 380px;
+    background: var(--whatsapp-bubble);
+    border-radius: 10px 10px 10px 0;
+    padding: 14px 16px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.12);
+    position: relative;
+    font-size: 13.5px;
+    line-height: 1.55;
+    color: #111B21;
+  }
+
+  .whatsapp-bubble-wrap::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: -8px;
+    width: 0;
+    height: 0;
+    border: 8px solid transparent;
+    border-top-color: var(--whatsapp-bubble);
+    border-bottom: 0;
+    border-left: 0;
+  }
+
+  .whatsapp-body-text {
+    white-space: pre-line;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  }
+
+  .whatsapp-time {
+    text-align: right;
+    font-size: 11px;
+    color: rgba(17, 27, 33, 0.6);
+    margin-top: 6px;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 4px;
+  }
+
+  .whatsapp-buttons-container {
+    margin-top: 10px;
+    border-top: 1px solid rgba(0,0,0,0.08);
+    padding-top: 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .whatsapp-cta-btn {
+    background: #FFFFFF;
+    color: #00A884;
+    font-weight: 600;
+    font-size: 12.5px;
+    text-align: center;
+    padding: 8px 12px;
+    border-radius: 6px;
+    border: 1px solid rgba(0,0,0,0.05);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+  }
+
+  /* Code / Copy Box */
+  .copy-box-wrap {
+    position: relative;
+    margin: 12px 0 18px;
+  }
+
+  .copy-box {
+    background: var(--forest-deep);
+    color: #F8F9FA;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12.5px;
+    padding: 16px;
+    border-radius: 8px;
+    line-height: 1.6;
+    white-space: pre-wrap;
+    word-break: break-word;
+    border: 1px solid rgba(217, 189, 117, 0.3);
+  }
+
+  /* Field Rows */
+  .meta-field-row {
+    display: flex;
+    align-items: baseline;
+    padding: 6px 0;
+    border-bottom: 1px dashed var(--parchment-border);
+    font-size: 13.5px;
+  }
+
+  .meta-field-row:last-child {
+    border-bottom: none;
+  }
+
+  .meta-field-label {
+    width: 130px;
+    font-weight: 600;
+    color: var(--forest);
+    flex-shrink: 0;
+  }
+
+  .meta-field-val {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12.5px;
+    color: var(--ink);
+  }
+
+  /* Step Cards */
+  .step-card {
+    background: #FFFFFF;
+    border: 1px solid var(--parchment-border);
+    border-radius: 12px;
+    padding: 22px;
+    margin-bottom: 18px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.03);
+  }
+
+  .step-card-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 12px;
+  }
+
+  .step-pill {
+    background: var(--forest);
+    color: var(--brass-light);
+    font-family: 'IBM Plex Mono', monospace;
+    font-weight: 700;
+    font-size: 12px;
+    padding: 4px 10px;
+    border-radius: 6px;
+  }
+
+  .step-card-title {
+    font-family: 'Fraunces', serif;
+    font-size: 17px;
+    font-weight: 600;
+    color: var(--forest-deep);
+  }
+
+  .checklist {
+    list-style: none;
+    margin: 12px 0;
+  }
+
+  .checklist li {
+    position: relative;
+    padding-left: 28px;
+    margin-bottom: 10px;
+    color: var(--ink-soft);
+  }
+
+  .checklist li::before {
+    content: '✓';
+    position: absolute;
+    left: 0;
+    top: 1px;
+    color: var(--forest-mid);
+    font-weight: 800;
+    font-size: 14px;
+    background: rgba(44, 74, 34, 0.12);
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  /* Footer */
+  .doc-footer {
+    background: var(--parchment-tint);
+    padding: 24px 48px;
+    border-top: 1px solid var(--parchment-border);
+    font-size: 12.5px;
+    color: var(--ink-muted);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  /* Print Styles */
+  @media print {
+    .top-action-bar { display: none !important; }
+    body { background: #fff !important; font-size: 13px !important; }
+    .document-wrapper {
+      max-width: 100% !important;
+      margin: 0 !important;
+      border: none !important;
+      box-shadow: none !important;
+      border-radius: 0 !important;
+    }
+    .doc-header { padding: 32px !important; }
+    .doc-body { padding: 24px !important; }
+    .template-card { page-break-inside: avoid !important; margin: 20px 0 !important; }
+    .step-card { page-break-inside: avoid !important; }
+    @page {
+      margin: 15mm 12mm 15mm 12mm;
+      size: A4 portrait;
+    }
+  }
+</style>
+</head>
+<body>
+
+<!-- Interactive Top Bar for Quick PDF Saving -->
+<div class="top-action-bar">
+  <div class="action-bar-brand">
+    <img src="https://shivalayaresort.com/wp-content/uploads/2024/11/Shivalaya-Resort-Logo-t.png" alt="Shivalaya Monogram">
+    <span>Shivalaya Resorts · WhatsApp Setup Guide</span>
+  </div>
+  <div class="action-bar-buttons">
+    <button class="btn-print" onclick="window.print()">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9V2h12v7M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2M6 14h12v8H6z"/></svg>
+      Print / Save as PDF
+    </button>
+  </div>
+</div>
+
+<div class="document-wrapper">
+
+  <!-- Document Header Cover -->
+  <header class="doc-header">
+    <div class="header-tag">Official Integration Guide · Executive Copy</div>
+    <h1 class="doc-title">WhatsApp Business API & AiSensy <span>Onboarding Guide</span></h1>
+    <p class="doc-subtitle">
+      A step-by-step registration roadmap and official Meta message templates for Shivalaya Resorts management to activate automated guest messaging upon Check-In and Check-Out.
+    </p>
+
+    <div class="doc-meta-grid">
+      <div class="doc-meta-item">
+        <div class="label">Client Property</div>
+        <div class="val">Shivalaya Resorts, Bhimtal</div>
+      </div>
+      <div class="doc-meta-item">
+        <div class="label">API Provider</div>
+        <div class="val">AiSensy (Official Meta Tech Partner)</div>
+      </div>
+      <div class="doc-meta-item">
+        <div class="label">Setup Duration</div>
+        <div class="val">~15 Minutes</div>
+      </div>
+      <div class="doc-meta-item">
+        <div class="label">Approval Category</div>
+        <div class="val">UTILITY (Transactional)</div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Document Body -->
+  <div class="doc-body">
+
+    <!-- Section: Why Management Must Do This -->
+    <h2><span class="step-num">!</span> Why Shivalaya Resorts Must Register on Their Own</h2>
+    <p>
+      Meta (WhatsApp's parent company) strictly requires the registered WhatsApp Business Account (WABA) to be legally owned by the business entity (<strong>Shivalaya Resorts</strong>).
+    </p>
+
+    <div class="callout callout-info">
+      <div class="callout-title">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+        Why third parties cannot do this on your behalf:
+      </div>
+      <p style="margin: 0; font-size: 14px;">
+        1. <strong>Verification via SMS/Voice OTP:</strong> Meta delivers a one-time verification PIN directly to your official resort SIM card.<br>
+        2. <strong>Legal Entity Verification:</strong> Meta requires business certificates (GST Certificate, MSME/Udyam, or Utility Bill) that match your resort's registered legal trade name and Bhimtal address.<br>
+        3. <strong>Account Ownership:</strong> The verified green-tick WABA remains an asset of Shivalaya Resorts indefinitely.
+      </p>
+    </div>
+
+    <!-- Section 1: Pre-Requisites -->
+    <h2><span class="step-num">1</span> Pre-Requisites Checklist (Before Starting)</h2>
+    <p>Please gather the following items before initiating the 15-minute signup:</p>
+
+    <ul class="checklist">
+      <li><strong>Official Resort Phone Number:</strong> Must be able to receive an instant SMS or Voice Call OTP.</li>
+      <li><strong>No Active Consumer WhatsApp on this SIM:</strong> 
+        <span style="color: var(--danger); font-weight: 600;">CRITICAL:</span> If this number is currently used on a mobile phone's regular WhatsApp or WhatsApp Business App, open <em>WhatsApp Settings → Account → Delete My Account</em> before proceeding. The number cannot exist on a phone app and the Meta Cloud API simultaneously.
+      </li>
+      <li><strong>Facebook Profile with Admin Access:</strong> An active personal Facebook account that has Admin privileges on the Shivalaya Resorts Facebook Page / Meta Business Suite.</li>
+      <li><strong>GST Certificate / Business Proof:</strong> Soft copy of your GST registration certificate, MSME Udyam, or Certificate of Incorporation showing the exact legal business name.</li>
+      <li><strong>Address Proof:</strong> Recent electricity bill, telephone bill, or bank statement matching the address on the GST certificate.</li>
+      <li><strong>Live Official Website:</strong> <code>https://shivalayaresort.com</code> with business contact info visible.</li>
+    </ul>
+
+    <!-- Section 2: Step-by-Step Walkthrough -->
+    <h2><span class="step-num">2</span> Step-by-Step Onboarding Walkthrough</h2>
+
+    <div class="step-card">
+      <div class="step-card-header">
+        <span class="step-pill">STEP 2.1</span>
+        <span class="step-card-title">Create Account on AiSensy</span>
+      </div>
+      <p>1. Go to <a href="https://aisensy.com" target="_blank" style="color: var(--brass-dark); font-weight: 600;">https://aisensy.com</a> and click <strong>"Start Free Trial"</strong> or <strong>"Sign Up"</strong>.</p>
+      <p>2. Sign up using your official management email (e.g., <code>frontdesk@shivalayaresort.com</code>).</p>
+      <p>3. In the AiSensy onboarding dashboard, click <strong>"Apply for WhatsApp Business API"</strong> / <strong>"Connect WhatsApp API"</strong>.</p>
+    </div>
+
+    <div class="step-card">
+      <div class="step-card-header">
+        <span class="step-pill">STEP 2.2</span>
+        <span class="step-card-title">Complete Meta Embedded Signup (5 Mins)</span>
+      </div>
+      <p>A secure Meta (Facebook) popup window will appear:</p>
+      <ul class="checklist">
+        <li><strong>Log in to Facebook:</strong> Sign in using your Facebook Admin profile.</li>
+        <li><strong>Select / Create Business Account:</strong> Choose your existing Meta Business Account (e.g. <code>Shivalaya Resorts</code>) or create one.</li>
+        <li><strong>Set WhatsApp Display Name:</strong> Enter <code>Shivalaya Resorts</code> (must match the branding on your website/GST).</li>
+        <li><strong>Category:</strong> Select <code>Hotel & Lodging</code> or <code>Travel & Transportation</code>.</li>
+        <li><strong>Website URL:</strong> Enter <code>https://shivalayaresort.com</code></li>
+        <li><strong>Phone Number Verification:</strong> Enter the resort phone number, choose <strong>SMS</strong> or <strong>Phone Call</strong>, and type the 6-digit OTP code received.</li>
+      </ul>
+      <p style="margin-top: 8px;">Click <strong>Finish</strong>. Your official phone number is now connected to the Meta WhatsApp Cloud API!</p>
+    </div>
+
+    <div class="step-card">
+      <div class="step-card-header">
+        <span class="step-pill">STEP 2.3</span>
+        <span class="step-card-title">Meta Business Verification (For High Daily Message Limits)</span>
+      </div>
+      <p>1. Open <a href="https://business.facebook.com/settings/info" target="_blank" style="color: var(--brass-dark); font-weight: 600;">Meta Business Settings</a>.</p>
+      <p>2. In the left navigation, click <strong>Security Center</strong> → under <strong>Business Verification</strong>, click <strong>"Start Verification"</strong>.</p>
+      <p>3. Upload your <strong>GST Certificate</strong> (as Legal Document) and <strong>Electricity Bill / Bank Statement</strong> (as Address Proof).</p>
+      <p>4. Meta reviews the documents and typically approves within <strong>24 to 48 hours</strong>.</p>
+    </div>
+
+    <div class="step-card">
+      <div class="step-card-header">
+        <span class="step-pill">STEP 2.4</span>
+        <span class="step-card-title">Retrieve API Key for Developer Team</span>
+      </div>
+      <p>1. In the AiSensy dashboard, navigate to <strong>Manage</strong> (left sidebar) → <strong>API Key</strong>.</p>
+      <p>2. Click <strong>"Generate API Key"</strong> and copy the alphanumeric key.</p>
+      <p>3. Send this <strong>API Key</strong> and your <strong>Registered Phone Number</strong> to our development team so we can connect your reception desk system.</p>
+    </div>
+
+    <!-- Section 3: Official Templates -->
+    <h2><span class="step-num">3</span> Official Message Templates for Meta Approval</h2>
+    <p>
+      In your AiSensy dashboard, go to <strong>Manage</strong> → <strong>Template Messages</strong> → Click <strong>"+ New Template"</strong>.<br>
+      Submit the following templates exactly as specified below.
+    </p>
+
+    <div class="callout callout-warning">
+      <div class="callout-title">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+        CRITICAL: Always select the "UTILITY" Category
+      </div>
+      <p style="margin: 0; font-size: 13.5px;">
+        Do <strong>NOT</strong> select "MARKETING". Check-in and check-out are transactional reservation alerts. Categorizing under <code>UTILITY</code> guarantees immediate Meta approval (often under 5 minutes), zero spam flags, and the lowest per-message cost.
+      </p>
+    </div>
+
+    <!-- TEMPLATE 1: CHECK-IN -->
+    <div class="template-card">
+      <div class="template-card-header">
+        <div class="template-title">Template 1: Guest Check-In Welcome & Digital Key</div>
+        <div class="template-tag">Category: UTILITY</div>
+      </div>
+
+      <div class="template-grid">
+        <div class="template-details-col">
+          <div class="meta-field-row">
+            <span class="meta-field-label">Template Name</span>
+            <span class="meta-field-val">shivalaya_guest_checkin_v1</span>
+          </div>
+          <div class="meta-field-row">
+            <span class="meta-field-label">Category</span>
+            <span class="badge-utility">UTILITY</span>
+          </div>
+          <div class="meta-field-row">
+            <span class="meta-field-label">Language</span>
+            <span class="meta-field-val">English (en)</span>
+          </div>
+          <div class="meta-field-row">
+            <span class="meta-field-label">Header</span>
+            <span class="meta-field-val">None (or Text: Welcome to Shivalaya Resorts)</span>
+          </div>
+
+          <p style="margin-top: 14px; font-weight: 600; font-size: 13px; color: var(--forest);">Body Text (Copy & Paste):</p>
+          <div class="copy-box-wrap">
+            <div class="copy-box">Namaste {{1}}, welcome to Shivalaya Resorts, Bhimtal! 🏔️
+
+We are delighted to have you with us in the tranquil Kumaon hills. Your mountain sanctuary is ready:
+
+• Room / Suite: {{2}}
+• Wi-Fi Network: Shivalaya_Guest
+• Wi-Fi Password: {{3}}
+
+To browse the Panache dining menu, place in-room food orders, or explore curated estate retreats, please open your Resident Portal:
+{{4}}
+
+Should you require any assistance, fresh mountain cedar, or room service, our reception desk is at your service.
+
+Warm regards,
+Estate Concierge · Shivalaya Resorts
+Hotline: {{5}}</div>
+          </div>
+
+          <p style="font-weight: 600; font-size: 13px; color: var(--forest);">Sample Values (Mandatory for Meta Review):</p>
+          <div style="font-size: 12.5px; font-family: 'IBM Plex Mono', monospace; line-height: 1.8; color: var(--ink-soft); margin-bottom: 14px;">
+            {{1}} = Abhay Sharma<br>
+            {{2}} = Suite 204<br>
+            {{3}} = ShivalayaGuest2026<br>
+            {{4}} = https://portal.shivalayaresort.com<br>
+            {{5}} = +91 7668-009-400
+          </div>
+
+          <p style="font-weight: 600; font-size: 13px; color: var(--forest);">Buttons to Configure:</p>
+          <ul style="font-size: 12.5px; padding-left: 18px; color: var(--ink-soft);">
+            <li><strong>Button 1:</strong> Call to Action → Visit Website → Text: <code>Open Guest Portal</code> → URL: <code>https://portal.shivalayaresort.com</code></li>
+            <li><strong>Button 2:</strong> Call to Action → Call Phone Number → Text: <code>Call Front Desk</code> → Phone: <code>+917668009400</code></li>
+          </ul>
+        </div>
+
+        <div class="template-preview-col">
+          <div style="font-size: 11px; font-family: 'IBM Plex Mono', monospace; color: #5E6973; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 1px;">Live WhatsApp Preview</div>
+          <div class="whatsapp-bubble-wrap">
+            <div class="whatsapp-body-text">Namaste <strong>Abhay Sharma</strong>, welcome to Shivalaya Resorts, Bhimtal! 🏔️
+
+We are delighted to have you with us in the tranquil Kumaon hills. Your mountain sanctuary is ready:
+
+• Room / Suite: <strong>Suite 204</strong>
+• Wi-Fi Network: Shivalaya_Guest
+• Wi-Fi Password: <strong>ShivalayaGuest2026</strong>
+
+To browse the Panache dining menu, place in-room food orders, or explore curated estate retreats, please open your Resident Portal:
+https://portal.shivalayaresort.com
+
+Should you require any assistance, fresh mountain cedar, or room service, our reception desk is at your service.
+
+Warm regards,
+Estate Concierge · Shivalaya Resorts
+Hotline: +91 7668-009-400</div>
+            <div class="whatsapp-time">14:02 · ✓✓</div>
+            <div class="whatsapp-buttons-container">
+              <div class="whatsapp-cta-btn">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6M15 3h6v6M10 14L21 3"/></svg>
+                Open Guest Portal
+              </div>
+              <div class="whatsapp-cta-btn">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72 12.84 12.84 0 00.7 2.81 2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45 12.84 12.84 0 002.81.7A2 2 0 0122 16.92z"/></svg>
+                Call Front Desk
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TEMPLATE 2: CHECK-OUT -->
+    <div class="template-card">
+      <div class="template-card-header">
+        <div class="template-title">Template 2: Guest Check-Out Farewell & Digital Folio</div>
+        <div class="template-tag">Category: UTILITY</div>
+      </div>
+
+      <div class="template-grid">
+        <div class="template-details-col">
+          <div class="meta-field-row">
+            <span class="meta-field-label">Template Name</span>
+            <span class="meta-field-val">shivalaya_guest_checkout_v1</span>
+          </div>
+          <div class="meta-field-row">
+            <span class="meta-field-label">Category</span>
+            <span class="badge-utility">UTILITY</span>
+          </div>
+          <div class="meta-field-row">
+            <span class="meta-field-label">Language</span>
+            <span class="meta-field-val">English (en)</span>
+          </div>
+          <div class="meta-field-row">
+            <span class="meta-field-label">Header</span>
+            <span class="meta-field-val">None (or Text: Thank You for Staying with Us)</span>
+          </div>
+
+          <p style="margin-top: 14px; font-weight: 600; font-size: 13px; color: var(--forest);">Body Text (Copy & Paste):</p>
+          <div class="copy-box-wrap">
+            <div class="copy-box">Namaste {{1}}, thank you for spending your mountain retreat with us at Shivalaya Resorts. 🙏
+
+Your check-out for Room {{2}} has been successfully processed.
+
+• Stay Summary & Final Folio: {{3}}
+
+It was our absolute pleasure hosting you amidst the pines. We hope the serenity and crisp mountain air stay with you until we welcome you back to Bhimtal.
+
+We would be deeply grateful if you could share a moment of your experience with fellow travelers:
+{{4}}
+
+Safe travels on your journey ahead!
+
+Warm regards,
+Team Shivalaya Resorts & Panache Pavilion</div>
+          </div>
+
+          <p style="font-weight: 600; font-size: 13px; color: var(--forest);">Sample Values (Mandatory for Meta Review):</p>
+          <div style="font-size: 12.5px; font-family: 'IBM Plex Mono', monospace; line-height: 1.8; color: var(--ink-soft); margin-bottom: 14px;">
+            {{1}} = Abhay Sharma<br>
+            {{2}} = Suite 204<br>
+            {{3}} = https://portal.shivalayaresort.com/folio/inv-8821<br>
+            {{4}} = https://g.page/r/shivalaya-resorts-bhimtal/review
+          </div>
+
+          <p style="font-weight: 600; font-size: 13px; color: var(--forest);">Buttons to Configure:</p>
+          <ul style="font-size: 12.5px; padding-left: 18px; color: var(--ink-soft);">
+            <li><strong>Button 1:</strong> Call to Action → Visit Website → Text: <code>Rate Your Stay</code> → URL: <code>https://g.page/r/shivalaya-resorts-bhimtal/review</code></li>
+            <li><strong>Button 2:</strong> Call to Action → Visit Website → Text: <code>View Final Invoice</code> → URL Type: <code>Dynamic</code> → URL: <code>https://portal.shivalayaresort.com/invoice/{{1}}</code> (Sample: <code>inv-8821</code>)</li>
+          </ul>
+        </div>
+
+        <div class="template-preview-col">
+          <div style="font-size: 11px; font-family: 'IBM Plex Mono', monospace; color: #5E6973; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 1px;">Live WhatsApp Preview</div>
+          <div class="whatsapp-bubble-wrap">
+            <div class="whatsapp-body-text">Namaste <strong>Abhay Sharma</strong>, thank you for spending your mountain retreat with us at Shivalaya Resorts. 🙏
+
+Your check-out for Room <strong>Suite 204</strong> has been successfully processed.
+
+• Stay Summary & Final Folio: https://portal.shivalayaresort.com/folio/inv-8821
+
+It was our absolute pleasure hosting you amidst the pines. We hope the serenity and crisp mountain air stay with you until we welcome you back to Bhimtal.
+
+We would be deeply grateful if you could share a moment of your experience with fellow travelers:
+https://g.page/r/shivalaya-resorts-bhimtal/review
+
+Safe travels on your journey ahead!
+
+Warm regards,
+Team Shivalaya Resorts & Panache Pavilion</div>
+            <div class="whatsapp-time">11:15 · ✓✓</div>
+            <div class="whatsapp-buttons-container">
+              <div class="whatsapp-cta-btn">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                Rate Your Stay
+              </div>
+              <div class="whatsapp-cta-btn">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8zM14 2v6h6M16 13H8M16 17H8M10 9H8"/></svg>
+                View Final Invoice
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TEMPLATE 3: IN-ROOM DINING ORDER -->
+    <div class="template-card">
+      <div class="template-card-header">
+        <div class="template-title">Template 3 (Bonus): Room Service Order Confirmation</div>
+        <div class="template-tag">Category: UTILITY</div>
+      </div>
+
+      <div class="template-grid">
+        <div class="template-details-col">
+          <div class="meta-field-row">
+            <span class="meta-field-label">Template Name</span>
+            <span class="meta-field-val">shivalaya_order_confirmed_v1</span>
+          </div>
+          <div class="meta-field-row">
+            <span class="meta-field-label">Category</span>
+            <span class="badge-utility">UTILITY</span>
+          </div>
+          <div class="meta-field-row">
+            <span class="meta-field-label">Language</span>
+            <span class="meta-field-val">English (en)</span>
+          </div>
+
+          <p style="margin-top: 14px; font-weight: 600; font-size: 13px; color: var(--forest);">Body Text (Copy & Paste):</p>
+          <div class="copy-box-wrap">
+            <div class="copy-box">Namaste {{1}}, your order #{{2}} has been received by Panache Restaurant kitchen! 🍽️
+
+• Destination: Room {{3}}
+• Estimated Preparation Time: {{4}} minutes
+
+Our chefs are preparing your mountain-crafted meal. You can track your order status live on your portal:
+{{5}}
+
+Warm regards,
+Panache Culinary Team · Shivalaya Resorts</div>
+          </div>
+
+          <p style="font-weight: 600; font-size: 13px; color: var(--forest);">Sample Values:</p>
+          <div style="font-size: 12.5px; font-family: 'IBM Plex Mono', monospace; line-height: 1.8; color: var(--ink-soft); margin-bottom: 14px;">
+            {{1}} = Abhay Sharma<br>
+            {{2}} = ORD-1042<br>
+            {{3}} = Suite 204<br>
+            {{4}} = 25-30<br>
+            {{5}} = https://portal.shivalayaresort.com/track?order=ORD-1042
+          </div>
+
+          <p style="font-weight: 600; font-size: 13px; color: var(--forest);">Buttons to Configure:</p>
+          <ul style="font-size: 12.5px; padding-left: 18px; color: var(--ink-soft);">
+            <li><strong>Button 1:</strong> Call to Action → Visit Website → Text: <code>Track Live Order</code> → URL Type: <code>Dynamic</code> → URL: <code>https://portal.shivalayaresort.com/track?order={{1}}</code> (Sample: <code>ORD-1042</code>)</li>
+          </ul>
+        </div>
+
+        <div class="template-preview-col">
+          <div style="font-size: 11px; font-family: 'IBM Plex Mono', monospace; color: #5E6973; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 1px;">Live WhatsApp Preview</div>
+          <div class="whatsapp-bubble-wrap">
+            <div class="whatsapp-body-text">Namaste <strong>Abhay Sharma</strong>, your order #<strong>ORD-1042</strong> has been received by Panache Restaurant kitchen! 🍽️
+
+• Destination: Room <strong>Suite 204</strong>
+• Estimated Preparation Time: <strong>25-30</strong> minutes
+
+Our chefs are preparing your mountain-crafted meal. You can track your order status live on your portal:
+https://portal.shivalayaresort.com/track?order=ORD-1042
+
+Warm regards,
+Panache Culinary Team · Shivalaya Resorts</div>
+            <div class="whatsapp-time">19:40 · ✓✓</div>
+            <div class="whatsapp-buttons-container">
+              <div class="whatsapp-cta-btn">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 8v4l3 3M12 2a10 10 0 100 20 10 10 0 000-20z"/></svg>
+                Track Live Order
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Section 4: Handover Checklist -->
+    <h2><span class="step-num">4</span> Final Handover: What to Send to the Tech Team</h2>
+    <p>Once you finish the above steps, please send the following 3 pieces of information to our development team:</p>
+
+    <table class="table-custom">
+      <thead>
+        <tr>
+          <th style="width: 30%;">Credential / Item</th>
+          <th style="width: 40%;">Where to Find in AiSensy</th>
+          <th style="width: 30%;">Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>AiSensy API Key</strong></td>
+          <td>AiSensy Dashboard → <code>Manage</code> → <code>API Key</code></td>
+          <td><em>Copy & Share</em></td>
+        </tr>
+        <tr>
+          <td><strong>Registered Phone Number</strong></td>
+          <td>The phone number verified on WhatsApp Cloud API</td>
+          <td><em>e.g. +91 76680 09400</em></td>
+        </tr>
+        <tr>
+          <td><strong>Template Status</strong></td>
+          <td>AiSensy Dashboard → <code>Template Messages</code></td>
+          <td><em>Must say "Approved"</em></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="callout callout-success">
+      <div class="callout-title">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+        Ready to Launch!
+      </div>
+      <p style="margin: 0; font-size: 13.5px;">
+        As soon as the API key is shared and templates show "Approved", automated WhatsApp alerts will be live for all guests checking in and checking out at Shivalaya Resorts!
+      </p>
+    </div>
+
+  </div>
+
+  <!-- Document Footer -->
+  <footer class="doc-footer">
+    <div>Shivalaya Resorts & Panache Restaurant · Technical Operations Document</div>
+    <div>Village Gethia, Mehragaon, Bhimtal, Uttarakhand 263136</div>
+  </footer>
+
+</div>
+
+</body>
+</html>

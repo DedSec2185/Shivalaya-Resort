@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Shivalaya Resort & Panache - Highway Red Edition (2x3 ft)</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;800;900&family=Montserrat:wght@600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: #0a0a0a;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      padding: 20px;
+      font-family: 'Montserrat', sans-serif;
+    }
+    .poster {
+      width: 800px;
+      height: 1200px;
+      position: relative;
+      background: linear-gradient(180deg, #FFFFFF 0%, #F5FAF6 45%, #E5F0E8 100%);
+      border: 8px solid #0F3E2C;
+      outline: 3px solid rgba(200, 150, 62, 0.6);
+      outline-offset: -16px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 36px 38px 30px 38px;
+      color: #fff;
+      overflow: hidden;
+      box-shadow: 0 25px 60px rgba(0,0,0,0.9);
+    }
+
+    /* 1. TOP HIGHWAY STRIP */
+    .top-strip {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: #0F3E2C;
+      border: 2px solid #C8963E;
+      border-radius: 40px;
+      padding: 8px 10px 8px 24px;
+      white-space: nowrap;
+    }
+    .location-tag {
+      font-size: 15px;
+      font-weight: 800;
+      letter-spacing: 2px;
+      color: #FFFFFF;
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+    .distance-hero {
+      background: #C8963E;
+      color: #FFFFFF;
+      font-size: 18px;
+      font-weight: 900;
+      padding: 8px 22px;
+      border-radius: 30px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      box-shadow: 0 3px 10px rgba(0,0,0,0.4);
+      white-space: nowrap;
+    }
+
+    /* 2. PILGRIM HOOK */
+    .hook-block {
+      text-align: center;
+      margin-top: 6px;
+    }
+    .hook-lead {
+      font-size: 30px;
+      font-weight: 900;
+      color: #0F3E2C;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      line-height: 1.2;
+      white-space: nowrap;
+    }
+    .hook-main {
+      font-size: 46px;
+      font-weight: 900;
+      color: #0F3E2C;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      line-height: 1.15;
+      margin-top: 2px;
+      white-space: nowrap;
+      text-shadow: none;
+    }
+
+    /* 3. EXCLUSIVITY CALLOUT (GHORAKHAL'S ONLY LUXURY RESTAURANT) */
+    .usp-banner {
+      background: #0F3E2C;
+      border-radius: 18px;
+      padding: 16px 22px;
+      text-align: center;
+      box-shadow: 0 8px 25px rgba(15,62,44,0.3);
+      margin: 10px 0;
+    }
+    .usp-question {
+      font-size: 32px;
+      font-weight: 900;
+      color: #FFD700;
+      line-height: 1.15;
+      white-space: nowrap;
+    }
+    .usp-claim {
+      font-size: 25px;
+      font-weight: 900;
+      color: #FFFFFF;
+      line-height: 1.2;
+      text-transform: uppercase;
+      margin-top: 4px;
+      letter-spacing: 0.5px;
+      white-space: nowrap;
+    }
+    .usp-sub {
+      font-size: 15px;
+      font-weight: 800;
+      color: #D6EADF;
+      margin-top: 6px;
+      letter-spacing: 0.5px;
+      white-space: nowrap;
+    }
+
+    /* 4. MASTER BRAND HERO */
+    .brand-hero {
+      background: #FFFFFF;
+      border: 3px solid #0F3E2C;
+      border-radius: 24px;
+      padding: 22px 24px;
+      text-align: center;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    }
+    .logo-medallion {
+      width: 120px;
+      height: 120px;
+      margin: 0 auto 10px auto;
+      border-radius: 50%;
+      border: 3px solid #FFD700;
+      background: #000;
+      box-shadow: 0 0 24px rgba(255, 215, 0, 0.6);
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .logo-medallion img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 50%;
+    }
+    .restaurant-title {
+      font-family: 'Cinzel', serif;
+      font-size: 46px;
+      font-weight: 900;
+      letter-spacing: 2px;
+      color: #0F3E2C;
+      text-shadow: none;
+      line-height: 1.1;
+      white-space: nowrap;
+    }
+    .resort-connector {
+      font-family: 'Cinzel', serif;
+      font-size: 26px;
+      font-weight: 800;
+      letter-spacing: 3px;
+      color: #C8963E;
+      text-shadow: none;
+      margin-top: 6px;
+      white-space: nowrap;
+    }
+    .cuisines-bar {
+      margin-top: 14px;
+      display: inline-block;
+      background: #F4F8F5;
+      border: 1.5px solid #0F3E2C;
+      border-radius: 20px;
+      padding: 8px 20px;
+      font-size: 14px;
+      font-weight: 800;
+      letter-spacing: 1.5px;
+      color: #0F3E2C;
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+
+    /* 5. BOTTOM HIGHWAY DIRECTION & MASSIVE NUMBERS */
+    .bottom-anchor {
+      background: #0F3E2C;
+      border-radius: 20px;
+      padding: 16px 20px;
+      color: #FFFFFF;
+      text-align: center;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.8);
+    }
+    .direction-banner {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 14px;
+      border-bottom: 2px dashed #9E7400;
+      padding-bottom: 10px;
+      margin-bottom: 10px;
+      white-space: nowrap;
+    }
+    .direction-arrow {
+      font-size: 42px;
+      font-weight: 900;
+      color: #FFD700;
+      line-height: 1;
+    }
+    .direction-main {
+      font-size: 28px;
+      font-weight: 900;
+      color: #FFFFFF;
+      letter-spacing: 1px;
+      line-height: 1.1;
+      white-space: nowrap;
+    }
+    .direction-sub {
+      font-size: 16px;
+      font-weight: 800;
+      color: #D6EADF;
+      margin-top: 3px;
+      white-space: nowrap;
+    }
+    .call-box {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+    }
+    .call-label {
+      font-size: 13px;
+      font-weight: 900;
+      color: #FFD700;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+    .call-numbers {
+      font-size: 38px;
+      font-weight: 900;
+      color: #FFFFFF;
+      letter-spacing: 2px;
+      line-height: 1.15;
+      white-space: nowrap;
+      text-align: center;
+      width: 100%;
+    }
+    .num-sep {
+      color: #C8963E;
+      font-weight: 700;
+      margin: 0 10px;
+      opacity: 0.7;
+    }
+
+    @media print {
+      @page { size: 24in 36in; margin: 0; }
+      body { background: transparent; padding: 0; }
+      .poster { width: 100vw !important; height: 100vh !important; box-shadow: none !important; border-radius: 0 !important; }
+    }
+  </style>
+</head>
+<body>
+  <div class="poster">
+    <!-- Top Strip: Road & 5 Mins Distance -->
+    <div class="top-strip">
+      <div class="location-tag">GOLU DEVTA MANDIR ROAD</div>
+      <div class="distance-hero">BAS 2 KM • SIRF 5 MINS DRIVE</div>
+    </div>
+
+    <!-- Pilgrim Hook: Balanced & Grand -->
+    <div class="hook-block">
+      <div class="hook-lead">MANDIR DARSHAN KE BAAD...</div>
+      <div class="hook-main">SWAAD BHI, SUKOON BHI!</div>
+    </div>
+
+    <!-- Core Exclusivity Callout: The Only Luxury Dining around Ghorakhal -->
+    <div class="usp-banner">
+      <div class="usp-question">“Random Dhaba Kyun?”</div>
+      <div class="usp-claim">GHORAKHAL'S ONLY LUXURY MULTI-CUISINE DINING</div>
+      <div class="usp-sub">100% Family Ambience • Breathtaking Valley Views • Ample Parking</div>
+    </div>
+
+    <!-- Master Brand Hero: Panache Restaurant at Shivalaya Resort -->
+    <div class="brand-hero">
+      <div class="logo-medallion">
+        <img src="../assets/branding/shivalaya_badge_perfect.png" onerror="this.src='../assets/branding/shivalaya_logo.jpg'" alt="Shivalaya Resort Logo">
+      </div>
+      <div class="restaurant-title">PANACHE RESTAURANT</div>
+      <div class="resort-connector">AT SHIVALAYA RESORT</div>
+      <div class="cuisines-bar">
+        AUTHENTIC PAHADI • SHUDDH VRAT THALI • NORTH INDIAN • CAFE
+      </div>
+    </div>
+
+    <!-- Bottom Highway Direction & Massive Unclipped Contact -->
+    <div class="bottom-anchor">
+      <div class="direction-banner">
+        <div class="direction-arrow">➔</div>
+        <div>
+          <div class="direction-main">TURN FOR SHIVALAYA RESORT</div>
+          <div class="direction-sub">Mandir Gate Se Bas 2 KM Aage (Near Pine Crest School)</div>
+        </div>
+      </div>
+      <div class="call-box">
+        <div class="call-label">CALL FOR TABLE BOOKING & DIRECTIONS</div>
+        <div class="call-numbers">76680 09400<span class="num-sep">|</span>94121 56361</div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

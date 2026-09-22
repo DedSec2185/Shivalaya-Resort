@@ -1,19 +1,23 @@
 {
-  "name": "panache-ordering-system",
+  "name": "shivalaya-resort-suite",
   "private": true,
-  "version": "1.0.0",
-  "description": "Interactive ordering system for Panache restaurant at Shivalaya resort",
+  "version": "2.0.0",
+  "description": "Integrated management suite for Shivalaya Resorts & Panache Restaurant",
   "scripts": {
-    "dev:menu": "pnpm --filter customer-menu dev",
-    "dev:desk": "pnpm --filter front-desk dev",
-    "dev:owner": "pnpm --filter owner-dashboard dev",
-    "build:menu": "pnpm --filter customer-menu build",
-    "build:desk": "pnpm --filter front-desk build",
-    "build:owner": "pnpm --filter owner-dashboard build",
+    "dev": "pnpm --parallel --filter guest-portal --filter kitchen-panel --filter resort-reception dev",
+    "dev:portal": "pnpm --filter guest-portal dev",
+    "dev:guest": "pnpm --filter guest-portal dev",
+    "dev:menu": "pnpm --filter guest-portal dev",
+    "dev:kitchen": "pnpm --filter kitchen-panel dev",
+    "dev:reception": "pnpm --filter resort-reception dev",
+    "build:portal": "pnpm --filter guest-portal build",
+    "build:guest": "pnpm --filter guest-portal build",
+    "build:menu": "pnpm --filter guest-portal build",
+    "build:kitchen": "pnpm --filter kitchen-panel build",
+    "build:reception": "pnpm --filter resort-reception build",
     "build": "pnpm -r build",
     "test": "node --test tests/**/*.test.mjs",
-    "check": "pnpm test && pnpm build",
-    "dev": "pnpm -r --parallel dev"
+    "check": "pnpm test && pnpm build"
   },
   "engines": {
     "node": ">=18"

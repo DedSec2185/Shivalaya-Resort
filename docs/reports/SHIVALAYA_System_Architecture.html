@@ -1,0 +1,1950 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Shivalaya — System Architecture & Flow Reference</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&family=Fraunces:ital,wght@0,600;1,500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0D1117;
+  --bg2: #161B22;
+  --bg3: #1E2530;
+  --border: rgba(255,255,255,0.08);
+  --border2: rgba(255,255,255,0.14);
+  --text: #E6EDF3;
+  --text2: #8B949E;
+  --text3: #6E7681;
+  --guest: #2C6B3F;
+  --guest-light: #3FB261;
+  --guest-pale: rgba(44,107,63,0.15);
+  --kitchen: #8B4513;
+  --kitchen-light: #E8844A;
+  --kitchen-pale: rgba(139,69,19,0.15);
+  --reception: #1A3A6B;
+  --reception-light: #4D8FE8;
+  --reception-pale: rgba(26,58,107,0.18);
+  --db: #4B1A6B;
+  --db-light: #A855F7;
+  --db-pale: rgba(75,26,107,0.18);
+  --realtime: #0C4A6E;
+  --realtime-light: #38BDF8;
+  --realtime-pale: rgba(12,74,110,0.18);
+  --whatsapp: #075E54;
+  --whatsapp-light: #25D366;
+  --whatsapp-pale: rgba(7,94,84,0.18);
+  --brass: #AD8A3F;
+  --brass-light: #D9BA72;
+  --success: #3FB261;
+  --warning: #E8A020;
+  --danger: #E85555;
+  --code-bg: #0A0D14;
+  --mono: 'IBM Plex Mono', monospace;
+  --sans: 'Inter', sans-serif;
+  --display: 'Fraunces', serif;
+}
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: var(--sans);
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.6;
+  font-size: 14px;
+  display: flex;
+}
+
+/* ── SIDEBAR ─────────────────────────────────────────────── */
+.sidebar {
+  width: 260px; min-height: 100vh; flex-shrink: 0;
+  background: var(--bg2);
+  border-right: 1px solid var(--border);
+  position: sticky; top: 0; height: 100vh;
+  overflow-y: auto; padding: 24px 0;
+  scrollbar-width: thin; scrollbar-color: var(--border2) transparent;
+}
+.sidebar-logo {
+  padding: 0 20px 20px;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 16px;
+}
+.sidebar-logo .name { font-family: var(--display); font-style: italic; font-size: 17px; color: var(--brass-light); }
+.sidebar-logo .sub  { font-size: 10px; color: var(--text3); text-transform: uppercase; letter-spacing: 1.5px; margin-top: 2px; font-family: var(--mono); }
+.nav-group { margin-bottom: 6px; }
+.nav-group-label {
+  font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 1.5px;
+  color: var(--text3); padding: 8px 20px 4px; font-family: var(--mono);
+}
+.nav-item {
+  display: block; padding: 7px 20px; font-size: 12.5px; color: var(--text2);
+  text-decoration: none; transition: all 0.15s ease;
+  border-left: 2px solid transparent;
+}
+.nav-item:hover { color: var(--text); background: rgba(255,255,255,0.04); border-left-color: var(--brass); }
+.nav-item.guest-nav:hover   { border-left-color: var(--guest-light);    }
+.nav-item.kitchen-nav:hover { border-left-color: var(--kitchen-light);  }
+.nav-item.recep-nav:hover   { border-left-color: var(--reception-light);}
+.nav-item.db-nav:hover      { border-left-color: var(--db-light);       }
+.nav-item.rt-nav:hover      { border-left-color: var(--realtime-light); }
+.nav-item.wa-nav:hover      { border-left-color: var(--whatsapp-light); }
+
+/* ── MAIN ────────────────────────────────────────────────── */
+.main { flex: 1; padding: 0; overflow-x: hidden; }
+
+/* ── SECTIONS ────────────────────────────────────────────── */
+.section { padding: 52px 52px 40px; border-bottom: 1px solid var(--border); }
+.section:last-child { border-bottom: none; }
+
+.section-eyebrow {
+  font-family: var(--mono); font-size: 10.5px; font-weight: 600;
+  letter-spacing: 2px; text-transform: uppercase; margin-bottom: 10px;
+}
+.section-title {
+  font-size: clamp(22px, 3vw, 30px); font-weight: 800; color: var(--text);
+  margin-bottom: 6px; line-height: 1.2;
+}
+.section-sub { font-size: 14px; color: var(--text2); margin-bottom: 32px; max-width: 700px; line-height: 1.65; }
+
+.s-guest     { --accent: var(--guest-light);    --pale: var(--guest-pale);     }
+.s-kitchen   { --accent: var(--kitchen-light);  --pale: var(--kitchen-pale);   }
+.s-reception { --accent: var(--reception-light);--pale: var(--reception-pale); }
+.s-db        { --accent: var(--db-light);        --pale: var(--db-pale);        }
+.s-realtime  { --accent: var(--realtime-light); --pale: var(--realtime-pale);  }
+.s-whatsapp  { --accent: var(--whatsapp-light); --pale: var(--whatsapp-pale);  }
+.s-brass     { --accent: var(--brass-light);    --pale: rgba(173,138,63,0.12); }
+.section-eyebrow { color: var(--accent, var(--brass-light)); }
+
+/* ── CARDS ───────────────────────────────────────────────── */
+.card {
+  background: var(--bg2); border: 1px solid var(--border);
+  border-radius: 12px; padding: 20px 22px; margin-bottom: 16px;
+}
+.card-title { font-weight: 700; font-size: 13px; color: var(--text); margin-bottom: 6px; display: flex; align-items: center; gap: 8px; }
+.card-body  { font-size: 13px; color: var(--text2); line-height: 1.65; }
+.card.accent-border { border-left: 3px solid var(--accent, var(--brass)); }
+
+.app-tag {
+  display: inline-block; font-family: var(--mono); font-size: 9.5px; font-weight: 600;
+  padding: 2px 7px; border-radius: 4px; text-transform: uppercase; letter-spacing: 0.5px;
+}
+.tag-guest     { background: var(--guest-pale);     color: var(--guest-light);     border: 1px solid rgba(63,178,97,0.3);    }
+.tag-kitchen   { background: var(--kitchen-pale);   color: var(--kitchen-light);   border: 1px solid rgba(232,132,74,0.3);  }
+.tag-reception { background: var(--reception-pale); color: var(--reception-light); border: 1px solid rgba(77,143,232,0.3);  }
+.tag-db        { background: var(--db-pale);         color: var(--db-light);        border: 1px solid rgba(168,85,247,0.3);  }
+.tag-realtime  { background: var(--realtime-pale);  color: var(--realtime-light);  border: 1px solid rgba(56,189,248,0.3);  }
+.tag-wa        { background: var(--whatsapp-pale);  color: var(--whatsapp-light);  border: 1px solid rgba(37,211,102,0.3);  }
+.tag-brass     { background: rgba(173,138,63,0.12); color: var(--brass-light);     border: 1px solid rgba(217,186,114,0.3); }
+
+/* ── GRID ────────────────────────────────────────────────── */
+.grid-3 { display: grid; grid-template-columns: repeat(3,1fr); gap: 14px; margin-bottom: 28px; }
+.grid-2 { display: grid; grid-template-columns: repeat(2,1fr); gap: 14px; margin-bottom: 28px; }
+@media(max-width:900px){ .grid-3,.grid-2 { grid-template-columns:1fr; } }
+
+/* ── CODE ────────────────────────────────────────────────── */
+.code-block {
+  background: var(--code-bg); border: 1px solid var(--border2);
+  border-radius: 10px; overflow: hidden; margin: 16px 0;
+}
+.code-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 9px 16px; border-bottom: 1px solid var(--border);
+  background: rgba(255,255,255,0.03);
+}
+.code-lang { font-family: var(--mono); font-size: 10.5px; font-weight: 600; color: var(--text3); letter-spacing: 1px; text-transform: uppercase; }
+.code-label { font-size: 11px; color: var(--text3); }
+pre {
+  padding: 18px 18px; overflow-x: auto; font-family: var(--mono);
+  font-size: 12.5px; line-height: 1.75; color: #CDD9E5;
+  scrollbar-width: thin;
+}
+.kw { color: #F47067; }   /* keywords */
+.kw2{ color: #8DDB8C; }   /* function names */
+.cm { color: #6A737D; font-style: italic; } /* comments */
+.st { color: #96D0FF; }   /* strings */
+.nm { color: #D2A8FF; }   /* numbers/types */
+.fn { color: #79C0FF; }   /* functions */
+.op { color: #F47067; }   /* operators */
+
+/* ── FLOW STEPS ──────────────────────────────────────────── */
+.flow { display: flex; flex-direction: column; gap: 0; position: relative; margin: 20px 0; }
+.flow-step {
+  display: flex; gap: 16px; position: relative;
+  padding-bottom: 4px;
+}
+.flow-step:not(:last-child)::after {
+  content: ''; position: absolute; left: 19px; top: 38px;
+  width: 2px; height: calc(100% + 4px);
+  background: linear-gradient(to bottom, var(--accent,var(--brass)), transparent);
+}
+.flow-num {
+  width: 38px; height: 38px; border-radius: 50%; flex-shrink: 0;
+  background: var(--pale, rgba(173,138,63,0.12));
+  border: 2px solid var(--accent, var(--brass));
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--mono); font-weight: 700; font-size: 13px;
+  color: var(--accent, var(--brass-light)); z-index: 1;
+}
+.flow-content { flex: 1; padding: 8px 0 20px; }
+.flow-content h4 { font-size: 13.5px; font-weight: 700; color: var(--text); margin-bottom: 4px; }
+.flow-content p  { font-size: 12.5px; color: var(--text2); line-height: 1.6; margin-bottom: 4px; }
+.flow-content .trigger {
+  display: inline-flex; align-items: center; gap: 6px; margin-top: 6px;
+  font-family: var(--mono); font-size: 10.5px; color: var(--text3);
+  background: rgba(255,255,255,0.04); padding: 4px 10px; border-radius: 6px;
+  border: 1px solid var(--border);
+}
+
+/* ── TABLE ───────────────────────────────────────────────── */
+.data-table { width: 100%; border-collapse: collapse; font-size: 12.5px; margin: 12px 0; }
+.data-table th {
+  text-align: left; padding: 9px 12px; background: rgba(255,255,255,0.04);
+  color: var(--text3); font-weight: 700; text-transform: uppercase;
+  letter-spacing: 0.8px; font-size: 10.5px; border-bottom: 1px solid var(--border2);
+}
+.data-table td { padding: 9px 12px; border-bottom: 1px solid var(--border); color: var(--text2); vertical-align: top; }
+.data-table tr:hover td { background: rgba(255,255,255,0.02); }
+.col-name { font-family: var(--mono); color: var(--text); font-weight: 500; }
+.col-type { font-family: var(--mono); color: var(--db-light); }
+.col-fk   { color: var(--brass-light); font-family: var(--mono); font-size: 11px; }
+.col-note { color: var(--text3); font-size: 11.5px; }
+
+/* ── SPECIAL BLOCKS ──────────────────────────────────────── */
+.callout {
+  display: flex; gap: 14px; padding: 16px 18px; border-radius: 10px; margin: 16px 0;
+  border: 1px solid var(--border2);
+  background: rgba(255,255,255,0.02);
+}
+.callout-icon { font-size: 18px; flex-shrink: 0; margin-top: 1px; }
+.callout-body h4 { font-size: 13px; font-weight: 700; margin-bottom: 4px; }
+.callout-body p  { font-size: 12.5px; color: var(--text2); line-height: 1.6; }
+.callout.info    { border-color: rgba(56,189,248,0.3); background: rgba(56,189,248,0.05); }
+.callout.warning { border-color: rgba(232,160,32,0.3); background: rgba(232,160,32,0.05); }
+.callout.success { border-color: rgba(63,178,97,0.3);  background: rgba(63,178,97,0.05);  }
+
+/* ── SCHEMA BOX ──────────────────────────────────────────── */
+.schema-box {
+  border: 1px solid var(--border2); border-radius: 10px; overflow: hidden; margin-bottom: 14px;
+}
+.schema-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 11px 16px; background: rgba(255,255,255,0.04); border-bottom: 1px solid var(--border);
+}
+.schema-name { font-family: var(--mono); font-weight: 700; font-size: 13px; }
+.schema-desc { font-size: 11px; color: var(--text3); }
+
+/* ── DIVIDER ─────────────────────────────────────────────── */
+.divider { border: none; border-top: 1px solid var(--border); margin: 28px 0; }
+.divider-label {
+  display: flex; align-items: center; gap: 12px; margin: 24px 0;
+  font-family: var(--mono); font-size: 10.5px; color: var(--text3); text-transform: uppercase; letter-spacing: 1.5px;
+}
+.divider-label::before, .divider-label::after {
+  content: ''; flex: 1; height: 1px; background: var(--border);
+}
+
+/* ── HERO ────────────────────────────────────────────────── */
+.doc-hero {
+  padding: 56px 52px 44px;
+  background: linear-gradient(170deg, #0D1117 0%, #111820 50%, #0D1117 100%);
+  border-bottom: 1px solid var(--border);
+  position: relative; overflow: hidden;
+}
+.doc-hero::before {
+  content: ''; position: absolute; inset: 0;
+  background: radial-gradient(ellipse at 70% 50%, rgba(44,107,63,0.08) 0%, transparent 60%),
+              radial-gradient(ellipse at 30% 80%, rgba(26,58,107,0.10) 0%, transparent 60%);
+}
+.doc-hero-content { position: relative; z-index: 1; }
+.doc-hero-eyebrow { font-family: var(--mono); font-size: 10.5px; color: var(--brass-light); letter-spacing: 2.5px; text-transform: uppercase; margin-bottom: 14px; }
+.doc-hero-title { font-size: clamp(28px,4vw,42px); font-weight: 800; line-height: 1.15; margin-bottom: 12px; }
+.doc-hero-title span { color: var(--brass-light); }
+.doc-hero-sub { font-size: 15px; color: var(--text2); max-width: 640px; line-height: 1.65; margin-bottom: 28px; }
+.hero-chips { display: flex; gap: 10px; flex-wrap: wrap; }
+.hero-chip {
+  font-family: var(--mono); font-size: 11px; font-weight: 600;
+  padding: 5px 13px; border-radius: 6px; border: 1px solid var(--border2);
+  background: rgba(255,255,255,0.04); color: var(--text2);
+}
+
+/* ── ARCHITECTURE DIAGRAM ────────────────────────────────── */
+.arch-diagram { background: var(--bg3); border: 1px solid var(--border2); border-radius: 14px; padding: 32px; margin: 24px 0; }
+.arch-diagram svg { width: 100%; height: auto; display: block; }
+
+/* ── CHANNEL BADGE ───────────────────────────────────────── */
+.channel {
+  display: inline-flex; align-items: center; gap: 7px;
+  font-family: var(--mono); font-size: 11px; font-weight: 600;
+  padding: 4px 11px; border-radius: 6px;
+  background: var(--realtime-pale); color: var(--realtime-light);
+  border: 1px solid rgba(56,189,248,0.25);
+}
+.channel::before { content: '⚡'; font-size: 12px; }
+
+/* ── RESPONSIVE ──────────────────────────────────────────── */
+@media(max-width:768px) {
+  .sidebar { display: none; }
+  .section { padding: 36px 24px 32px; }
+  .doc-hero { padding: 36px 24px; }
+}
+
+/* ── PRINT ───────────────────────────────────────────────── */
+@media print {
+  .sidebar { display: none; }
+  .main { padding: 0; }
+  .section { page-break-inside: avoid; }
+}
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+  <div class="sidebar-logo">
+    <div class="name">Shivalaya</div>
+    <div class="sub">System Architecture · v2.0</div>
+  </div>
+
+  <div class="nav-group">
+    <div class="nav-group-label">Overview</div>
+    <a class="nav-item" href="#overview">System Map</a>
+    <a class="nav-item" href="#apps">The Three Apps</a>
+    <a class="nav-item" href="#tech">Tech Stack</a>
+  </div>
+
+  <div class="nav-group">
+    <div class="nav-group-label">Database</div>
+    <a class="nav-item db-nav" href="#schema">Full Schema</a>
+    <a class="nav-item db-nav" href="#relations">Relationships</a>
+    <a class="nav-item db-nav" href="#rls">RLS Policies</a>
+  </div>
+
+  <div class="nav-group">
+    <div class="nav-group-label">Real-time</div>
+    <a class="nav-item rt-nav" href="#channels">Supabase Channels</a>
+    <a class="nav-item rt-nav" href="#events">Event Map</a>
+  </div>
+
+  <div class="nav-group">
+    <div class="nav-group-label">Core Flows</div>
+    <a class="nav-item guest-nav" href="#food-flow">Food Ordering</a>
+    <a class="nav-item kitchen-nav" href="#kitchen-flow">Kitchen Panel</a>
+    <a class="nav-item guest-nav" href="#checkin-flow">Guest Check-in</a>
+    <a class="nav-item guest-nav" href="#checkout-flow">Guest Check-out</a>
+  </div>
+
+  <div class="nav-group">
+    <div class="nav-group-label">Time Slots System</div>
+    <a class="nav-item reception-nav" href="#slots-design">Schema Design</a>
+    <a class="nav-item guest-nav" href="#slots-customer">Customer Side</a>
+    <a class="nav-item db-nav" href="#slots-backend">Backend Deep Dive</a>
+    <a class="nav-item db-nav" href="#slots-concurrency">Concurrency Lock</a>
+    <a class="nav-item reception-nav" href="#slots-reception">Reception Flow</a>
+    <a class="nav-item db-nav" href="#slots-sql">Full SQL Functions</a>
+  </div>
+
+  <div class="nav-group">
+    <div class="nav-group-label">Automation</div>
+    <a class="nav-item wa-nav" href="#whatsapp">WhatsApp Automation</a>
+    <a class="nav-item wa-nav" href="#wa-templates">Message Templates</a>
+    <a class="nav-item wa-nav" href="#edge-functions">Edge Functions</a>
+  </div>
+
+  <div class="nav-group">
+    <div class="nav-group-label">Billing</div>
+    <a class="nav-item" href="#folio">Guest Folio</a>
+    <a class="nav-item" href="#folio-sql">Folio SQL View</a>
+  </div>
+
+  <div class="nav-group">
+    <div class="nav-group-label">Auth & Deploy</div>
+    <a class="nav-item" href="#auth">Auth & Roles</a>
+    <a class="nav-item" href="#deployment">Deployment</a>
+    <a class="nav-item" href="#qr">QR Code System</a>
+  </div>
+</aside>
+
+<!-- MAIN CONTENT -->
+<main class="main">
+
+<!-- HERO -->
+<div class="doc-hero">
+  <div class="doc-hero-content">
+    <div class="doc-hero-eyebrow">ASVEX Technologies · Internal Engineering Reference</div>
+    <h1 class="doc-hero-title">Shivalaya Guest Experience<br><span>Platform Architecture</span></h1>
+    <p class="doc-hero-sub">Complete system map — every flow, database trigger, real-time event, time slot algorithm, and deployment detail for the Shivalaya Resorts + Panache Restaurant digital platform.</p>
+    <div class="hero-chips">
+      <div class="hero-chip">3 Web Apps</div>
+      <div class="hero-chip">Supabase PostgreSQL</div>
+      <div class="hero-chip">Realtime WebSockets</div>
+      <div class="hero-chip">Edge Functions</div>
+      <div class="hero-chip">WhatsApp API</div>
+      <div class="hero-chip">Vercel</div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ═══════════════════════════════════════════════════════
+     SECTION 1 — SYSTEM OVERVIEW
+     ═══════════════════════════════════════════════════════ -->
+<section class="section s-brass" id="overview">
+  <div class="section-eyebrow">01 · System Overview</div>
+  <h2 class="section-title">The Complete System Map</h2>
+  <p class="section-sub">One Supabase database is the single source of truth. Three web apps connect to it. All state changes propagate in real-time via WebSockets. No app talks to another directly — everything goes through the database.</p>
+
+  <div class="arch-diagram">
+    <svg viewBox="0 0 900 520" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <marker id="arr" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+          <polygon points="0 0, 8 3, 0 6" fill="#6E7681"/>
+        </marker>
+        <marker id="arr-green" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+          <polygon points="0 0, 8 3, 0 6" fill="#3FB261"/>
+        </marker>
+        <marker id="arr-blue" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+          <polygon points="0 0, 8 3, 0 6" fill="#4D8FE8"/>
+        </marker>
+        <marker id="arr-orange" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+          <polygon points="0 0, 8 3, 0 6" fill="#E8844A"/>
+        </marker>
+        <marker id="arr-wa" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+          <polygon points="0 0, 8 3, 0 6" fill="#25D366"/>
+        </marker>
+      </defs>
+
+      <!-- QR CODE ENTRY -->
+      <rect x="20" y="30" width="140" height="56" rx="10" fill="#1C2230" stroke="#3FB261" stroke-width="1.5"/>
+      <text x="90" y="55" text-anchor="middle" fill="#3FB261" font-size="11" font-family="IBM Plex Mono" font-weight="600">QR CODE</text>
+      <text x="90" y="72" text-anchor="middle" fill="#6E7681" font-size="10" font-family="IBM Plex Mono">Scanned by guest</text>
+
+      <!-- GUEST PORTAL -->
+      <rect x="20" y="160" width="180" height="90" rx="12" fill="#162A1E" stroke="#3FB261" stroke-width="1.5"/>
+      <text x="110" y="186" text-anchor="middle" fill="#3FB261" font-size="12" font-family="IBM Plex Mono" font-weight="700">GUEST PORTAL</text>
+      <text x="110" y="203" text-anchor="middle" fill="#8B949E" font-size="10" font-family="IBM Plex Mono">order.shivalayaresorts.com</text>
+      <text x="110" y="220" text-anchor="middle" fill="#6E7681" font-size="10" font-family="IBM Plex Mono">Food + Activities</text>
+      <text x="110" y="237" text-anchor="middle" fill="#6E7681" font-size="10" font-family="IBM Plex Mono">Order Tracking</text>
+
+      <!-- KITCHEN PANEL -->
+      <rect x="20" y="330" width="180" height="80" rx="12" fill="#2A1A10" stroke="#E8844A" stroke-width="1.5"/>
+      <text x="110" y="356" text-anchor="middle" fill="#E8844A" font-size="12" font-family="IBM Plex Mono" font-weight="700">KITCHEN PANEL</text>
+      <text x="110" y="373" text-anchor="middle" fill="#8B949E" font-size="10" font-family="IBM Plex Mono">kitchen.shivalayaresorts.com</text>
+      <text x="110" y="390" text-anchor="middle" fill="#6E7681" font-size="10" font-family="IBM Plex Mono">Food orders only</text>
+
+      <!-- RESORT RECEPTION -->
+      <rect x="20" y="440" width="180" height="62" rx="12" fill="#111E30" stroke="#4D8FE8" stroke-width="1.5"/>
+      <text x="110" y="465" text-anchor="middle" fill="#4D8FE8" font-size="12" font-family="IBM Plex Mono" font-weight="700">RESORT RECEPTION</text>
+      <text x="110" y="482" text-anchor="middle" fill="#8B949E" font-size="10" font-family="IBM Plex Mono">reception.shivalayaresorts.com</text>
+      <text x="110" y="496" text-anchor="middle" fill="#6E7681" font-size="10" font-family="IBM Plex Mono">All management</text>
+
+      <!-- SUPABASE DB (CENTER) -->
+      <rect x="355" y="180" width="190" height="220" rx="16" fill="#1A1030" stroke="#A855F7" stroke-width="2"/>
+      <text x="450" y="212" text-anchor="middle" fill="#A855F7" font-size="13" font-family="IBM Plex Mono" font-weight="700">SUPABASE</text>
+      <text x="450" y="228" text-anchor="middle" fill="#6E7681" font-size="10" font-family="IBM Plex Mono">PostgreSQL · Realtime · Auth</text>
+      <line x1="380" y1="240" x2="520" y2="240" stroke="#2D1F50" stroke-width="1"/>
+      <text x="450" y="258" text-anchor="middle" fill="#8B949E" font-size="10.5" font-family="IBM Plex Mono">guests · rooms · orders</text>
+      <text x="450" y="276" text-anchor="middle" fill="#8B949E" font-size="10.5" font-family="IBM Plex Mono">menu_items · staff</text>
+      <text x="450" y="294" text-anchor="middle" fill="#8B949E" font-size="10.5" font-family="IBM Plex Mono">activities · time_slots</text>
+      <text x="450" y="312" text-anchor="middle" fill="#8B949E" font-size="10.5" font-family="IBM Plex Mono">activity_bookings</text>
+      <text x="450" y="330" text-anchor="middle" fill="#8B949E" font-size="10.5" font-family="IBM Plex Mono">order_status_log</text>
+      <text x="450" y="348" text-anchor="middle" fill="#8B949E" font-size="10.5" font-family="IBM Plex Mono">whatsapp_log</text>
+      <text x="450" y="366" text-anchor="middle" fill="#8B949E" font-size="10.5" font-family="IBM Plex Mono">guest_folio (VIEW)</text>
+      <text x="450" y="388" text-anchor="middle" fill="#A855F7" font-size="10" font-family="IBM Plex Mono">+ 12 more tables</text>
+
+      <!-- EDGE FUNCTIONS -->
+      <rect x="355" y="430" width="190" height="72" rx="10" fill="#0E2018" stroke="#25D366" stroke-width="1.5"/>
+      <text x="450" y="454" text-anchor="middle" fill="#25D366" font-size="11" font-family="IBM Plex Mono" font-weight="700">EDGE FUNCTIONS</text>
+      <text x="450" y="471" text-anchor="middle" fill="#6E7681" font-size="10" font-family="IBM Plex Mono">on_checkin · on_checkout</text>
+      <text x="450" y="488" text-anchor="middle" fill="#6E7681" font-size="10" font-family="IBM Plex Mono">check_slot_capacity</text>
+
+      <!-- WHATSAPP API -->
+      <rect x="680" y="430" width="170" height="72" rx="10" fill="#081A14" stroke="#25D366" stroke-width="1.5"/>
+      <text x="765" y="454" text-anchor="middle" fill="#25D366" font-size="11" font-family="IBM Plex Mono" font-weight="700">WHATSAPP API</text>
+      <text x="765" y="471" text-anchor="middle" fill="#6E7681" font-size="10" font-family="IBM Plex Mono">AiSensy / Interakt</text>
+      <text x="765" y="488" text-anchor="middle" fill="#6E7681" font-size="10" font-family="IBM Plex Mono">Meta Business API</text>
+
+      <!-- VERCEL HOSTING -->
+      <rect x="680" y="180" width="170" height="220" rx="16" fill="#12141A" stroke="#4D8FE8" stroke-width="1.5" stroke-dasharray="6,3"/>
+      <text x="765" y="212" text-anchor="middle" fill="#4D8FE8" font-size="12" font-family="IBM Plex Mono" font-weight="700">VERCEL</text>
+      <text x="765" y="228" text-anchor="middle" fill="#6E7681" font-size="10" font-family="IBM Plex Mono">Auto-scaling CDN host</text>
+      <line x1="705" y1="240" x2="835" y2="240" stroke="#1A1E28" stroke-width="1"/>
+      <text x="765" y="262" text-anchor="middle" fill="#8B949E" font-size="10" font-family="IBM Plex Mono">Guest Portal</text>
+      <text x="765" y="280" text-anchor="middle" fill="#8B949E" font-size="10" font-family="IBM Plex Mono">Kitchen Panel</text>
+      <text x="765" y="298" text-anchor="middle" fill="#8B949E" font-size="10" font-family="IBM Plex Mono">Resort Reception</text>
+      <text x="765" y="318" text-anchor="middle" fill="#6E7681" font-size="10" font-family="IBM Plex Mono">SSL auto-configured</text>
+      <text x="765" y="336" text-anchor="middle" fill="#6E7681" font-size="10" font-family="IBM Plex Mono">Custom domains</text>
+      <text x="765" y="356" text-anchor="middle" fill="#6E7681" font-size="10" font-family="IBM Plex Mono">Git auto-deploy</text>
+
+      <!-- QR → GUEST PORTAL -->
+      <line x1="90" y1="86" x2="90" y2="155" stroke="#3FB261" stroke-width="1.5" marker-end="url(#arr-green)"/>
+
+      <!-- GUEST PORTAL ↔ SUPABASE -->
+      <line x1="200" y1="205" x2="350" y2="267" stroke="#3FB261" stroke-width="1.5" marker-end="url(#arr-green)"/>
+      <line x1="350" y1="267" x2="200" y2="220" stroke="#6E7681" stroke-width="1" stroke-dasharray="4,3" marker-end="url(#arr-green)"/>
+      <text x="270" y="228" text-anchor="middle" fill="#3FB261" font-size="9" font-family="IBM Plex Mono">REST + WebSocket</text>
+
+      <!-- KITCHEN ↔ SUPABASE -->
+      <line x1="200" y1="370" x2="350" y2="310" stroke="#E8844A" stroke-width="1.5" marker-end="url(#arr-orange)"/>
+      <line x1="350" y1="300" x2="200" y2="355" stroke="#6E7681" stroke-width="1" stroke-dasharray="4,3" marker-end="url(#arr-orange)"/>
+      <text x="268" y="360" text-anchor="middle" fill="#E8844A" font-size="9" font-family="IBM Plex Mono">Realtime subscribe</text>
+
+      <!-- RECEPTION ↔ SUPABASE -->
+      <line x1="200" y1="471" x2="350" y2="380" stroke="#4D8FE8" stroke-width="1.5" marker-end="url(#arr-blue)"/>
+      <line x1="350" y1="390" x2="200" y2="476" stroke="#6E7681" stroke-width="1" stroke-dasharray="4,3" marker-end="url(#arr-blue)"/>
+
+      <!-- SUPABASE → EDGE FUNCTIONS (trigger) -->
+      <line x1="450" y1="400" x2="450" y2="425" stroke="#A855F7" stroke-width="1.5" marker-end="url(#arr)"/>
+      <text x="460" y="418" fill="#A855F7" font-size="9" font-family="IBM Plex Mono">DB trigger</text>
+
+      <!-- EDGE → WHATSAPP -->
+      <line x1="545" y1="466" x2="675" y2="466" stroke="#25D366" stroke-width="1.5" marker-end="url(#arr-wa)"/>
+      <text x="610" y="458" fill="#25D366" font-size="9" font-family="IBM Plex Mono">POST request</text>
+
+      <!-- VERCEL LABEL -->
+      <text x="765" y="170" text-anchor="middle" fill="#4D8FE8" font-size="9" font-family="IBM Plex Mono">Hosts all 3 apps</text>
+
+      <!-- REALTIME label -->
+      <text x="450" y="160" text-anchor="middle" fill="#38BDF8" font-size="11" font-family="IBM Plex Mono" font-weight="600">⚡ Supabase Realtime &lt;200ms latency</text>
+      <text x="450" y="173" text-anchor="middle" fill="#6E7681" font-size="10" font-family="IBM Plex Mono">All apps subscribe via WebSocket channels</text>
+    </svg>
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════════════════
+     SECTION 2 — THE THREE APPS
+     ═══════════════════════════════════════════════════════ -->
+<section class="section" id="apps">
+  <div class="section-eyebrow">02 · Applications</div>
+  <h2 class="section-title">The Three Apps — Roles & Responsibilities</h2>
+  <p class="section-sub">Each app has a clearly separated role. No app handles another's domain. All share the same Supabase backend.</p>
+
+  <div class="grid-3">
+    <div class="card accent-border" style="--accent: var(--guest-light);">
+      <div class="card-title"><span class="app-tag tag-guest">App 1</span> Shivalaya Guest Portal</div>
+      <div class="card-body">
+        <p style="margin-bottom:10px; color: var(--guest-light); font-family: var(--mono); font-size: 11px;">order.shivalayaresorts.com</p>
+        <p>Mobile-first. Accessed via QR scan by resort guests. Contains the landing page, full food ordering system, real-time order tracking, and the complete activities & experiences booking module.</p>
+        <br>
+        <p><strong style="color:var(--text)">Writes to:</strong> orders, order_items, activity_bookings</p>
+        <p><strong style="color:var(--text)">Reads from:</strong> menu_items, menu_categories, activities, activity_time_slots, activity_bookings (own), orders (own)</p>
+        <p><strong style="color:var(--text)">Subscribes:</strong> orders channel (own order status updates)</p>
+      </div>
+    </div>
+
+    <div class="card accent-border" style="--accent: var(--kitchen-light);">
+      <div class="card-title"><span class="app-tag tag-kitchen">App 2</span> Panache Kitchen Panel</div>
+      <div class="card-body">
+        <p style="margin-bottom:10px; color: var(--kitchen-light); font-family: var(--mono); font-size: 11px;">kitchen.shivalayaresorts.com</p>
+        <p>Desktop/tablet. Used exclusively by kitchen staff and restaurant servers. Handles food orders only — no activities, no guest management. Focused and distraction-free.</p>
+        <br>
+        <p><strong style="color:var(--text)">Writes to:</strong> orders (status only), order_status_log</p>
+        <p><strong style="color:var(--text)">Reads from:</strong> orders, staff</p>
+        <p><strong style="color:var(--text)">Subscribes:</strong> orders channel (all new orders, status changes)</p>
+      </div>
+    </div>
+
+    <div class="card accent-border" style="--accent: var(--reception-light);">
+      <div class="card-title"><span class="app-tag tag-reception">App 3</span> Shivalaya Resort Reception</div>
+      <div class="card-body">
+        <p style="margin-bottom:10px; color: var(--reception-light); font-family: var(--mono); font-size: 11px;">reception.shivalayaresorts.com</p>
+        <p>Desktop. Lives at the main resort reception counter. Handles guest check-in/out, activities confirmation and staff assignment, consolidated guest folio, analytics, menu management, and WhatsApp triggers.</p>
+        <br>
+        <p><strong style="color:var(--text)">Writes to:</strong> guests, activity_bookings (status), orders (manual), activities, activity_time_slots</p>
+        <p><strong style="color:var(--text)">Reads from:</strong> Everything — full access</p>
+        <p><strong style="color:var(--text)">Subscribes:</strong> activity_bookings channel, orders overview channel</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════════════════
+     SECTION 3 — DATABASE SCHEMA
+     ═══════════════════════════════════════════════════════ -->
+<section class="section s-db" id="schema">
+  <div class="section-eyebrow">03 · Database</div>
+  <h2 class="section-title">Complete Database Schema</h2>
+  <p class="section-sub">All 15 tables in the Supabase PostgreSQL database. UUIDs as primary keys throughout. Created in Supabase SQL Editor, RLS enabled on every table.</p>
+
+  <!-- GUESTS TABLE -->
+  <div class="schema-box">
+    <div class="schema-header">
+      <span class="schema-name" style="color:var(--reception-light)">guests</span>
+      <span class="schema-desc">One row per active or past resort stay</span>
+    </div>
+    <table class="data-table">
+      <thead><tr><th>Column</th><th>Type</th><th>Notes</th></tr></thead>
+      <tbody>
+        <tr><td class="col-name">id</td><td class="col-type">uuid PK</td><td class="col-note">gen_random_uuid()</td></tr>
+        <tr><td class="col-name">resort_id</td><td class="col-type">uuid FK</td><td class="col-fk">→ resorts.id</td></tr>
+        <tr><td class="col-name">room_id</td><td class="col-type">uuid FK</td><td class="col-fk">→ rooms.id (nullable if walk-in)</td></tr>
+        <tr><td class="col-name">guest_name</td><td class="col-type">text NOT NULL</td><td class="col-note">Full name from check-in</td></tr>
+        <tr><td class="col-name">guest_phone</td><td class="col-type">text NOT NULL</td><td class="col-note">WhatsApp number — E.164 format (+91...)</td></tr>
+        <tr><td class="col-name">number_of_adults</td><td class="col-type">integer</td><td class="col-note">Total adults in room</td></tr>
+        <tr><td class="col-name">check_in_date</td><td class="col-type">date NOT NULL</td><td class="col-note">Actual check-in date</td></tr>
+        <tr><td class="col-name">expected_checkout</td><td class="col-type">date</td><td class="col-note">Expected departure</td></tr>
+        <tr><td class="col-name">actual_checkout</td><td class="col-type">timestamptz</td><td class="col-note">Set when checkout happens</td></tr>
+        <tr><td class="col-name">status</td><td class="col-type">text</td><td class="col-note">checked_in | checked_out</td></tr>
+        <tr><td class="col-name">notes</td><td class="col-type">text</td><td class="col-note">Staff notes about guest</td></tr>
+        <tr><td class="col-name">checked_in_by</td><td class="col-type">uuid FK</td><td class="col-fk">→ staff.id (who performed check-in)</td></tr>
+        <tr><td class="col-name">created_at</td><td class="col-type">timestamptz</td><td class="col-note">DEFAULT now()</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- ROOMS TABLE -->
+  <div class="schema-box">
+    <div class="schema-header">
+      <span class="schema-name" style="color:var(--reception-light)">rooms</span>
+      <span class="schema-desc">Pre-defined resort rooms — prevents typos in order routing</span>
+    </div>
+    <table class="data-table">
+      <thead><tr><th>Column</th><th>Type</th><th>Notes</th></tr></thead>
+      <tbody>
+        <tr><td class="col-name">id</td><td class="col-type">uuid PK</td><td class="col-note"></td></tr>
+        <tr><td class="col-name">resort_id</td><td class="col-type">uuid FK</td><td class="col-fk">→ resorts.id</td></tr>
+        <tr><td class="col-name">room_number</td><td class="col-type">text NOT NULL</td><td class="col-note">"101", "302", "Cottage A"</td></tr>
+        <tr><td class="col-name">room_type</td><td class="col-type">text</td><td class="col-note">"Deluxe", "Suite", "Cottage"</td></tr>
+        <tr><td class="col-name">floor</td><td class="col-type">integer</td><td class="col-note"></td></tr>
+        <tr><td class="col-name">has_balcony</td><td class="col-type">boolean</td><td class="col-note">Required for bonfire/BBQ activity eligibility</td></tr>
+        <tr><td class="col-name">is_occupied</td><td class="col-type">boolean DEFAULT false</td><td class="col-note">Flipped on check-in/checkout</td></tr>
+        <tr><td class="col-name">current_guest_id</td><td class="col-type">uuid FK nullable</td><td class="col-fk">→ guests.id</td></tr>
+        <tr><td class="col-name">sort_order</td><td class="col-type">integer</td><td class="col-note">Display order in Reception</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- ORDERS TABLE -->
+  <div class="schema-box">
+    <div class="schema-header">
+      <span class="schema-name" style="color:var(--kitchen-light)">orders</span>
+      <span class="schema-desc">Every food order ever placed — the central operational table</span>
+    </div>
+    <table class="data-table">
+      <thead><tr><th>Column</th><th>Type</th><th>Notes</th></tr></thead>
+      <tbody>
+        <tr><td class="col-name">id</td><td class="col-type">uuid PK</td><td class="col-note"></td></tr>
+        <tr><td class="col-name">order_number</td><td class="col-type">text UNIQUE</td><td class="col-note">PAN-XXXXX — human-readable ID</td></tr>
+        <tr><td class="col-name">resort_id</td><td class="col-type">uuid FK</td><td class="col-fk">→ resorts.id</td></tr>
+        <tr><td class="col-name">guest_id</td><td class="col-type">uuid FK nullable</td><td class="col-fk">→ guests.id (null if guest not checked in)</td></tr>
+        <tr><td class="col-name">room_id</td><td class="col-type">uuid FK nullable</td><td class="col-fk">→ rooms.id</td></tr>
+        <tr><td class="col-name">table_id</td><td class="col-type">uuid FK nullable</td><td class="col-fk">→ restaurant_tables.id</td></tr>
+        <tr><td class="col-name">service_type</td><td class="col-type">text</td><td class="col-note">room_service | dine_in | pickup | walk_in</td></tr>
+        <tr><td class="col-name">guest_name</td><td class="col-type">text NOT NULL</td><td class="col-note">Always stored even if guest_id exists</td></tr>
+        <tr><td class="col-name">guest_phone</td><td class="col-type">text</td><td class="col-note"></td></tr>
+        <tr><td class="col-name">items</td><td class="col-type">jsonb NOT NULL</td><td class="col-note">[{id, name, qty, price, variant}]</td></tr>
+        <tr><td class="col-name">subtotal</td><td class="col-type">integer NOT NULL</td><td class="col-note">In rupees (no paise)</td></tr>
+        <tr><td class="col-name">status</td><td class="col-type">text DEFAULT 'new'</td><td class="col-note">new | confirmed | preparing | ready | served | cancelled</td></tr>
+        <tr><td class="col-name">special_note</td><td class="col-type">text</td><td class="col-note">Guest's special instructions</td></tr>
+        <tr><td class="col-name">created_at</td><td class="col-type">timestamptz DEFAULT now()</td><td class="col-note">Indexed — used for folio queries</td></tr>
+        <tr><td class="col-name">updated_at</td><td class="col-type">timestamptz</td><td class="col-note">Auto-updated via trigger</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- ACTIVITIES TABLE -->
+  <div class="schema-box">
+    <div class="schema-header">
+      <span class="schema-name" style="color:var(--guest-light)">activities</span>
+      <span class="schema-desc">Master list of all bookable resort experiences</span>
+    </div>
+    <table class="data-table">
+      <thead><tr><th>Column</th><th>Type</th><th>Notes</th></tr></thead>
+      <tbody>
+        <tr><td class="col-name">id</td><td class="col-type">uuid PK</td><td class="col-note"></td></tr>
+        <tr><td class="col-name">resort_id</td><td class="col-type">uuid FK</td><td class="col-fk">→ resorts.id</td></tr>
+        <tr><td class="col-name">name</td><td class="col-type">text NOT NULL</td><td class="col-note">"Bird Cage Experience", "Bonfire Setup"</td></tr>
+        <tr><td class="col-name">description</td><td class="col-type">text</td><td class="col-note">Long description shown on detail page</td></tr>
+        <tr><td class="col-name">short_description</td><td class="col-type">text</td><td class="col-note">Card subtitle — max 100 chars</td></tr>
+        <tr><td class="col-name">pricing_type</td><td class="col-type">text NOT NULL</td><td class="col-note">per_person | per_setup | per_session</td></tr>
+        <tr><td class="col-name">price_per_person</td><td class="col-type">integer nullable</td><td class="col-note">Used when pricing_type = per_person</td></tr>
+        <tr><td class="col-name">price_per_setup</td><td class="col-type">integer nullable</td><td class="col-note">Used for Bonfire, BBQ (fixed per setup)</td></tr>
+        <tr><td class="col-name">price_per_session</td><td class="col-type">integer nullable</td><td class="col-note">Used for PS5 (fixed per session regardless of people)</td></tr>
+        <tr><td class="col-name">duration_minutes</td><td class="col-type">integer</td><td class="col-note">Shown to guest on card</td></tr>
+        <tr><td class="col-name">max_capacity_per_slot</td><td class="col-type">integer NOT NULL</td><td class="col-note">Default max across all slots unless overridden</td></tr>
+        <tr><td class="col-name">requires_balcony</td><td class="col-type">boolean DEFAULT false</td><td class="col-note">If true, only rooms with has_balcony can book</td></tr>
+        <tr><td class="col-name">min_advance_hours</td><td class="col-type">integer DEFAULT 0</td><td class="col-note">Minimum hours in advance booking required</td></tr>
+        <tr><td class="col-name">what_is_included</td><td class="col-type">text[]</td><td class="col-note">["Tea & snacks", "Bird feed", "Guide"]</td></tr>
+        <tr><td class="col-name">notes_for_guest</td><td class="col-type">text</td><td class="col-note">Shown after booking confirmation</td></tr>
+        <tr><td class="col-name">notes_for_staff</td><td class="col-type">text</td><td class="col-note">Internal instructions shown in reception</td></tr>
+        <tr><td class="col-name">image_url</td><td class="col-type">text</td><td class="col-note">Stored in Supabase Storage</td></tr>
+        <tr><td class="col-name">is_available</td><td class="col-type">boolean DEFAULT true</td><td class="col-note">Toggle in reception — instantly hides from guest portal</td></tr>
+        <tr><td class="col-name">sort_order</td><td class="col-type">integer DEFAULT 0</td><td class="col-note">Display order on /experiences page</td></tr>
+        <tr><td class="col-name">category</td><td class="col-type">text</td><td class="col-note">"outdoor" | "indoor" | "food_experience"</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- ACTIVITY TIME SLOTS -->
+  <div class="schema-box">
+    <div class="schema-header">
+      <span class="schema-name" style="color:var(--guest-light)">activity_time_slots</span>
+      <span class="schema-desc">Available time windows per activity — reusable across dates</span>
+    </div>
+    <table class="data-table">
+      <thead><tr><th>Column</th><th>Type</th><th>Notes</th></tr></thead>
+      <tbody>
+        <tr><td class="col-name">id</td><td class="col-type">uuid PK</td><td class="col-note"></td></tr>
+        <tr><td class="col-name">activity_id</td><td class="col-type">uuid FK NOT NULL</td><td class="col-fk">→ activities.id CASCADE DELETE</td></tr>
+        <tr><td class="col-name">label</td><td class="col-type">text NOT NULL</td><td class="col-note">"Morning Session", "Evening Slot"</td></tr>
+        <tr><td class="col-name">start_time</td><td class="col-type">time NOT NULL</td><td class="col-note">"07:00:00", "18:30:00"</td></tr>
+        <tr><td class="col-name">end_time</td><td class="col-type">time NOT NULL</td><td class="col-note">"09:00:00", "20:00:00"</td></tr>
+        <tr><td class="col-name">days_available</td><td class="col-type">integer[] NOT NULL</td><td class="col-note">[0,1,2,3,4,5,6] — 0=Sunday. ALL DAYS = {0,1,2,3,4,5,6}</td></tr>
+        <tr><td class="col-name">max_capacity_override</td><td class="col-type">integer nullable</td><td class="col-note">If set, overrides activity.max_capacity_per_slot for this slot</td></tr>
+        <tr><td class="col-name">is_active</td><td class="col-type">boolean DEFAULT true</td><td class="col-note">Disable specific slot without deleting</td></tr>
+        <tr><td class="col-name">sort_order</td><td class="col-type">integer DEFAULT 0</td><td class="col-note">Display order of slots</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- ACTIVITY BOOKINGS -->
+  <div class="schema-box">
+    <div class="schema-header">
+      <span class="schema-name" style="color:var(--guest-light)">activity_bookings</span>
+      <span class="schema-desc">One row per guest booking — tied to a specific date + slot</span>
+    </div>
+    <table class="data-table">
+      <thead><tr><th>Column</th><th>Type</th><th>Notes</th></tr></thead>
+      <tbody>
+        <tr><td class="col-name">id</td><td class="col-type">uuid PK</td><td class="col-note"></td></tr>
+        <tr><td class="col-name">booking_number</td><td class="col-type">text UNIQUE</td><td class="col-note">EXP-XXXXX — human-readable</td></tr>
+        <tr><td class="col-name">activity_id</td><td class="col-type">uuid FK NOT NULL</td><td class="col-fk">→ activities.id</td></tr>
+        <tr><td class="col-name">slot_id</td><td class="col-type">uuid FK NOT NULL</td><td class="col-fk">→ activity_time_slots.id</td></tr>
+        <tr><td class="col-name">booking_date</td><td class="col-type">date NOT NULL</td><td class="col-note">Specific calendar date the activity is booked for</td></tr>
+        <tr><td class="col-name">guest_id</td><td class="col-type">uuid FK nullable</td><td class="col-fk">→ guests.id (null if no formal check-in)</td></tr>
+        <tr><td class="col-name">room_id</td><td class="col-type">uuid FK nullable</td><td class="col-fk">→ rooms.id (for folio linking)</td></tr>
+        <tr><td class="col-name">guest_name</td><td class="col-type">text NOT NULL</td><td class="col-note">Always denormalized for speed</td></tr>
+        <tr><td class="col-name">guest_phone</td><td class="col-type">text</td><td class="col-note"></td></tr>
+        <tr><td class="col-name">number_of_guests</td><td class="col-type">integer NOT NULL DEFAULT 1</td><td class="col-note">Used for capacity calc and total_amount calc</td></tr>
+        <tr><td class="col-name">pricing_type_snapshot</td><td class="col-type">text NOT NULL</td><td class="col-note">Snapshot at booking time — price can change later</td></tr>
+        <tr><td class="col-name">unit_price_snapshot</td><td class="col-type">integer NOT NULL</td><td class="col-note">Price per person/setup/session at time of booking</td></tr>
+        <tr><td class="col-name">total_amount</td><td class="col-type">integer NOT NULL</td><td class="col-note">Calculated: unit_price × number_of_guests (or 1 if per_setup)</td></tr>
+        <tr><td class="col-name">status</td><td class="col-type">text DEFAULT 'pending'</td><td class="col-note">pending | confirmed | completed | cancelled | no_show</td></tr>
+        <tr><td class="col-name">special_requests</td><td class="col-type">text</td><td class="col-note">Guest's notes at booking</td></tr>
+        <tr><td class="col-name">assigned_staff_name</td><td class="col-type">text</td><td class="col-note">Reception fills in after confirmation</td></tr>
+        <tr><td class="col-name">staff_instructions</td><td class="col-type">text</td><td class="col-note">Internal note from reception to assigned staff</td></tr>
+        <tr><td class="col-name">confirmed_by</td><td class="col-type">uuid FK nullable</td><td class="col-fk">→ staff.id</td></tr>
+        <tr><td class="col-name">cancellation_reason</td><td class="col-type">text</td><td class="col-note">Required if status = cancelled</td></tr>
+        <tr><td class="col-name">created_at</td><td class="col-type">timestamptz DEFAULT now()</td><td class="col-note">Indexed</td></tr>
+        <tr><td class="col-name">updated_at</td><td class="col-type">timestamptz</td><td class="col-note">Auto-updated trigger</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- OTHER TABLES SUMMARY -->
+  <div class="divider-label">Additional Tables</div>
+  <div class="grid-3">
+    <div class="card">
+      <div class="card-title"><span class="app-tag tag-db">menu_categories</span></div>
+      <div class="card-body">id, name, available_from (time), available_until (time), sort_order, is_available. <strong>available_from/until</strong> powers time-gating — Breakfast disappears outside 7AM–4PM.</div>
+    </div>
+    <div class="card">
+      <div class="card-title"><span class="app-tag tag-db">menu_items</span></div>
+      <div class="card-body">id, category_id (FK), name, description, price, item_type (veg|nonveg|egg), is_available, has_variants, sort_order. Toggling is_available instantly removes from Guest Portal.</div>
+    </div>
+    <div class="card">
+      <div class="card-title"><span class="app-tag tag-db">menu_item_variants</span></div>
+      <div class="card-body">id, item_id (FK), group_label ("Choose Stuffing"), option_name ("Aloo"), price_delta (0 for same price). Required selection blocks add-to-cart until chosen.</div>
+    </div>
+    <div class="card">
+      <div class="card-title"><span class="app-tag tag-db">staff</span></div>
+      <div class="card-body">id, resort_id, name, role (owner|receptionist|kitchen), pin_hash (bcrypt), supabase_user_id (FK to auth.users), is_active. PINs never stored plain.</div>
+    </div>
+    <div class="card">
+      <div class="card-title"><span class="app-tag tag-db">order_status_log</span></div>
+      <div class="card-body">id, order_id (FK), old_status, new_status, changed_by (staff FK), changed_at. Every status change written here — full audit trail for disputes.</div>
+    </div>
+    <div class="card">
+      <div class="card-title"><span class="app-tag tag-db">whatsapp_log</span></div>
+      <div class="card-body">id, guest_id (FK), phone_number, message_type (checkin|checkout), template_name, provider_message_id, status (sent|delivered|failed), sent_at, error_message.</div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════════════════
+     SECTION 4 — REALTIME ARCHITECTURE
+     ═══════════════════════════════════════════════════════ -->
+<section class="section s-realtime" id="channels">
+  <div class="section-eyebrow">04 · Real-time</div>
+  <h2 class="section-title">Supabase Realtime Channels</h2>
+  <p class="section-sub">Supabase Realtime wraps PostgreSQL's LISTEN/NOTIFY into WebSocket channels. Apps subscribe to specific channels and receive events within &lt;200ms of a database change — no polling, no refresh.</p>
+
+  <div class="grid-2">
+    <div class="card accent-border" style="--accent: var(--realtime-light)">
+      <div class="card-title">Channel: <span class="channel">orders</span></div>
+      <div class="card-body">
+        <p><strong style="color:var(--text)">Who subscribes:</strong></p>
+        <p>• <span class="app-tag tag-kitchen">Kitchen Panel</span> subscribes to ALL new orders (service = any)</p>
+        <p>• <span class="app-tag tag-guest">Guest Portal</span> subscribes FILTERED by order_id after placing order</p>
+        <br>
+        <p><strong style="color:var(--text)">Events emitted:</strong> INSERT (new order), UPDATE (status change)</p>
+        <p><strong style="color:var(--text)">Kitchen filter:</strong> <code style="font-family:var(--mono);color:var(--realtime-light)">status=eq.new</code></p>
+        <p><strong style="color:var(--text)">Guest filter:</strong> <code style="font-family:var(--mono);color:var(--realtime-light)">id=eq.[orderUUID]</code></p>
+      </div>
+    </div>
+
+    <div class="card accent-border" style="--accent: var(--realtime-light)">
+      <div class="card-title">Channel: <span class="channel">activity_bookings</span></div>
+      <div class="card-body">
+        <p><strong style="color:var(--text)">Who subscribes:</strong></p>
+        <p>• <span class="app-tag tag-reception">Resort Reception</span> subscribes to ALL new bookings and status changes</p>
+        <p>• <span class="app-tag tag-guest">Guest Portal</span> subscribes FILTERED by booking_id for tracking</p>
+        <br>
+        <p><strong style="color:var(--text)">Events emitted:</strong> INSERT (new booking), UPDATE (confirmed/cancelled)</p>
+        <p><strong style="color:var(--text)">Reception shows:</strong> alert badge when new pending booking arrives</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="code-block">
+    <div class="code-header">
+      <span class="code-lang">JavaScript</span>
+      <span class="code-label">Supabase Realtime subscription — Kitchen Panel</span>
+    </div>
+    <pre><span class="cm">// Kitchen Panel — subscribe to all new food orders in real-time</span>
+<span class="kw">const</span> channel = supabase
+  .channel(<span class="st">'kitchen_orders'</span>)
+  .on(
+    <span class="st">'postgres_changes'</span>,
+    {
+      event: <span class="st">'*'</span>,           <span class="cm">// INSERT + UPDATE</span>
+      schema: <span class="st">'public'</span>,
+      table: <span class="st">'orders'</span>,
+      filter: <span class="st">`resort_id=eq.${resortId}`</span>
+    },
+    (payload) => {
+      <span class="kw">if</span> (payload.eventType === <span class="st">'INSERT'</span>) {
+        <span class="fn">playNotificationSound</span>();
+        <span class="fn">addOrderToQueue</span>(payload.new);
+        <span class="fn">updateBadgeCount</span>();
+      }
+      <span class="kw">if</span> (payload.eventType === <span class="st">'UPDATE'</span>) {
+        <span class="fn">updateOrderStatus</span>(payload.new.id, payload.new.status);
+      }
+    }
+  )
+  .subscribe();
+
+<span class="cm">// Guest Portal — track a specific order after placing it</span>
+<span class="kw">const</span> trackChannel = supabase
+  .channel(<span class="st">`order_track_${orderId}`</span>)
+  .on(
+    <span class="st">'postgres_changes'</span>,
+    {
+      event: <span class="st">'UPDATE'</span>,
+      schema: <span class="st">'public'</span>,
+      table: <span class="st">'orders'</span>,
+      filter: <span class="st">`id=eq.${orderId}`</span>  <span class="cm">// Only this order</span>
+    },
+    (payload) => {
+      <span class="fn">updateTrackingUI</span>(payload.new.status); <span class="cm">// Updates tracker in &lt;200ms</span>
+    }
+  )
+  .subscribe();</pre>
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════════════════
+     SECTION 5 — FOOD ORDERING FLOW
+     ═══════════════════════════════════════════════════════ -->
+<section class="section s-guest" id="food-flow">
+  <div class="section-eyebrow">05 · Core Flow</div>
+  <h2 class="section-title">Food Ordering — Complete Flow</h2>
+  <p class="section-sub">Every step from QR scan to food served. Each step lists what happens in the frontend, what database operation fires, and what real-time event it triggers.</p>
+
+  <div class="flow" style="--accent: var(--guest-light); --pale: var(--guest-pale)">
+    <div class="flow-step">
+      <div class="flow-num">1</div>
+      <div class="flow-content">
+        <h4>Guest Scans QR Code</h4>
+        <p>QR encodes <code style="font-family:var(--mono);color:var(--guest-light)">order.shivalayaresorts.com?room=302</code> or <code style="font-family:var(--mono);color:var(--guest-light)">?table=5&type=dine_in</code>. Browser opens. Landing page renders.</p>
+        <p>Frontend reads URL params. If <code style="font-family:var(--mono)">room=302</code> is present, it's stored in <code style="font-family:var(--mono)">sessionStorage</code> to pre-fill the checkout form.</p>
+        <span class="trigger">NO DB read yet — landing page is static</span>
+      </div>
+    </div>
+    <div class="flow-step">
+      <div class="flow-num">2</div>
+      <div class="flow-content">
+        <h4>Guest Taps "Order Food" → Menu Loads</h4>
+        <p>Supabase JS client fetches all available items. Query applies two filters: <code style="font-family:var(--mono)">is_available=true</code> on menu_items AND time-gate check on menu_categories.</p>
+        <span class="trigger">READ: menu_categories JOIN menu_items WHERE is_available=true AND current_time BETWEEN available_from AND available_until</span>
+      </div>
+    </div>
+    <div class="flow-step">
+      <div class="flow-num">3</div>
+      <div class="flow-content">
+        <h4>Guest Builds Cart</h4>
+        <p>Cart state is entirely in-memory (Zustand store). No DB writes during browsing. If an item has variants, a modal forces selection before the item is added. Cart renders as floating bottom bar.</p>
+        <p>If item has <code style="font-family:var(--mono)">has_variants=true</code>, client fetches that item's variants on-demand (<code style="font-family:var(--mono)">menu_item_variants WHERE item_id=X</code>).</p>
+        <span class="trigger">READ: menu_item_variants (only on items with has_variants=true)</span>
+      </div>
+    </div>
+    <div class="flow-step">
+      <div class="flow-num">4</div>
+      <div class="flow-content">
+        <h4>Guest Submits Checkout Form</h4>
+        <p>Guest enters name, phone, room number (or table), service type, notes. Frontend validates all required fields. On submit, calls a Supabase RPC function (not a direct INSERT) to atomically create the order and generate the order number.</p>
+        <span class="trigger">WRITE: INSERT orders + INSERT order_items (via RPC: create_order)</span>
+      </div>
+    </div>
+    <div class="flow-step">
+      <div class="flow-num">5</div>
+      <div class="flow-content">
+        <h4>Order Created — Realtime Fires</h4>
+        <p>Supabase Realtime broadcasts the INSERT event on the <code style="font-family:var(--mono)">orders</code> channel. The Kitchen Panel — which is always subscribed — receives the event within &lt;200ms. The new order card appears at the top of the "New" column. Browser notification sound plays.</p>
+        <p>Guest Portal receives the order UUID back from the RPC call. It navigates to <code style="font-family:var(--mono)">/order/PAN-00123</code> (the tracking page) and subscribes to real-time updates for that specific order.</p>
+        <span class="trigger">REALTIME EVENT → Kitchen Panel: new order in queue ⚡</span>
+      </div>
+    </div>
+    <div class="flow-step">
+      <div class="flow-num">6</div>
+      <div class="flow-content">
+        <h4>Kitchen Accepts Order</h4>
+        <p>Kitchen staff clicks "Accept." Frontend calls UPDATE orders SET status='confirmed'. The order_status_log trigger fires (see below), writing an audit row automatically.</p>
+        <p>Guest's tracking page receives the UPDATE event via WebSocket. The tracker UI moves from "Received" to "Confirmed" — live, on the guest's phone.</p>
+        <span class="trigger">WRITE: UPDATE orders SET status='confirmed' → TRIGGER: log_status_change → INSERT order_status_log</span>
+      </div>
+    </div>
+    <div class="flow-step">
+      <div class="flow-num">7</div>
+      <div class="flow-content">
+        <h4>Kitchen Marks Ready → Guest Sees It</h4>
+        <p>Kitchen updates status to 'ready'. Guest's phone shows the tracker jump to "Ready" in real-time. If dining in, the waiter calls the name. If room service, it's already on its way.</p>
+        <span class="trigger">WRITE: UPDATE status='ready' → REALTIME to Guest Portal tracker ⚡</span>
+      </div>
+    </div>
+    <div class="flow-step">
+      <div class="flow-num">8</div>
+      <div class="flow-content">
+        <h4>Order Marked Served — Folio Updated</h4>
+        <p>Waiter clicks "Served." Status → 'served'. The order is now final. The guest's folio (SQL VIEW) automatically includes this charge under their room/stay. No separate step needed — the folio VIEW queries in real-time.</p>
+        <span class="trigger">WRITE: UPDATE status='served' → guest_folio VIEW auto-includes this order</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="code-block">
+    <div class="code-header">
+      <span class="code-lang">SQL</span>
+      <span class="code-label">Auto-trigger: log every status change + update updated_at</span>
+    </div>
+    <pre><span class="kw">CREATE OR REPLACE FUNCTION</span> <span class="fn">log_order_status_change</span>()
+<span class="kw">RETURNS TRIGGER AS</span> $$
+<span class="kw">BEGIN</span>
+  <span class="cm">-- Only fire when status actually changes</span>
+  <span class="kw">IF</span> OLD.status <span class="op">!=</span> NEW.status <span class="kw">THEN</span>
+    <span class="kw">INSERT INTO</span> order_status_log (
+      order_id, old_status, new_status, changed_at
+    ) <span class="kw">VALUES</span> (
+      NEW.id, OLD.status, NEW.status, <span class="fn">now</span>()
+    );
+  <span class="kw">END IF</span>;
+
+  <span class="cm">-- Always update updated_at</span>
+  NEW.updated_at := <span class="fn">now</span>();
+  <span class="kw">RETURN</span> NEW;
+<span class="kw">END</span>;
+$$ <span class="kw">LANGUAGE</span> plpgsql;
+
+<span class="kw">CREATE TRIGGER</span> orders_status_log
+  <span class="kw">BEFORE UPDATE ON</span> orders
+  <span class="kw">FOR EACH ROW</span>
+  <span class="kw">EXECUTE FUNCTION</span> <span class="fn">log_order_status_change</span>();</pre>
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════════════════
+     SECTION 6 — TIME SLOT SYSTEM SCHEMA DESIGN
+     ═══════════════════════════════════════════════════════ -->
+<section class="section s-db" id="slots-design">
+  <div class="section-eyebrow">06 · Time Slot System — Schema Design</div>
+  <h2 class="section-title">How the Time Slot System Is Modelled</h2>
+  <p class="section-sub">The slot system separates the definition of a slot (when it repeats, what days, what capacity) from an individual booking (a specific guest, on a specific date). This lets you define a slot once and it recurs automatically every applicable day.</p>
+
+  <div class="callout info">
+    <div class="callout-icon">💡</div>
+    <div class="callout-body">
+      <h4>The Key Design Decision</h4>
+      <p>A time slot in <code style="font-family:var(--mono)">activity_time_slots</code> is a <strong>template</strong> — it says "Bird Cage Morning Session runs 7:00–9:00 AM every day." An <code style="font-family:var(--mono)">activity_booking</code> is the <strong>instance</strong> — it says "Guest Rajesh booked the Bird Cage Morning Session for August 12." The availability calculation always queries the bookings table for a specific (slot_id + booking_date) combination.</p>
+    </div>
+  </div>
+
+  <div class="grid-2" style="margin-top: 24px;">
+    <div>
+      <h3 style="margin-bottom: 14px; color:var(--text); font-size: 15px;">Real Example: Bird Cage Experience</h3>
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">SQL</span><span class="code-label">Seed data for Bird Cage</span></div>
+        <pre><span class="cm">-- The activity itself</span>
+<span class="kw">INSERT INTO</span> activities (
+  name, pricing_type, price_per_person,
+  max_capacity_per_slot, duration_minutes,
+  is_available
+) <span class="kw">VALUES</span> (
+  <span class="st">'Bird Cage Experience'</span>,
+  <span class="st">'per_person'</span>, <span class="nm">500</span>,
+  <span class="nm">6</span>,  <span class="cm">-- max 6 guests per slot</span>
+  <span class="nm">90</span>, <span class="cm">-- 1.5 hour session</span>
+  <span class="nm">true</span>
+);
+
+<span class="cm">-- Two recurring morning slots</span>
+<span class="kw">INSERT INTO</span> activity_time_slots (
+  activity_id, label, start_time, end_time,
+  days_available, is_active
+) <span class="kw">VALUES</span>
+(
+  <span class="st">'[bird-cage-uuid]'</span>,
+  <span class="st">'Early Morning'</span>,
+  <span class="st">'07:00:00'</span>, <span class="st">'08:30:00'</span>,
+  <span class="st">'{0,1,2,3,4,5,6}'</span>,  <span class="cm">-- every day</span>
+  <span class="nm">true</span>
+),
+(
+  <span class="st">'[bird-cage-uuid]'</span>,
+  <span class="st">'Morning Session'</span>,
+  <span class="st">'08:30:00'</span>, <span class="st">'10:00:00'</span>,
+  <span class="st">'{0,1,2,3,4,5,6}'</span>,
+  <span class="nm">true</span>
+);</pre>
+      </div>
+    </div>
+    <div>
+      <h3 style="margin-bottom: 14px; color:var(--text); font-size: 15px;">Real Example: Bonfire Setup</h3>
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">SQL</span><span class="code-label">Per-setup pricing (not per-person)</span></div>
+        <pre><span class="cm">-- Bonfire is per setup, not per person</span>
+<span class="kw">INSERT INTO</span> activities (
+  name, pricing_type, price_per_setup,
+  max_capacity_per_slot, duration_minutes,
+  requires_balcony, is_available
+) <span class="kw">VALUES</span> (
+  <span class="st">'Bonfire Setup'</span>,
+  <span class="st">'per_setup'</span>, <span class="nm">1200</span>,
+  <span class="nm">3</span>,  <span class="cm">-- max 3 simultaneous setups</span>
+  <span class="nm">180</span>, <span class="cm">-- 3 hour experience</span>
+  <span class="nm">true</span>, <span class="cm">-- balcony required</span>
+  <span class="nm">true</span>
+);
+
+<span class="cm">-- Evening only, 7 nights a week</span>
+<span class="kw">INSERT INTO</span> activity_time_slots (
+  activity_id, label, start_time, end_time,
+  days_available
+) <span class="kw">VALUES</span> (
+  <span class="st">'[bonfire-uuid]'</span>,
+  <span class="st">'Evening Setup'</span>,
+  <span class="st">'18:00:00'</span>, <span class="st">'21:00:00'</span>,
+  <span class="st">'{0,1,2,3,4,5,6}'</span>
+);
+
+<span class="cm">-- PS5 Gaming — open all day, per session</span>
+<span class="kw">INSERT INTO</span> activities (
+  name, pricing_type, price_per_session,
+  max_capacity_per_slot, duration_minutes
+) <span class="kw">VALUES</span> (
+  <span class="st">'PS5 Gaming Session'</span>, <span class="st">'per_session'</span>,
+  <span class="nm">800</span>, <span class="nm">2</span>, <span class="nm">60</span>
+);</pre>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════════════════
+     SECTION 7 — TIME SLOTS: CUSTOMER SIDE
+     ═══════════════════════════════════════════════════════ -->
+<section class="section s-guest" id="slots-customer">
+  <div class="section-eyebrow">07 · Time Slot System — Customer Side</div>
+  <h2 class="section-title">What the Guest Experiences</h2>
+  <p class="section-sub">The booking flow is designed to be fully self-service. A guest who has never used the app before should be able to book an activity in under 60 seconds.</p>
+
+  <div class="flow" style="--accent: var(--guest-light); --pale: var(--guest-pale)">
+    <div class="flow-step">
+      <div class="flow-num">1</div>
+      <div class="flow-content">
+        <h4>Guest Opens /experiences</h4>
+        <p>The page loads all available activities with a single query. Only activities where <code style="font-family:var(--mono)">is_available=true</code> appear. Cards show name, short description, pricing structure, duration, and a "Book Now" button.</p>
+        <p>If the guest's room number is in session (from QR scan), it's stored in context — will be used to pre-fill the booking form.</p>
+        <span class="trigger">READ: SELECT * FROM activities WHERE is_available=true ORDER BY sort_order</span>
+      </div>
+    </div>
+    <div class="flow-step">
+      <div class="flow-num">2</div>
+      <div class="flow-content">
+        <h4>Guest Taps an Activity</h4>
+        <p>Opens the activity detail page. The system immediately fetches available slots for today + the next 3 days. This calls the RPC function <code style="font-family:var(--mono)">get_available_slots</code> which returns each slot with its remaining capacity for the selected date.</p>
+        <p>Date chips appear at top (Today, Tomorrow, Date+2, Date+3). Time slot chips appear below — green for available with spots remaining, grey/strikethrough for full.</p>
+        <span class="trigger">RPC: get_available_slots(activity_id, date) → returns slots with remaining capacity</span>
+      </div>
+    </div>
+    <div class="flow-step">
+      <div class="flow-num">3</div>
+      <div class="flow-content">
+        <h4>Guest Selects Date + Time Slot</h4>
+        <p>When guest taps a date chip, the time slots reload for that date. When a slot is tapped, it highlights. A "Continues" button appears. If they select a full slot, the UI shows "This slot is full — please pick another."</p>
+        <p>Each slot chip shows: label, time range, and a compact capacity indicator like "3 spots left" or "Full." For <code style="font-family:var(--mono)">per_setup</code> activities, capacity means how many simultaneous setups are available, not people.</p>
+      </div>
+    </div>
+    <div class="flow-step">
+      <div class="flow-num">4</div>
+      <div class="flow-content">
+        <h4>Guest Fills Booking Form</h4>
+        <p>Form appears below the slot picker (or as a bottom sheet on mobile). Fields:</p>
+        <p>• Number of guests (integer — affects total price for per_person activities)</p>
+        <p>• Name, Phone (pre-filled from session if available)</p>
+        <p>• Room number (pre-filled from QR session if scanned from room)</p>
+        <p>• Special requests (optional textarea)</p>
+        <p>Total price auto-calculates as guest changes the guest count: <code style="font-family:var(--mono)">total = price_per_person × number_of_guests</code>. For per_setup, total is always the fixed setup price regardless of guest count.</p>
+      </div>
+    </div>
+    <div class="flow-step">
+      <div class="flow-num">5</div>
+      <div class="flow-content">
+        <h4>Guest Taps "Confirm Booking"</h4>
+        <p>This calls the <code style="font-family:var(--mono)">book_activity_slot</code> RPC function (NOT a direct INSERT — the RPC handles concurrency locking). The function either succeeds and returns a booking_id, or fails with an error code.</p>
+        <p>If it fails (slot just filled while they were on the form — race condition): frontend shows "Sorry, this slot just filled up. Please select another time." The slot picker reloads with updated availability.</p>
+        <p>If it succeeds: confirmation screen appears immediately.</p>
+        <span class="trigger">RPC: book_activity_slot(activity_id, slot_id, date, guests, name, phone, room, requests)</span>
+      </div>
+    </div>
+    <div class="flow-step">
+      <div class="flow-num">6</div>
+      <div class="flow-content">
+        <h4>Confirmation Screen</h4>
+        <p>Guest sees a confirmation card with booking reference (EXP-XXXXX), activity name, date, time slot, number of guests, total amount, and a note: "Our team will confirm this booking and any instructions will be shared shortly. Payment will be added to your room bill at checkout."</p>
+        <p>Status shows "Pending Confirmation" (brass/amber color). Once reception confirms in their dashboard, the status updates to "Confirmed" — guest can see this on their "My Bookings" page.</p>
+        <span class="trigger">REALTIME: activity_bookings channel → Reception Dashboard notified ⚡</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════════════════
+     SECTION 8 — TIME SLOTS: BACKEND DEEP DIVE
+     ═══════════════════════════════════════════════════════ -->
+<section class="section s-db" id="slots-backend">
+  <div class="section-eyebrow">08 · Time Slot System — Backend Deep Dive</div>
+  <h2 class="section-title">How Availability Is Calculated</h2>
+  <p class="section-sub">Availability is not stored — it's computed on every request by counting existing non-cancelled bookings against the slot's max capacity. This means it's always accurate.</p>
+
+  <div class="code-block">
+    <div class="code-header">
+      <span class="code-lang">SQL</span>
+      <span class="code-label">RPC: get_available_slots — called when guest opens an activity detail page</span>
+    </div>
+    <pre><span class="kw">CREATE OR REPLACE FUNCTION</span> <span class="fn">get_available_slots</span>(
+  p_activity_id  <span class="nm">UUID</span>,
+  p_date         <span class="nm">DATE</span>
+)
+<span class="kw">RETURNS TABLE</span> (
+  slot_id              <span class="nm">UUID</span>,
+  label                <span class="nm">TEXT</span>,
+  start_time           <span class="nm">TIME</span>,
+  end_time             <span class="nm">TIME</span>,
+  max_capacity         <span class="nm">INTEGER</span>,
+  booked_count         <span class="nm">INTEGER</span>,
+  remaining_capacity   <span class="nm">INTEGER</span>,
+  is_available         <span class="nm">BOOLEAN</span>
+)
+<span class="kw">LANGUAGE</span> plpgsql <span class="kw">AS</span> $$
+<span class="kw">BEGIN</span>
+  <span class="kw">RETURN QUERY</span>
+    <span class="kw">SELECT</span>
+      ats.id                        <span class="kw">AS</span> slot_id,
+      ats.label,
+      ats.start_time,
+      ats.end_time,
+
+      <span class="cm">-- Effective max: slot override wins, else activity default</span>
+      <span class="fn">COALESCE</span>(ats.max_capacity_override, a.max_capacity_per_slot) <span class="kw">AS</span> max_capacity,
+
+      <span class="cm">-- Current bookings: SUM of number_of_guests (NOT count of rows!)</span>
+      <span class="cm">-- Because 1 booking can cover 3 people</span>
+      <span class="fn">COALESCE</span>(
+        (
+          <span class="kw">SELECT SUM</span>(ab.number_of_guests)
+          <span class="kw">FROM</span> activity_bookings ab
+          <span class="kw">WHERE</span>
+            ab.slot_id = ats.id
+            <span class="kw">AND</span> ab.booking_date = p_date
+            <span class="kw">AND</span> ab.status <span class="op">NOT IN</span> (<span class="st">'cancelled'</span>, <span class="st">'no_show'</span>)
+        ),
+        <span class="nm">0</span>
+      ) <span class="kw">AS</span> booked_count,
+
+      <span class="cm">-- Remaining = max - booked</span>
+      <span class="fn">COALESCE</span>(ats.max_capacity_override, a.max_capacity_per_slot)
+        - <span class="fn">COALESCE</span>(
+            (<span class="kw">SELECT SUM</span>(ab.number_of_guests)
+             <span class="kw">FROM</span> activity_bookings ab
+             <span class="kw">WHERE</span> ab.slot_id = ats.id
+               <span class="kw">AND</span> ab.booking_date = p_date
+               <span class="kw">AND</span> ab.status <span class="op">NOT IN</span> (<span class="st">'cancelled'</span>, <span class="st">'no_show'</span>)),
+            <span class="nm">0</span>
+          )
+      <span class="kw">AS</span> remaining_capacity,
+
+      <span class="cm">-- is_available: slot is active AND has remaining capacity</span>
+      <span class="cm">-- AND the slot day matches the requested date's day of week</span>
+      (
+        ats.is_active = <span class="nm">TRUE</span>
+        <span class="kw">AND</span> a.is_available = <span class="nm">TRUE</span>
+        <span class="kw">AND EXTRACT</span>(DOW <span class="kw">FROM</span> p_date) = <span class="fn">ANY</span>(ats.days_available)
+        <span class="kw">AND</span> (
+          <span class="fn">COALESCE</span>(ats.max_capacity_override, a.max_capacity_per_slot)
+          - <span class="fn">COALESCE</span>(
+              (<span class="kw">SELECT SUM</span>(number_of_guests)
+               <span class="kw">FROM</span> activity_bookings
+               <span class="kw">WHERE</span> slot_id = ats.id
+                 <span class="kw">AND</span> booking_date = p_date
+                 <span class="kw">AND</span> status <span class="op">NOT IN</span> (<span class="st">'cancelled'</span>, <span class="st">'no_show'</span>)),
+              <span class="nm">0</span>
+            )
+        ) > <span class="nm">0</span>
+        <span class="cm">-- Enforce minimum advance booking hours</span>
+        <span class="kw">AND</span> (
+          p_date > <span class="fn">CURRENT_DATE</span>
+          <span class="kw">OR</span> (
+            p_date = <span class="fn">CURRENT_DATE</span>
+            <span class="kw">AND</span> (ats.start_time - <span class="fn">make_interval</span>(hours => a.min_advance_hours)) > <span class="fn">CURRENT_TIME</span>
+          )
+        )
+      ) <span class="kw">AS</span> is_available
+
+    <span class="kw">FROM</span> activity_time_slots ats
+    <span class="kw">JOIN</span> activities a <span class="kw">ON</span> ats.activity_id = a.id
+
+    <span class="kw">WHERE</span>
+      ats.activity_id = p_activity_id
+      <span class="kw">AND EXTRACT</span>(DOW <span class="kw">FROM</span> p_date) = <span class="fn">ANY</span>(ats.days_available)
+
+    <span class="kw">ORDER BY</span> ats.sort_order, ats.start_time;
+<span class="kw">END</span>;
+$$;</pre>
+  </div>
+
+  <div class="callout warning">
+    <div class="callout-icon">⚠️</div>
+    <div class="callout-body">
+      <h4>Important: Counting guests, not bookings</h4>
+      <p>The availability query uses <code style="font-family:var(--mono)">SUM(number_of_guests)</code>, not <code style="font-family:var(--mono)">COUNT(*)</code>. This is critical. If Bird Cage has max capacity 6 and one booking is for 4 people, only 2 spots remain — not 5. Counting rows instead of people would overbook the slot.</p>
+    </div>
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════════════════
+     SECTION 9 — CONCURRENCY LOCKING
+     ═══════════════════════════════════════════════════════ -->
+<section class="section s-db" id="slots-concurrency">
+  <div class="section-eyebrow">09 · Time Slot System — Concurrency Control</div>
+  <h2 class="section-title">Preventing Double-Booking</h2>
+  <p class="section-sub">Two guests could tap "Confirm" on the last available spot at the same millisecond. Without locking, both would succeed and overbook the slot. The solution is PostgreSQL advisory locks inside a transaction.</p>
+
+  <div class="callout info">
+    <div class="callout-icon">🔒</div>
+    <div class="callout-body">
+      <h4>How advisory locks work</h4>
+      <p><code style="font-family:var(--mono)">pg_advisory_xact_lock(key)</code> acquires a session-level lock on an integer key. Any other transaction trying to acquire the same key will wait until the first transaction commits or rolls back. The key is derived from a hash of slot_id + booking_date — so only concurrent bookings for the exact same slot on the same day compete for the lock. Different slots never block each other.</p>
+    </div>
+  </div>
+
+  <div class="code-block">
+    <div class="code-header">
+      <span class="code-lang">SQL</span>
+      <span class="code-label">RPC: book_activity_slot — the atomic, concurrency-safe booking function</span>
+    </div>
+    <pre><span class="kw">CREATE OR REPLACE FUNCTION</span> <span class="fn">book_activity_slot</span>(
+  p_activity_id     <span class="nm">UUID</span>,
+  p_slot_id         <span class="nm">UUID</span>,
+  p_booking_date    <span class="nm">DATE</span>,
+  p_number_guests   <span class="nm">INTEGER</span>,
+  p_guest_name      <span class="nm">TEXT</span>,
+  p_guest_phone     <span class="nm">TEXT</span>,
+  p_room_number     <span class="nm">TEXT</span>,
+  p_special_requests <span class="nm">TEXT</span> <span class="kw">DEFAULT</span> <span class="nm">NULL</span>
+)
+<span class="kw">RETURNS</span> <span class="nm">JSONB</span>   <span class="cm">-- Returns {success, booking_id, booking_number} or {success, error}</span>
+<span class="kw">LANGUAGE</span> plpgsql <span class="kw">AS</span> $$
+<span class="kw">DECLARE</span>
+  v_max_capacity    <span class="nm">INTEGER</span>;
+  v_booked_count    <span class="nm">INTEGER</span>;
+  v_remaining       <span class="nm">INTEGER</span>;
+  v_pricing_type    <span class="nm">TEXT</span>;
+  v_unit_price      <span class="nm">INTEGER</span>;
+  v_total_amount    <span class="nm">INTEGER</span>;
+  v_booking_id      <span class="nm">UUID</span>;
+  v_booking_number  <span class="nm">TEXT</span>;
+  v_lock_key        <span class="nm">BIGINT</span>;
+  v_room_id         <span class="nm">UUID</span>;
+  v_guest_id        <span class="nm">UUID</span>;
+<span class="kw">BEGIN</span>
+
+  <span class="cm">-- ① DERIVE ADVISORY LOCK KEY from slot+date combination</span>
+  <span class="cm">-- hashtext returns an integer — unique per slot+date pair</span>
+  v_lock_key := <span class="fn">hashtext</span>(p_slot_id::text <span class="op">||</span> p_booking_date::text);
+
+  <span class="cm">-- ② ACQUIRE LOCK — blocks until acquired (auto-released on tx end)</span>
+  <span class="kw">PERFORM</span> <span class="fn">pg_advisory_xact_lock</span>(v_lock_key);
+
+  <span class="cm">-- ③ GET ACTIVITY DETAILS (pricing, capacity)</span>
+  <span class="kw">SELECT</span>
+    <span class="fn">COALESCE</span>(ats.max_capacity_override, a.max_capacity_per_slot),
+    a.pricing_type,
+    <span class="kw">CASE</span> a.pricing_type
+      <span class="kw">WHEN</span> <span class="st">'per_person'</span>  <span class="kw">THEN</span> a.price_per_person
+      <span class="kw">WHEN</span> <span class="st">'per_setup'</span>   <span class="kw">THEN</span> a.price_per_setup
+      <span class="kw">WHEN</span> <span class="st">'per_session'</span> <span class="kw">THEN</span> a.price_per_session
+    <span class="kw">END</span>
+  <span class="kw">INTO</span> v_max_capacity, v_pricing_type, v_unit_price
+  <span class="kw">FROM</span> activity_time_slots ats
+  <span class="kw">JOIN</span> activities a <span class="kw">ON</span> ats.activity_id = a.id
+  <span class="kw">WHERE</span> ats.id = p_slot_id;
+
+  <span class="cm">-- ④ COUNT EXISTING BOOKINGS (after lock — no race condition possible)</span>
+  <span class="kw">SELECT</span> <span class="fn">COALESCE</span>(<span class="kw">SUM</span>(number_of_guests), <span class="nm">0</span>)
+  <span class="kw">INTO</span> v_booked_count
+  <span class="kw">FROM</span> activity_bookings
+  <span class="kw">WHERE</span>
+    slot_id = p_slot_id
+    <span class="kw">AND</span> booking_date = p_booking_date
+    <span class="kw">AND</span> status <span class="op">NOT IN</span> (<span class="st">'cancelled'</span>, <span class="st">'no_show'</span>);
+
+  v_remaining := v_max_capacity - v_booked_count;
+
+  <span class="cm">-- ⑤ CAPACITY CHECK</span>
+  <span class="kw">IF</span> p_number_guests > v_remaining <span class="kw">THEN</span>
+    <span class="kw">RETURN</span> <span class="fn">jsonb_build_object</span>(
+      <span class="st">'success'</span>, <span class="nm">false</span>,
+      <span class="st">'error'</span>, <span class="st">'SLOT_FULL'</span>,
+      <span class="st">'remaining'</span>, v_remaining,
+      <span class="st">'message'</span>, <span class="st">'This slot is fully booked. Please choose another time.'</span>
+    );
+  <span class="kw">END IF</span>;
+
+  <span class="cm">-- ⑥ CALCULATE TOTAL AMOUNT</span>
+  v_total_amount := <span class="kw">CASE</span> v_pricing_type
+    <span class="kw">WHEN</span> <span class="st">'per_person'</span>  <span class="kw">THEN</span> v_unit_price <span class="op">*</span> p_number_guests
+    <span class="kw">WHEN</span> <span class="st">'per_setup'</span>   <span class="kw">THEN</span> v_unit_price  <span class="cm">-- always fixed</span>
+    <span class="kw">WHEN</span> <span class="st">'per_session'</span> <span class="kw">THEN</span> v_unit_price  <span class="cm">-- always fixed</span>
+  <span class="kw">END</span>;
+
+  <span class="cm">-- ⑦ RESOLVE room_id from room_number (if provided)</span>
+  <span class="kw">IF</span> p_room_number <span class="op">IS NOT NULL</span> <span class="kw">THEN</span>
+    <span class="kw">SELECT</span> id, current_guest_id
+    <span class="kw">INTO</span> v_room_id, v_guest_id
+    <span class="kw">FROM</span> rooms
+    <span class="kw">WHERE</span> room_number = p_room_number;
+  <span class="kw">END IF</span>;
+
+  <span class="cm">-- ⑧ GENERATE BOOKING NUMBER</span>
+  v_booking_number := <span class="st">'EXP-'</span> <span class="op">||</span> <span class="fn">to_char</span>(
+    <span class="fn">nextval</span>(<span class="st">'booking_number_seq'</span>), <span class="st">'FM00000'</span>
+  );
+
+  <span class="cm">-- ⑨ INSERT THE BOOKING (capacity confirmed, lock held)</span>
+  <span class="kw">INSERT INTO</span> activity_bookings (
+    booking_number, activity_id, slot_id, booking_date,
+    guest_id, room_id,
+    guest_name, guest_phone,
+    number_of_guests,
+    pricing_type_snapshot, unit_price_snapshot, total_amount,
+    status, special_requests
+  ) <span class="kw">VALUES</span> (
+    v_booking_number, p_activity_id, p_slot_id, p_booking_date,
+    v_guest_id, v_room_id,
+    p_guest_name, p_guest_phone,
+    p_number_guests,
+    v_pricing_type, v_unit_price, v_total_amount,
+    <span class="st">'pending'</span>, p_special_requests
+  )
+  <span class="kw">RETURNING</span> id <span class="kw">INTO</span> v_booking_id;
+
+  <span class="cm">-- Lock auto-released when transaction commits</span>
+
+  <span class="kw">RETURN</span> <span class="fn">jsonb_build_object</span>(
+    <span class="st">'success'</span>, <span class="nm">true</span>,
+    <span class="st">'booking_id'</span>, v_booking_id,
+    <span class="st">'booking_number'</span>, v_booking_number,
+    <span class="st">'total_amount'</span>, v_total_amount
+  );
+
+<span class="kw">EXCEPTION WHEN OTHERS THEN</span>
+  <span class="kw">RETURN</span> <span class="fn">jsonb_build_object</span>(
+    <span class="st">'success'</span>, <span class="nm">false</span>,
+    <span class="st">'error'</span>, <span class="st">'SERVER_ERROR'</span>,
+    <span class="st">'message'</span>, <span class="fn">SQLERRM</span>
+  );
+<span class="kw">END</span>;
+$$;</pre>
+  </div>
+
+  <div class="callout success">
+    <div class="callout-icon">✅</div>
+    <div class="callout-body">
+      <h4>Why this is race-condition proof</h4>
+      <p>Between steps ② and ⑨, no other booking for the same slot+date can run. The advisory lock is held for the entire transaction. Step ④ runs AFTER the lock, so the count it reads is the true committed count. Even if 50 guests all tap "Confirm" simultaneously, they queue up at step ② and each one either books successfully or gets SLOT_FULL — no double booking possible.</p>
+    </div>
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════════════════
+     SECTION 10 — SLOTS: RECEPTION FLOW
+     ═══════════════════════════════════════════════════════ -->
+<section class="section s-reception" id="slots-reception">
+  <div class="section-eyebrow">10 · Time Slot System — Reception Flow</div>
+  <h2 class="section-title">How Reception Manages Bookings</h2>
+  <p class="section-sub">The Resort Reception dashboard is the control center for all activity bookings. From here, the owner or reception staff confirms, assigns staff, and marks activities complete.</p>
+
+  <div class="flow" style="--accent: var(--reception-light); --pale: var(--reception-pale)">
+    <div class="flow-step">
+      <div class="flow-num">1</div>
+      <div class="flow-content">
+        <h4>New Booking Notification Arrives</h4>
+        <p>When a guest completes booking on the Guest Portal, the INSERT into <code style="font-family:var(--mono)">activity_bookings</code> fires the Supabase Realtime event on the <code style="font-family:var(--mono)">activity_bookings</code> channel.</p>
+        <p>The Reception Dashboard's WebSocket subscription receives this immediately. A notification badge appears on the "Activity Bookings" section tab, a soft chime plays, and the booking card appears at the top of the "Pending" list.</p>
+        <span class="trigger">REALTIME: activity_bookings INSERT → Reception Dashboard ⚡</span>
+      </div>
+    </div>
+    <div class="flow-step">
+      <div class="flow-num">2</div>
+      <div class="flow-content">
+        <h4>Reception Reviews the Booking</h4>
+        <p>The booking card shows: Activity name, date, time slot, number of guests, room number, guest name, special requests, and total amount (already calculated). Reception also sees the <code style="font-family:var(--mono)">notes_for_staff</code> from the activity configuration (e.g., "Bird Cage: ensure morning feed is prepared before 6:45 AM").</p>
+        <p>Reception can check the calendar view to see if any guides/staff are already committed to another slot at the same time.</p>
+      </div>
+    </div>
+    <div class="flow-step">
+      <div class="flow-num">3</div>
+      <div class="flow-content">
+        <h4>Reception Confirms + Assigns Staff</h4>
+        <p>Two actions in one panel: Reception types the staff member's name in "Assign to" (e.g., "Ramesh — Bird Cage Guide") and any instructions (e.g., "Meet guest at garden gate at 7:00 AM"). Then clicks Confirm.</p>
+        <p>This fires: <code style="font-family:var(--mono)">UPDATE activity_bookings SET status='confirmed', assigned_staff_name='Ramesh', staff_instructions='...', confirmed_by=[staff_id]</code>.</p>
+        <p>The Guest Portal tracking page — if open — receives the UPDATE event and changes the booking status from "Pending Confirmation" to "Confirmed ✓".</p>
+        <span class="trigger">WRITE: UPDATE activity_bookings SET status='confirmed' → REALTIME to Guest Portal ⚡</span>
+      </div>
+    </div>
+    <div class="flow-step">
+      <div class="flow-num">4</div>
+      <div class="flow-content">
+        <h4>Day-of: Calendar View</h4>
+        <p>On the day of the activity, the calendar view shows all confirmed bookings for today, ordered by time. Reception staff can brief their guides/activity coordinators from this view.</p>
+        <p>Each calendar block shows: Activity, Time, Room, Guest name, Guest count, Assigned staff, Instructions.</p>
+      </div>
+    </div>
+    <div class="flow-step">
+      <div class="flow-num">5</div>
+      <div class="flow-content">
+        <h4>Activity Completed → Folio Updated</h4>
+        <p>After the activity happens, reception marks it "Completed." This sets <code style="font-family:var(--mono)">status='completed'</code> on the booking. The <code style="font-family:var(--mono)">guest_folio</code> VIEW immediately reflects this charge under the guest's room for checkout billing.</p>
+        <p>If cancelled: status='cancelled', cancellation_reason required, amount = ₹0 on folio. The capacity is restored automatically — the availability query excludes cancelled bookings.</p>
+        <span class="trigger">WRITE: UPDATE status='completed' → guest_folio VIEW auto-includes ✓</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider-label">Owner Configuration Panel</div>
+  <div class="grid-2">
+    <div class="card accent-border" style="--accent: var(--reception-light)">
+      <div class="card-title">Adding a New Activity</div>
+      <div class="card-body">
+        <p>Reception section → Activity Management → "Add Activity." Form with all fields from the <code style="font-family:var(--mono)">activities</code> table. On save: INSERT activities, then owner adds time slots via the slot builder (visual time picker + days checkboxes + capacity input).</p>
+        <p>The activity appears on the Guest Portal immediately on next page load (or real-time if the portal polls activities every 60 seconds).</p>
+      </div>
+    </div>
+    <div class="card accent-border" style="--accent: var(--reception-light)">
+      <div class="card-title">Disabling an Activity (86'd)</div>
+      <div class="card-body">
+        <p>Toggle <code style="font-family:var(--mono)">is_available=false</code> on any activity. It vanishes from the Guest Portal's /experiences page on the next load. Existing bookings are NOT cancelled — they remain in the database and on folios. Only new bookings become impossible.</p>
+        <p>Example: Bird Cage needs maintenance — flip the toggle. Gone from guest view in seconds.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════════════════
+     SECTION 11 — CHECK-IN FLOW
+     ═══════════════════════════════════════════════════════ -->
+<section class="section s-reception" id="checkin-flow">
+  <div class="section-eyebrow">11 · Guest Check-in Flow</div>
+  <h2 class="section-title">Check-in → Supabase → WhatsApp</h2>
+  <p class="section-sub">Check-in is the moment a guest becomes "known" to the system. After this, all their orders and activity bookings are automatically linked to their room, building the folio in real-time through their stay.</p>
+
+  <div class="flow" style="--accent: var(--reception-light); --pale: var(--reception-pale)">
+    <div class="flow-step">
+      <div class="flow-num">1</div>
+      <div class="flow-content">
+        <h4>Reception Opens Check-In Panel</h4>
+        <p>Reception → Guests → "New Check-In." Form: Room Number (dropdown from rooms table — only shows unoccupied rooms), Guest Full Name, Guest WhatsApp Phone, Number of Adults, Expected Check-out Date, optional notes.</p>
+      </div>
+    </div>
+    <div class="flow-step">
+      <div class="flow-num">2</div>
+      <div class="flow-content">
+        <h4>Submit → Guest Record Created</h4>
+        <p>On confirm, two writes happen atomically in a transaction:</p>
+        <p>• <code style="font-family:var(--mono)">INSERT guests</code> → creates the guest record with status='checked_in'</p>
+        <p>• <code style="font-family:var(--mono)">UPDATE rooms SET is_occupied=true, current_guest_id=[new_guest_id]</code></p>
+        <span class="trigger">WRITE: INSERT guests + UPDATE rooms (atomic transaction)</span>
+      </div>
+    </div>
+    <div class="flow-step">
+      <div class="flow-num">3</div>
+      <div class="flow-content">
+        <h4>Database Trigger → Edge Function</h4>
+        <p>The INSERT on guests fires a PostgreSQL trigger <code style="font-family:var(--mono)">on_guest_checkin</code>. This trigger calls a Supabase Edge Function via <code style="font-family:var(--mono)">pg_net</code> (Supabase's built-in HTTP from within Postgres). The Edge Function receives the guest data.</p>
+        <span class="trigger">TRIGGER: on_guest_checkin → pg_net.http_post → Edge Function URL</span>
+      </div>
+    </div>
+    <div class="flow-step">
+      <div class="flow-num">4</div>
+      <div class="flow-content">
+        <h4>Edge Function → WhatsApp API</h4>
+        <p>The Edge Function receives: guest_name, phone, room_number, resort_name. It calls the AiSensy/Interakt API with the pre-approved check-in template, substituting the variables. The WhatsApp message lands on the guest's phone within ~15 seconds of check-in.</p>
+        <p>The Edge Function then writes to <code style="font-family:var(--mono)">whatsapp_log</code>: provider_message_id, status='sent', sent_at.</p>
+        <span class="trigger">HTTP POST → AiSensy API → Guest's WhatsApp within ~15 seconds</span>
+      </div>
+    </div>
+    <div class="flow-step">
+      <div class="flow-num">5</div>
+      <div class="flow-content">
+        <h4>Guest Receives Welcome Message</h4>
+        <p>The WhatsApp message contains the welcome text, the guest portal URL (order.shivalayaresorts.com), and instructions to scan the QR code in their room. From this moment, if they order food or book activities using their room number, those charges automatically link to guest_id via the room lookup.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="code-block">
+    <div class="code-header">
+      <span class="code-lang">TypeScript</span>
+      <span class="code-label">Supabase Edge Function: send-checkin-whatsapp</span>
+    </div>
+    <pre><span class="cm">// supabase/functions/send-checkin-whatsapp/index.ts</span>
+<span class="kw">import</span> { serve } <span class="kw">from</span> <span class="st">'https://deno.land/std/http/server.ts'</span>
+
+<span class="fn">serve</span>(<span class="kw">async</span> (req) => {
+  <span class="kw">const</span> { guest_name, guest_phone, room_number } = <span class="kw">await</span> req.<span class="fn">json</span>();
+
+  <span class="cm">// Call AiSensy API</span>
+  <span class="kw">const</span> response = <span class="kw">await</span> <span class="fn">fetch</span>(<span class="st">'https://backend.aisensy.com/campaign/t1/api/v2'</span>, {
+    method: <span class="st">'POST'</span>,
+    headers: {
+      <span class="st">'Content-Type'</span>: <span class="st">'application/json'</span>
+    },
+    body: <span class="fn">JSON.stringify</span>({
+      apiKey: <span class="fn">Deno.env.get</span>(<span class="st">'AISENSY_API_KEY'</span>),
+      campaignName: <span class="st">'guest_checkin_v1'</span>,          <span class="cm">// Approved template name</span>
+      destination: guest_phone,                        <span class="cm">// E.164: +919876543210</span>
+      userName: <span class="st">'Shivalaya Resorts'</span>,
+      templateParams: [
+        guest_name,                                    <span class="cm">// {{1}} in template</span>
+        room_number,                                   <span class="cm">// {{2}} in template</span>
+        <span class="st">'https://order.shivalayaresorts.com'</span>           <span class="cm">// {{3}} in template</span>
+      ]
+    })
+  });
+
+  <span class="kw">const</span> result = <span class="kw">await</span> response.<span class="fn">json</span>();
+
+  <span class="cm">// Log to whatsapp_log table</span>
+  <span class="kw">const</span> { createClient } = <span class="kw">await import</span>(<span class="st">'https://esm.sh/@supabase/supabase-js@2'</span>);
+  <span class="kw">const</span> supabase = <span class="fn">createClient</span>(
+    <span class="fn">Deno.env.get</span>(<span class="st">'SUPABASE_URL'</span>)!,
+    <span class="fn">Deno.env.get</span>(<span class="st">'SUPABASE_SERVICE_ROLE_KEY'</span>)!
+  );
+
+  <span class="kw">await</span> supabase.<span class="fn">from</span>(<span class="st">'whatsapp_log'</span>).<span class="fn">insert</span>({
+    guest_phone,
+    message_type: <span class="st">'checkin'</span>,
+    template_name: <span class="st">'guest_checkin_v1'</span>,
+    provider_message_id: result.messageId,
+    status: response.ok ? <span class="st">'sent'</span> : <span class="st">'failed'</span>,
+    error_message: response.ok ? <span class="nm">null</span> : <span class="fn">JSON.stringify</span>(result)
+  });
+
+  <span class="kw">return new</span> <span class="fn">Response</span>(<span class="fn">JSON.stringify</span>({ ok: response.ok }));
+});</pre>
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════════════════
+     SECTION 12 — GUEST FOLIO
+     ═══════════════════════════════════════════════════════ -->
+<section class="section s-brass" id="folio">
+  <div class="section-eyebrow">12 · Guest Folio System</div>
+  <h2 class="section-title">Consolidated Billing — How the Folio Works</h2>
+  <p class="section-sub">The guest folio is not a stored table — it's a live SQL VIEW that queries both <code style="font-family:var(--mono)">orders</code> and <code style="font-family:var(--mono)">activity_bookings</code> for a given guest's stay, ordered chronologically. Whenever a new order is placed or activity is completed, the folio automatically reflects it.</p>
+
+  <div class="code-block">
+    <div class="code-header">
+      <span class="code-lang">SQL</span>
+      <span class="code-label">guest_folio VIEW — the unified billing view</span>
+    </div>
+    <pre><span class="kw">CREATE OR REPLACE VIEW</span> guest_folio <span class="kw">AS</span>
+
+  <span class="cm">-- Food orders</span>
+  <span class="kw">SELECT</span>
+    o.id,
+    o.guest_id,
+    o.room_id,
+    o.created_at                    <span class="kw">AS</span> charge_at,
+    <span class="st">'food'</span>                          <span class="kw">AS</span> charge_type,
+    o.order_number                  <span class="kw">AS</span> reference_number,
+    <span class="st">'Food Order — Panache Restaurant'</span> <span class="kw">AS</span> description,
+    o.items                         <span class="kw">AS</span> line_items,   <span class="cm">-- jsonb</span>
+    o.subtotal                      <span class="kw">AS</span> amount,
+    o.status,
+    o.service_type                  <span class="kw">AS</span> detail
+
+  <span class="kw">FROM</span> orders o
+  <span class="kw">WHERE</span> o.status <span class="op">NOT IN</span> (<span class="st">'cancelled'</span>)
+
+  <span class="kw">UNION ALL</span>
+
+  <span class="cm">-- Activity bookings</span>
+  <span class="kw">SELECT</span>
+    ab.id,
+    ab.guest_id,
+    ab.room_id,
+    ab.created_at                   <span class="kw">AS</span> charge_at,
+    <span class="st">'activity'</span>                      <span class="kw">AS</span> charge_type,
+    ab.booking_number               <span class="kw">AS</span> reference_number,
+    a.name || <span class="st">' — '</span> ||
+      to_char(ab.booking_date, <span class="st">'DD Mon'</span>) || <span class="st">', '</span> ||
+      to_char(ats.start_time, <span class="st">'HH12:MI AM'</span>)
+                                    <span class="kw">AS</span> description,
+    <span class="nm">NULL</span>                            <span class="kw">AS</span> line_items,
+    ab.total_amount                 <span class="kw">AS</span> amount,
+    ab.status,
+    ab.pricing_type_snapshot <span class="op">||</span> <span class="st">': '</span> <span class="op">||</span>
+      ab.number_of_guests::text <span class="op">||</span> <span class="st">' guest(s)'</span>
+                                    <span class="kw">AS</span> detail
+
+  <span class="kw">FROM</span> activity_bookings ab
+  <span class="kw">JOIN</span> activities a        <span class="kw">ON</span> ab.activity_id = a.id
+  <span class="kw">JOIN</span> activity_time_slots ats <span class="kw">ON</span> ab.slot_id = ats.id
+  <span class="kw">WHERE</span> ab.status <span class="op">NOT IN</span> (<span class="st">'cancelled'</span>)
+
+<span class="kw">ORDER BY</span> charge_at;</pre>
+  </div>
+
+  <div class="code-block">
+    <div class="code-header">
+      <span class="code-lang">SQL</span>
+      <span class="code-label">Querying the folio for a specific guest at checkout</span>
+    </div>
+    <pre><span class="cm">-- Get everything billed to guest_id during their stay</span>
+<span class="kw">SELECT</span>
+  charge_type,
+  reference_number,
+  description,
+  line_items,
+  amount,
+  status,
+  charge_at
+
+<span class="kw">FROM</span> guest_folio
+<span class="kw">WHERE</span>
+  guest_id = <span class="st">'[guest-uuid]'</span>
+  <span class="kw">AND</span> charge_at >= <span class="st">'2026-08-10'</span>  <span class="cm">-- check-in date</span>
+  <span class="kw">AND</span> charge_at <  <span class="st">'2026-08-13'</span>  <span class="cm">-- checkout date</span>
+
+<span class="kw">ORDER BY</span> charge_at;
+
+<span class="cm">-- Result: sorted timeline of every charge</span>
+<span class="cm">-- charge_type  | reference_number | description                    | amount</span>
+<span class="cm">-- food         | PAN-00123        | Food Order — Panache           | 1640</span>
+<span class="cm">-- activity     | EXP-00041        | Bird Cage — 11 Aug, 07:00 AM   | 1000</span>
+<span class="cm">-- food         | PAN-00156        | Food Order — Panache           | 540</span>
+<span class="cm">-- activity     | EXP-00053        | Bonfire Setup — 11 Aug, 6:00PM | 1200</span>
+<span class="cm">-- food         | PAN-00189        | Food Order — Panache           | 900</span>
+
+<span class="cm">-- Grand total</span>
+<span class="kw">SELECT</span> <span class="kw">SUM</span>(amount) <span class="kw">AS</span> total_food_and_activities
+<span class="kw">FROM</span> guest_folio
+<span class="kw">WHERE</span> guest_id = <span class="st">'[guest-uuid]'</span>;</pre>
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════════════════
+     SECTION 13 — WHATSAPP TEMPLATES
+     ═══════════════════════════════════════════════════════ -->
+<section class="section s-whatsapp" id="wa-templates">
+  <div class="section-eyebrow">13 · WhatsApp Automation</div>
+  <h2 class="section-title">Message Templates & Trigger Map</h2>
+  <p class="section-sub">WhatsApp Business API templates must be pre-approved by Meta before use. The variables ({{1}}, {{2}}) are substituted at send time. Approval takes 24–72 hours. Submit templates before Phase 4 starts.</p>
+
+  <div class="grid-2">
+    <div class="card accent-border" style="--accent: var(--whatsapp-light)">
+      <div class="card-title"><span class="app-tag tag-wa">Template 1</span> Check-In Welcome</div>
+      <div class="card-body">
+        <p style="font-family: var(--mono); font-size: 12px; color: var(--whatsapp-light); background: var(--code-bg); padding: 14px; border-radius: 8px; line-height: 1.7; margin-top: 10px;">
+          🏔️ Welcome to Shivalaya Resorts, {{1}}!<br><br>
+          We're delighted to have you with us in Room {{2}}.<br><br>
+          Order meals from Panache and book resort experiences anytime during your stay:<br>
+          👉 {{3}}<br><br>
+          Or simply scan the QR code in your room. Enjoy Bhimtal!<br><br>
+          — Team Shivalaya
+        </p>
+        <p style="margin-top: 12px;"><strong style="color:var(--text)">Variables:</strong> {{1}}=Guest Name, {{2}}=Room Number, {{3}}=Portal URL</p>
+        <p><strong style="color:var(--text)">Category:</strong> Utility (not marketing) — higher approval rate</p>
+        <p><strong style="color:var(--text)">Trigger:</strong> INSERT on guests table (DB trigger → Edge Function)</p>
+      </div>
+    </div>
+    <div class="card accent-border" style="--accent: var(--whatsapp-light)">
+      <div class="card-title"><span class="app-tag tag-wa">Template 2</span> Check-Out Thank You</div>
+      <div class="card-body">
+        <p style="font-family: var(--mono); font-size: 12px; color: var(--whatsapp-light); background: var(--code-bg); padding: 14px; border-radius: 8px; line-height: 1.7; margin-top: 10px;">
+          Thank you for choosing Shivalaya Resorts, {{1}}! 🙏<br><br>
+          It was a pleasure hosting you. We hope you carry beautiful memories of Bhimtal and the Kumaon hills with you.<br><br>
+          We look forward to welcoming you back soon.<br><br>
+          — Team Shivalaya Resorts
+        </p>
+        <p style="margin-top: 12px;"><strong style="color:var(--text)">Variables:</strong> {{1}}=Guest Name</p>
+        <p><strong style="color:var(--text)">Header:</strong> Branded image (Shivalaya landscape graphic) — submitted as media template</p>
+        <p><strong style="color:var(--text)">Trigger:</strong> Reception clicks "Complete Checkout" → UPDATE guests.status='checked_out' → DB trigger → Edge Function</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="callout warning">
+    <div class="callout-icon">⏰</div>
+    <div class="callout-body">
+      <h4>WhatsApp Template Submission Process</h4>
+      <p>1. Client registers WhatsApp Business API through <strong>AiSensy</strong> (aisensy.com) — they sign up directly, verify their business phone number through Meta Business Manager. Takes 2–5 days for Meta verification. Start this during Phase 2. &nbsp;2. Once approved, submit both templates from the AiSensy dashboard. Takes 24–72 hours per template. &nbsp;3. ASVEX adds the AiSensy API key to Supabase Edge Function secrets — done in 15 minutes. WhatsApp is then live. Cost to client: ~₹999–1,499/month AiSensy plan + ~₹0.58/conversation Meta fee.</p>
+    </div>
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════════════════
+     SECTION 14 — AUTHENTICATION
+     ═══════════════════════════════════════════════════════ -->
+<section class="section" id="auth">
+  <div class="section-eyebrow">14 · Authentication & Roles</div>
+  <h2 class="section-title">Who Can Do What</h2>
+  <p class="section-sub">Three distinct authentication tiers. Guests are anonymous (no account needed — room number + phone is their identity). Staff use PIN-based login. The system uses Supabase Auth plus Row Level Security to enforce access boundaries at the database level.</p>
+
+  <table class="data-table" style="margin-bottom: 24px;">
+    <thead>
+      <tr><th>Role</th><th>Auth Method</th><th>Can Access</th><th>Cannot Access</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><span class="app-tag tag-guest">Guest</span></td>
+        <td>Anonymous — no login. Room number + phone as identity.</td>
+        <td>Browse menu, place orders, book activities, track own order</td>
+        <td>Other guests' orders, staff dashboards, pricing data, analytics</td>
+      </tr>
+      <tr>
+        <td><span class="app-tag tag-kitchen">Kitchen Staff</span></td>
+        <td>Supabase Auth. 4-digit PIN. Profile-based (Netflix-style). Session: 12 hours.</td>
+        <td>View all orders for today, update order status, view KOT</td>
+        <td>Guest data, analytics, activity bookings, check-in/out, menu management</td>
+      </tr>
+      <tr>
+        <td><span class="app-tag tag-reception">Receptionist</span></td>
+        <td>Supabase Auth. Stronger credentials (email + PIN). Session: 8 hours.</td>
+        <td>All of Kitchen, plus: guest check-in/out, activity confirmation, folio, order history</td>
+        <td>Menu management, staff management, full analytics (owner only)</td>
+      </tr>
+      <tr>
+        <td><span class="app-tag tag-reception">Owner</span></td>
+        <td>Supabase Auth. Email + password (not PIN). Full access. Session: 24 hours.</td>
+        <td>Everything — all data, analytics, menu management, staff management, activity config, reports</td>
+        <td>N/A — full access</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="code-block">
+    <div class="code-header">
+      <span class="code-lang">SQL</span>
+      <span class="code-label">Row Level Security — orders table policies</span>
+    </div>
+    <pre><span class="cm">-- Enable RLS on orders table</span>
+<span class="kw">ALTER TABLE</span> orders <span class="kw">ENABLE ROW LEVEL SECURITY</span>;
+
+<span class="cm">-- Kitchen staff: can read all orders for their resort, update status only</span>
+<span class="kw">CREATE POLICY</span> kitchen_read_orders <span class="kw">ON</span> orders
+  <span class="kw">FOR SELECT TO</span> authenticated
+  <span class="kw">USING</span> (
+    resort_id = (<span class="kw">SELECT</span> resort_id <span class="kw">FROM</span> staff
+                 <span class="kw">WHERE</span> supabase_user_id = <span class="fn">auth.uid</span>()
+                 <span class="kw">AND</span> role = <span class="st">'kitchen'</span>)
+  );
+
+<span class="kw">CREATE POLICY</span> kitchen_update_status <span class="kw">ON</span> orders
+  <span class="kw">FOR UPDATE TO</span> authenticated
+  <span class="kw">USING</span> (resort_id = (<span class="kw">SELECT</span> resort_id <span class="kw">FROM</span> staff
+                       <span class="kw">WHERE</span> supabase_user_id = <span class="fn">auth.uid</span>()))
+  <span class="kw">WITH CHECK</span> (
+    <span class="cm">-- Kitchen can only change status field, nothing else</span>
+    status <span class="op">IN</span> (<span class="st">'confirmed'</span>, <span class="st">'preparing'</span>, <span class="st">'ready'</span>, <span class="st">'served'</span>)
+  );
+
+<span class="cm">-- Guests: anon users can INSERT orders and read their own</span>
+<span class="kw">CREATE POLICY</span> guest_insert_order <span class="kw">ON</span> orders
+  <span class="kw">FOR INSERT TO</span> anon
+  <span class="kw">WITH CHECK</span> (<span class="nm">true</span>);  <span class="cm">-- RPC function validates room/guest matching</span>
+
+<span class="kw">CREATE POLICY</span> guest_read_own_order <span class="kw">ON</span> orders
+  <span class="kw">FOR SELECT TO</span> anon
+  <span class="kw">USING</span> (guest_phone = <span class="fn">current_setting</span>(<span class="st">'request.jwt.claims'</span>, <span class="nm">true</span>)::jsonb->><span class="st">'phone'</span>);
+  <span class="cm">-- Phone passed as JWT claim via Supabase anon session token</span></pre>
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════════════════
+     SECTION 15 — DEPLOYMENT & QR
+     ═══════════════════════════════════════════════════════ -->
+<section class="section" id="deployment">
+  <div class="section-eyebrow">15 · Deployment & QR System</div>
+  <h2 class="section-title">Deployment Architecture & QR Code Strategy</h2>
+  <p class="section-sub">Three Vercel projects, one Supabase project, three CNAME records. The QR code strategy encodes context (room number OR table number + service type) so the guest portal pre-fills the checkout form automatically.</p>
+
+  <div class="grid-3">
+    <div class="card accent-border" style="--accent: var(--guest-light)">
+      <div class="card-title">Guest Portal QR</div>
+      <div class="card-body">
+        <p style="font-family:var(--mono); font-size: 11px; color: var(--guest-light); margin-bottom: 8px;">For rooms (one per room):</p>
+        <p style="font-family:var(--mono); font-size: 11px; background: var(--code-bg); padding: 8px; border-radius: 6px; word-break: break-all;">order.shivalayaresorts.com/?room=302</p>
+        <p style="margin-top: 10px; font-family:var(--mono); font-size: 11px; color: var(--guest-light);">For restaurant tables:</p>
+        <p style="font-family:var(--mono); font-size: 11px; background: var(--code-bg); padding: 8px; border-radius: 6px; word-break: break-all;">order.shivalayaresorts.com/?table=5&type=dine_in</p>
+        <p style="margin-top: 10px; font-size: 12px;">When guest scans → portal reads URL params → pre-fills room/table in checkout form → guest doesn't have to type it.</p>
+      </div>
+    </div>
+    <div class="card accent-border" style="--accent: var(--kitchen-light)">
+      <div class="card-title">Vercel Deployment</div>
+      <div class="card-body">
+        <p>Three separate Vercel projects, each pointing to a different folder in the monorepo:</p>
+        <p style="font-family:var(--mono); font-size: 11px; background: var(--code-bg); padding: 8px; border-radius: 6px; margin: 8px 0;">apps/guest-portal/ → order.shivalayaresorts.com</p>
+        <p style="font-family:var(--mono); font-size: 11px; background: var(--code-bg); padding: 8px; border-radius: 6px; margin: 8px 0;">apps/kitchen-panel/ → kitchen.shivalayaresorts.com</p>
+        <p style="font-family:var(--mono); font-size: 11px; background: var(--code-bg); padding: 8px; border-radius: 6px;">apps/resort-reception/ → reception.shivalayaresorts.com</p>
+        <p style="margin-top: 10px; font-size: 12px;">Git push to main → auto-deploy. SSL auto-configured. Client adds 3 CNAME records in their domain registrar.</p>
+      </div>
+    </div>
+    <div class="card accent-border" style="--accent: var(--reception-light)">
+      <div class="card-title">Supabase Configuration</div>
+      <div class="card-body">
+        <p>Single Supabase project serves all three apps.</p>
+        <p style="margin-top: 10px; font-size: 12px;"><strong style="color:var(--text)">Region:</strong> ap-south-1 (Mumbai) — lowest latency for Uttarakhand.</p>
+        <p style="margin-top: 6px; font-size: 12px;"><strong style="color:var(--text)">Auth:</strong> Supabase Auth for staff. Anon key for guests (RLS enforces limits).</p>
+        <p style="margin-top: 6px; font-size: 12px;"><strong style="color:var(--text)">Realtime:</strong> Enabled per-table for orders, activity_bookings.</p>
+        <p style="margin-top: 6px; font-size: 12px;"><strong style="color:var(--text)">Storage:</strong> Activity images stored in Supabase Storage bucket (public read, authenticated write).</p>
+        <p style="margin-top: 6px; font-size: 12px;"><strong style="color:var(--text)">Backups:</strong> Daily automated (Pro tier). Point-in-time recovery: 7 days.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider-label">Environment Variables</div>
+  <div class="code-block">
+    <div class="code-header">
+      <span class="code-lang">ENV</span>
+      <span class="code-label">.env — set in Vercel project settings (never in code)</span>
+    </div>
+    <pre><span class="cm"># All three apps share these Supabase variables</span>
+VITE_SUPABASE_URL=https://[project-ref].supabase.co
+VITE_SUPABASE_ANON_KEY=[anon-key]   <span class="cm"># Public — safe to expose to browser</span>
+
+<span class="cm"># Edge Functions only — these stay server-side</span>
+SUPABASE_SERVICE_ROLE_KEY=[service-role-key]   <span class="cm"># NEVER expose to browser</span>
+AISENSY_API_KEY=[aisensy-api-key]
+WHATSAPP_TEMPLATE_CHECKIN=guest_checkin_v1
+WHATSAPP_TEMPLATE_CHECKOUT=guest_checkout_v1
+RESORT_PORTAL_URL=https://order.shivalayaresorts.com</pre>
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════════════════
+     FINAL SECTION — IMPLEMENTATION ORDER
+     ═══════════════════════════════════════════════════════ -->
+<section class="section s-brass" id="impl-order">
+  <div class="section-eyebrow">16 · Build Order</div>
+  <h2 class="section-title">What to Build First — Implementation Sequence</h2>
+  <p class="section-sub">Everything above is the target state. This is the order in which to build it to hit working milestones as quickly as possible.</p>
+
+  <div class="grid-2">
+    <div>
+      <div class="card" style="border-left: 3px solid var(--guest-light)">
+        <div class="card-title" style="color:var(--guest-light)">Sprint 1 — Supabase Foundation</div>
+        <div class="card-body">
+          <p>Create Supabase project. Run all CREATE TABLE migrations. Enable Realtime on orders and activity_bookings. Seed: rooms, menu_categories, menu_items, 2–3 staff profiles, 3–4 activities with slots. Create get_available_slots and book_activity_slot RPC functions. Create all RLS policies.</p>
+          <p style="margin-top: 8px; font-family: var(--mono); font-size: 10.5px; color: var(--brass-light)">Estimated: 3 days</p>
+        </div>
+      </div>
+      <div class="card" style="border-left: 3px solid var(--guest-light)">
+        <div class="card-title" style="color:var(--guest-light)">Sprint 2 — Guest Portal (Food)</div>
+        <div class="card-body">
+          <p>Connect food ordering React app to Supabase. Real orders written to DB. Order tracking page with live WebSocket updates. Time-gated menu categories. Variant picker for items with has_variants.</p>
+          <p style="margin-top: 8px; font-family: var(--mono); font-size: 10.5px; color: var(--brass-light)">Estimated: 4 days</p>
+        </div>
+      </div>
+      <div class="card" style="border-left: 3px solid var(--kitchen-light)">
+        <div class="card-title" style="color:var(--kitchen-light)">Sprint 3 — Kitchen Panel (Live)</div>
+        <div class="card-body">
+          <p>PIN login. Real-time order queue from Supabase. Accept / Mark Ready / Served buttons. KOT view. Running counter. Test end-to-end: Guest Portal → Kitchen Panel real-time flow working.</p>
+          <p style="margin-top: 8px; font-family: var(--mono); font-size: 10.5px; color: var(--brass-light)">Estimated: 3 days</p>
+        </div>
+      </div>
+    </div>
+    <div>
+      <div class="card" style="border-left: 3px solid var(--reception-light)">
+        <div class="card-title" style="color:var(--reception-light)">Sprint 4 — Resort Reception (Core)</div>
+        <div class="card-body">
+          <p>Guest check-in / check-out forms. Room occupancy tracking. Guest list view. Food orders overview. Basic analytics (today's totals). Menu availability toggle. Deploy to reception.shivalayaresorts.com.</p>
+          <p style="margin-top: 8px; font-family: var(--mono); font-size: 10.5px; color: var(--brass-light)">Estimated: 4 days</p>
+        </div>
+      </div>
+      <div class="card" style="border-left: 3px solid var(--guest-light)">
+        <div class="card-title" style="color:var(--guest-light)">Sprint 5 — Activities Module</div>
+        <div class="card-body">
+          <p>Guest Portal: /experiences page, slot picker, book_activity_slot RPC call, confirmation screen. Reception: pending bookings queue, confirm + assign staff, calendar view, activity management panel. Guest Folio: combined food + activities view.</p>
+          <p style="margin-top: 8px; font-family: var(--mono); font-size: 10.5px; color: var(--brass-light)">Estimated: 5 days</p>
+        </div>
+      </div>
+      <div class="card" style="border-left: 3px solid var(--whatsapp-light)">
+        <div class="card-title" style="color:var(--whatsapp-light)">Sprint 6 — WhatsApp + Production</div>
+        <div class="card-body">
+          <p>Deploy Edge Functions. Wire DB triggers to Edge Functions. Test WhatsApp templates (after client submits and gets Meta approval). Final QR code generation. Domain CNAME setup. UptimeRobot monitoring. Staff training.</p>
+          <p style="margin-top: 8px; font-family: var(--mono); font-size: 10.5px; color: var(--brass-light)">Estimated: 3 days</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div style="margin-top: 24px; background: var(--bg2); border: 1px solid var(--border); border-radius: 12px; padding: 22px;">
+    <div style="font-family: var(--mono); font-size: 10.5px; color: var(--text3); text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 14px;">Complete System — When All Sprints Are Done</div>
+    <div style="display: flex; gap: 12px; flex-wrap: wrap;">
+      <span class="app-tag tag-guest">Guest Portal Live</span>
+      <span class="app-tag tag-kitchen">Kitchen Panel Live</span>
+      <span class="app-tag tag-reception">Resort Reception Live</span>
+      <span class="app-tag tag-db">Supabase Backend</span>
+      <span class="app-tag tag-realtime">Real-time &lt;200ms</span>
+      <span class="app-tag tag-wa">WhatsApp Automated</span>
+      <span class="app-tag tag-brass">Guest Folio</span>
+      <span class="app-tag tag-db">Activities Booking</span>
+      <span class="app-tag tag-db">Concurrency-safe Slots</span>
+    </div>
+  </div>
+</section>
+
+<div style="padding: 24px 52px; border-top: 1px solid var(--border); background: var(--bg2);">
+  <p style="font-family: var(--mono); font-size: 11px; color: var(--text3);">ASVEX Technologies · Shivalaya Guest Experience Platform · Architecture Reference v2.0 · August 2026 · INTERNAL — Not for client distribution</p>
+</div>
+
+</main><!-- /main -->
+</body>
+</html>

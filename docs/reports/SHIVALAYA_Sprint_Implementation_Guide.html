@@ -1,0 +1,2461 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Shivalaya — Sprint Implementation Guide</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&family=Fraunces:ital,wght@0,600;1,500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:#0D1117; --bg2:#161B22; --bg3:#1E2530; --bg4:#0A0D14;
+  --border:rgba(255,255,255,0.07); --border2:rgba(255,255,255,0.13);
+  --text:#E6EDF3; --text2:#8B949E; --text3:#6E7681;
+  --s1:#0C3B5E; --s1l:#38BDF8; --s1p:rgba(56,189,248,0.1);
+  --s2:#1A3B1A; --s2l:#4ADE80; --s2p:rgba(74,222,128,0.1);
+  --s3:#4A2010; --s3l:#FB923C; --s3p:rgba(251,146,60,0.1);
+  --s4:#1A1A4A; --s4l:#818CF8; --s4p:rgba(129,140,248,0.1);
+  --s5:#3A1A4A; --s5l:#C084FC; --s5p:rgba(192,132,252,0.1);
+  --brass:#AD8A3F; --brass-l:#D9BA72;
+  --success:#3FB261; --warning:#E8A020; --danger:#E85555;
+  --mono:'IBM Plex Mono',monospace; --sans:'Inter',sans-serif;
+}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{font-family:var(--sans);background:var(--bg);color:var(--text);line-height:1.6;font-size:14px;display:flex}
+
+.sidebar{
+  width:270px;min-height:100vh;flex-shrink:0;background:var(--bg2);
+  border-right:1px solid var(--border);position:sticky;top:0;height:100vh;
+  overflow-y:auto;padding:24px 0;scrollbar-width:thin;
+}
+.sidebar-logo{padding:0 20px 20px;border-bottom:1px solid var(--border);margin-bottom:16px}
+.sidebar-logo .name{font-family:'Fraunces',serif;font-style:italic;font-size:17px;color:var(--brass-l)}
+.sidebar-logo .sub{font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:1.5px;margin-top:2px;font-family:var(--mono)}
+.nav-group{margin-bottom:4px}
+.nav-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:var(--text3);padding:8px 20px 4px;font-family:var(--mono)}
+.nav-item{display:block;padding:7px 20px;font-size:12.5px;color:var(--text2);text-decoration:none;transition:all .15s;border-left:2px solid transparent}
+.nav-item:hover{color:var(--text);background:rgba(255,255,255,0.04)}
+.n1:hover{border-left-color:var(--s1l)} .n2:hover{border-left-color:var(--s2l)}
+.n3:hover{border-left-color:var(--s3l)} .n4:hover{border-left-color:var(--s4l)}
+.n5:hover{border-left-color:var(--s5l)}
+
+.main{flex:1;overflow-x:hidden}
+
+/* HERO */
+.hero{
+  padding:56px 52px 44px;
+  background:linear-gradient(170deg,#0D1117 0%,#111820 50%,#0D1117 100%);
+  border-bottom:1px solid var(--border);position:relative;overflow:hidden;
+}
+.hero::before{
+  content:'';position:absolute;inset:0;
+  background:radial-gradient(ellipse at 20% 50%,rgba(56,189,248,0.06) 0%,transparent 55%),
+             radial-gradient(ellipse at 80% 80%,rgba(192,132,252,0.06) 0%,transparent 55%);
+}
+.hero-content{position:relative;z-index:1}
+.hero-eye{font-family:var(--mono);font-size:10.5px;color:var(--brass-l);letter-spacing:2.5px;text-transform:uppercase;margin-bottom:14px}
+.hero-title{font-size:clamp(26px,3.5vw,40px);font-weight:800;line-height:1.15;margin-bottom:10px}
+.hero-title span{color:var(--brass-l)}
+.hero-sub{font-size:14.5px;color:var(--text2);max-width:620px;line-height:1.7;margin-bottom:28px}
+.sprint-chips{display:flex;gap:10px;flex-wrap:wrap}
+.sprint-chip{
+  font-family:var(--mono);font-size:11px;font-weight:700;padding:6px 14px;
+  border-radius:7px;cursor:default;
+}
+.c1{background:var(--s1p);color:var(--s1l);border:1px solid rgba(56,189,248,0.25)}
+.c2{background:var(--s2p);color:var(--s2l);border:1px solid rgba(74,222,128,0.25)}
+.c3{background:var(--s3p);color:var(--s3l);border:1px solid rgba(251,146,60,0.25)}
+.c4{background:var(--s4p);color:var(--s4l);border:1px solid rgba(129,140,248,0.25)}
+.c5{background:var(--s5p);color:var(--s5l);border:1px solid rgba(192,132,252,0.25)}
+
+/* SPRINT SECTIONS */
+.sprint{padding:52px 52px 48px;border-bottom:1px solid var(--border)}
+.sprint-banner{
+  display:flex;align-items:center;gap:16px;padding:20px 24px;
+  border-radius:14px;margin-bottom:36px;
+}
+.sb1{background:var(--s1p);border:1px solid rgba(56,189,248,0.2)}
+.sb2{background:var(--s2p);border:1px solid rgba(74,222,128,0.2)}
+.sb3{background:var(--s3p);border:1px solid rgba(251,146,60,0.2)}
+.sb4{background:var(--s4p);border:1px solid rgba(129,140,248,0.2)}
+.sb5{background:var(--s5p);border:1px solid rgba(192,132,252,0.2)}
+
+.sprint-num{
+  font-family:var(--mono);font-size:11px;font-weight:700;
+  padding:4px 10px;border-radius:5px;text-transform:uppercase;letter-spacing:1px;flex-shrink:0;
+}
+.sn1{background:rgba(56,189,248,0.15);color:var(--s1l)}
+.sn2{background:rgba(74,222,128,0.15);color:var(--s2l)}
+.sn3{background:rgba(251,146,60,0.15);color:var(--s3l)}
+.sn4{background:rgba(129,140,248,0.15);color:var(--s4l)}
+.sn5{background:rgba(192,132,252,0.15);color:var(--s5l)}
+
+.banner-text h2{font-size:20px;font-weight:800;color:var(--text);margin-bottom:3px}
+.banner-text p{font-size:12.5px;color:var(--text2)}
+.banner-meta{margin-left:auto;text-align:right;flex-shrink:0}
+.banner-days{font-family:var(--mono);font-size:11px;font-weight:600}
+.banner-unlock{font-size:11px;color:var(--text3);margin-top:3px}
+
+/* BODY CONTENT */
+.body-text{font-size:14px;color:var(--text2);line-height:1.75;margin-bottom:20px;max-width:780px}
+.body-text strong{color:var(--text);font-weight:600}
+
+h3.step-group{
+  font-size:16px;font-weight:700;color:var(--text);margin:32px 0 18px;
+  display:flex;align-items:center;gap:10px;
+}
+h3.step-group::after{content:'';flex:1;height:1px;background:var(--border2)}
+
+/* STEPS */
+.steps{display:flex;flex-direction:column;gap:0;margin:20px 0}
+.step{display:flex;gap:18px;position:relative;padding-bottom:0}
+.step:not(:last-child)::after{
+  content:'';position:absolute;left:20px;top:42px;
+  width:2px;height:calc(100% - 6px);
+  background:linear-gradient(to bottom,var(--accent,var(--brass)),transparent);
+}
+.step-num{
+  width:40px;height:40px;border-radius:50%;flex-shrink:0;z-index:1;
+  background:var(--num-bg,rgba(173,138,63,0.12));
+  border:2px solid var(--accent,var(--brass));
+  display:flex;align-items:center;justify-content:center;
+  font-family:var(--mono);font-weight:700;font-size:13px;
+  color:var(--accent,var(--brass-l));
+}
+.step-body{flex:1;padding:8px 0 28px}
+.step-body h4{font-size:14px;font-weight:700;color:var(--text);margin-bottom:5px}
+.step-body p{font-size:13px;color:var(--text2);line-height:1.7;margin-bottom:6px}
+.step-body ul{margin:8px 0 8px 18px;display:flex;flex-direction:column;gap:4px}
+.step-body li{font-size:13px;color:var(--text2);line-height:1.6}
+.step-body li strong{color:var(--text)}
+.trigger-badge{
+  display:inline-flex;align-items:center;gap:6px;margin-top:8px;
+  font-family:var(--mono);font-size:10.5px;color:var(--text3);
+  background:rgba(255,255,255,0.04);padding:4px 10px;border-radius:6px;
+  border:1px solid var(--border2);
+}
+
+/* CODE */
+.code-block{background:var(--bg4);border:1px solid var(--border2);border-radius:10px;overflow:hidden;margin:16px 0}
+.code-header{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:9px 16px;border-bottom:1px solid var(--border);
+  background:rgba(255,255,255,0.025);
+}
+.code-lang{font-family:var(--mono);font-size:10.5px;font-weight:600;color:var(--text3);letter-spacing:1px;text-transform:uppercase}
+.code-label{font-size:11px;color:var(--text3)}
+pre{padding:18px;overflow-x:auto;font-family:var(--mono);font-size:12.5px;line-height:1.75;color:#CDD9E5;scrollbar-width:thin}
+.kw{color:#F47067} .kw2{color:#8DDB8C} .cm{color:#6A737D;font-style:italic}
+.st{color:#96D0FF} .nm{color:#D2A8FF} .fn{color:#79C0FF} .op{color:#F47067}
+
+/* CALLOUTS */
+.callout{display:flex;gap:14px;padding:16px 18px;border-radius:10px;margin:18px 0;border:1px solid var(--border2);background:rgba(255,255,255,0.02)}
+.callout-icon{font-size:18px;flex-shrink:0;margin-top:1px}
+.callout-body h4{font-size:13px;font-weight:700;margin-bottom:4px}
+.callout-body p{font-size:12.5px;color:var(--text2);line-height:1.65}
+.callout-body code{font-family:var(--mono);font-size:11.5px;color:var(--brass-l)}
+.callout.info{border-color:rgba(56,189,248,0.3);background:rgba(56,189,248,0.05)}
+.callout.warn{border-color:rgba(232,160,32,0.3);background:rgba(232,160,32,0.05)}
+.callout.ok{border-color:rgba(63,178,97,0.3);background:rgba(63,178,97,0.05)}
+.callout.stop{border-color:rgba(232,85,85,0.3);background:rgba(232,85,85,0.05)}
+
+/* TABLES */
+.dt{width:100%;border-collapse:collapse;font-size:12.5px;margin:14px 0}
+.dt th{text-align:left;padding:9px 12px;background:rgba(255,255,255,0.04);color:var(--text3);font-weight:700;text-transform:uppercase;letter-spacing:.8px;font-size:10.5px;border-bottom:1px solid var(--border2)}
+.dt td{padding:9px 12px;border-bottom:1px solid var(--border);color:var(--text2);vertical-align:top}
+.dt tr:hover td{background:rgba(255,255,255,0.02)}
+.mn{font-family:var(--mono);color:var(--text);font-weight:500}
+.mt{font-family:var(--mono);color:var(--s1l)}
+
+/* GRID */
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:14px 0}
+.g3{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin:14px 0}
+@media(max-width:900px){.g2,.g3{grid-template-columns:1fr}}
+
+.card{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:18px 20px}
+.card-title{font-weight:700;font-size:13px;color:var(--text);margin-bottom:7px;display:flex;align-items:center;gap:8px}
+.card-body{font-size:12.5px;color:var(--text2);line-height:1.65}
+.card-body code{font-family:var(--mono);font-size:11px;color:var(--brass-l)}
+
+.tag{display:inline-block;font-family:var(--mono);font-size:9.5px;font-weight:700;padding:2px 7px;border-radius:4px;text-transform:uppercase;letter-spacing:.3px}
+.t1{background:var(--s1p);color:var(--s1l);border:1px solid rgba(56,189,248,0.25)}
+.t2{background:var(--s2p);color:var(--s2l);border:1px solid rgba(74,222,128,0.25)}
+.t3{background:var(--s3p);color:var(--s3l);border:1px solid rgba(251,146,60,0.25)}
+.t4{background:var(--s4p);color:var(--s4l);border:1px solid rgba(129,140,248,0.25)}
+.t5{background:var(--s5p);color:var(--s5l);border:1px solid rgba(192,132,252,0.25)}
+
+.divider-label{display:flex;align-items:center;gap:12px;margin:28px 0;font-family:var(--mono);font-size:10.5px;color:var(--text3);text-transform:uppercase;letter-spacing:1.5px}
+.divider-label::before,.divider-label::after{content:'';flex:1;height:1px;background:var(--border)}
+
+.test-sequence{background:var(--bg3);border:1px solid var(--border2);border-radius:10px;padding:20px;margin:20px 0}
+.test-sequence h4{font-size:13px;font-weight:700;color:var(--text);margin-bottom:14px;display:flex;align-items:center;gap:8px}
+.test-item{display:flex;align-items:flex-start;gap:10px;padding:8px 0;border-bottom:1px solid var(--border)}
+.test-item:last-child{border-bottom:none}
+.test-n{font-family:var(--mono);font-size:10px;font-weight:700;color:var(--text3);flex-shrink:0;margin-top:2px}
+.test-desc{font-size:12.5px;color:var(--text2);line-height:1.6}
+.test-desc strong{color:var(--text)}
+.test-desc code{font-family:var(--mono);font-size:11px;color:var(--brass-l)}
+
+.unlock-box{background:rgba(173,138,63,0.07);border:1px solid rgba(173,138,63,0.25);border-radius:10px;padding:16px 20px;margin-top:32px}
+.unlock-box h4{font-size:12px;font-weight:700;color:var(--brass-l);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px;font-family:var(--mono)}
+.unlock-box ul{list-style:none;display:flex;flex-direction:column;gap:5px}
+.unlock-box li{font-size:13px;color:var(--text2);display:flex;align-items:center;gap:8px}
+.unlock-box li::before{content:'→';color:var(--brass-l);font-weight:700;flex-shrink:0}
+
+@media(max-width:768px){
+  .sidebar{display:none}
+  .sprint,.hero{padding:32px 22px}
+}
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+  <div class="sidebar-logo">
+    <div class="name">Shivalaya</div>
+    <div class="sub">Sprint Implementation Guide</div>
+  </div>
+  <div class="nav-group">
+    <div class="nav-label">Sprints</div>
+    <a class="nav-item n1" href="#sprint1">Sprint 1 — Supabase Foundation</a>
+    <a class="nav-item n2" href="#sprint2">Sprint 2 — Guest Portal Food</a>
+    <a class="nav-item n3" href="#sprint3">Sprint 3 — Kitchen Panel</a>
+    <a class="nav-item n4" href="#sprint4">Sprint 4 — Resort Reception</a>
+    <a class="nav-item n5" href="#sprint5">Sprint 5 — Activities Module</a>
+  </div>
+  <div class="nav-group">
+    <div class="nav-label">Sprint 1 Details</div>
+    <a class="nav-item n1" href="#s1-project">Create Supabase Project</a>
+    <a class="nav-item n1" href="#s1-extensions">Extensions & Sequences</a>
+    <a class="nav-item n1" href="#s1-tables">Table Migrations</a>
+    <a class="nav-item n1" href="#s1-rls">RLS Policies</a>
+    <a class="nav-item n1" href="#s1-rpc">RPC Functions</a>
+    <a class="nav-item n1" href="#s1-seed">Seed Data</a>
+    <a class="nav-item n1" href="#s1-test">Testing</a>
+  </div>
+  <div class="nav-group">
+    <div class="nav-label">Sprint 2 Details</div>
+    <a class="nav-item n2" href="#s2-setup">Project Setup</a>
+    <a class="nav-item n2" href="#s2-menu">Menu Fetching + Time Gate</a>
+    <a class="nav-item n2" href="#s2-cart">Cart + Variants</a>
+    <a class="nav-item n2" href="#s2-order">Order Submission</a>
+    <a class="nav-item n2" href="#s2-track">Live Tracking Page</a>
+    <a class="nav-item n2" href="#s2-qr">QR Session Logic</a>
+    <a class="nav-item n2" href="#s2-deploy">Deploy to Vercel</a>
+  </div>
+  <div class="nav-group">
+    <div class="nav-label">Sprint 3 Details</div>
+    <a class="nav-item n3" href="#s3-auth">PIN Login System</a>
+    <a class="nav-item n3" href="#s3-queue">Order Queue UI</a>
+    <a class="nav-item n3" href="#s3-realtime">Real-time Subscription</a>
+    <a class="nav-item n3" href="#s3-kot">KOT View</a>
+    <a class="nav-item n3" href="#s3-sound">Sound + Notifications</a>
+  </div>
+  <div class="nav-group">
+    <div class="nav-label">Sprint 4 Details</div>
+    <a class="nav-item n4" href="#s4-auth">Owner Login</a>
+    <a class="nav-item n4" href="#s4-checkin">Check-in / Check-out</a>
+    <a class="nav-item n4" href="#s4-guests">Guest List</a>
+    <a class="nav-item n4" href="#s4-orders">Orders Overview</a>
+    <a class="nav-item n4" href="#s4-menu-mgmt">Menu Management</a>
+    <a class="nav-item n4" href="#s4-analytics">Analytics</a>
+  </div>
+  <div class="nav-group">
+    <div class="nav-label">Sprint 5 Details</div>
+    <a class="nav-item n5" href="#s5-portal">Activities Page</a>
+    <a class="nav-item n5" href="#s5-slots">Slot Picker</a>
+    <a class="nav-item n5" href="#s5-booking">Booking Flow</a>
+    <a class="nav-item n5" href="#s5-reception">Reception Activities</a>
+    <a class="nav-item n5" href="#s5-folio">Guest Folio</a>
+    <a class="nav-item n5" href="#s5-activity-mgmt">Activity Management</a>
+  </div>
+</aside>
+
+<main class="main">
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-content">
+    <div class="hero-eye">ASVEX Technologies · Internal Engineering Reference</div>
+    <h1 class="hero-title">Sprint Implementation Guide<br><span>Steps 1 through 5</span></h1>
+    <p class="hero-sub">Every decision, every SQL migration, every component, every test — for all five sprints. Read Sprint 1 before touching Sprint 2. Each sprint's output is the next sprint's prerequisite.</p>
+    <div class="sprint-chips">
+      <div class="sprint-chip c1">Sprint 1 — Foundation · 3 days</div>
+      <div class="sprint-chip c2">Sprint 2 — Guest Portal · 4 days</div>
+      <div class="sprint-chip c3">Sprint 3 — Kitchen Panel · 3 days</div>
+      <div class="sprint-chip c4">Sprint 4 — Reception Core · 4 days</div>
+      <div class="sprint-chip c5">Sprint 5 — Activities · 5 days</div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ═══════════════════════════════════════════════════
+     SPRINT 1 — SUPABASE FOUNDATION
+     ═══════════════════════════════════════════════════ -->
+<section class="sprint" id="sprint1" style="--accent:var(--s1l);--num-bg:var(--s1p)">
+  <div class="sprint-banner sb1">
+    <span class="sprint-num sn1">Sprint 1</span>
+    <div class="banner-text">
+      <h2>Supabase Foundation</h2>
+      <p>Project setup · All migrations · RLS · RPC functions · Seed data</p>
+    </div>
+    <div class="banner-meta">
+      <div class="banner-days" style="color:var(--s1l)">3 days</div>
+      <div class="banner-unlock">Unlocks: All other sprints</div>
+    </div>
+  </div>
+
+  <p class="body-text">Everything else in the system — all three apps, the real-time subscriptions, the booking logic, the WhatsApp triggers — depends on the database being correct. Do Sprint 1 completely before writing a single React component. A wrong column type or missing index found in Sprint 3 will cost you two hours of fixing. Found in Sprint 1 it costs two minutes.</p>
+
+  <!-- STEP GROUP 1 -->
+  <h3 class="step-group" id="s1-project">Part A — Create the Supabase Project</h3>
+
+  <div class="steps">
+    <div class="step">
+      <div class="step-num">1</div>
+      <div class="step-body">
+        <h4>Log into Supabase and create a new project</h4>
+        <p>Go to <strong>supabase.com</strong> → New Project. Settings:</p>
+        <ul>
+          <li><strong>Project name:</strong> shivalaya-resorts-prod</li>
+          <li><strong>Database password:</strong> Generate a strong one — save it in your password manager. You'll never type this again but you need it if you ever need direct Postgres access.</li>
+          <li><strong>Region:</strong> ap-south-1 (Singapore) — closest to Uttarakhand with sub-30ms latency. Mumbai region (ap-south-1) is the same AWS region India uses.</li>
+          <li><strong>Plan:</strong> Free tier for development. Before go-live, upgrade to Pro (₹1,700/month) for daily backups, point-in-time recovery, and no pausing after 1 week of inactivity.</li>
+        </ul>
+        <p>Wait 2 minutes for the project to provision. You'll land on the project dashboard.</p>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">2</div>
+      <div class="step-body">
+        <h4>Collect your project credentials — store them immediately</h4>
+        <p>Go to Settings → API. Copy and save in a <code>.env.local</code> file (never commit this):</p>
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">ENV</span><span class="code-label">.env.local — all three apps use the same values</span></div>
+          <pre><span class="cm"># Public — safe to expose in browser JavaScript bundles</span>
+VITE_SUPABASE_URL=https://[your-project-ref].supabase.co
+VITE_SUPABASE_ANON_KEY=[anon-public-key]
+
+<span class="cm"># Private — server-side only, Edge Functions only, NEVER in browser</span>
+SUPABASE_SERVICE_ROLE_KEY=[service-role-key]
+SUPABASE_DB_PASSWORD=[database-password]
+
+<span class="cm"># Added during Sprint 6</span>
+AISENSY_API_KEY=
+RESORT_PORTAL_URL=https://order.shivalayaresorts.com</pre>
+        </div>
+        <p>The anon key is public — it's safe in React code. RLS policies enforce what anon users can do. The service role key bypasses RLS — it only lives in Edge Functions and the DB trigger config.</p>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">3</div>
+      <div class="step-body">
+        <h4>Enable Realtime on the required tables</h4>
+        <p>Supabase Dashboard → Database → Replication. Enable the following tables for Realtime publication (INSERT + UPDATE events):</p>
+        <ul>
+          <li><strong>orders</strong> — Kitchen Panel subscribes to new orders. Guest Portal subscribes to status updates on their order.</li>
+          <li><strong>activity_bookings</strong> — Resort Reception subscribes to new pending bookings.</li>
+        </ul>
+        <p>Leave all other tables off Realtime — you don't need it and it wastes database compute.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP GROUP 2 -->
+  <h3 class="step-group" id="s1-extensions">Part B — Extensions and Sequences</h3>
+
+  <div class="steps">
+    <div class="step">
+      <div class="step-num">4</div>
+      <div class="step-body">
+        <h4>Enable required extensions — run in SQL Editor</h4>
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">SQL</span><span class="code-label">Run in Supabase SQL Editor → once only</span></div>
+          <pre><span class="cm">-- HTTP calls from within PostgreSQL triggers (needed for WhatsApp automation)</span>
+<span class="kw">CREATE EXTENSION IF NOT EXISTS</span> pg_net;
+
+<span class="cm">-- Better UUID generation</span>
+<span class="kw">CREATE EXTENSION IF NOT EXISTS</span> pgcrypto;
+
+<span class="cm">-- Scheduled jobs (daily reports in Sprint 6)</span>
+<span class="kw">CREATE EXTENSION IF NOT EXISTS</span> pg_cron;
+
+<span class="cm">-- Verify all three are installed</span>
+<span class="kw">SELECT</span> extname, extversion <span class="kw">FROM</span> pg_extension
+<span class="kw">WHERE</span> extname <span class="kw">IN</span> (<span class="st">'pg_net'</span>, <span class="st">'pgcrypto'</span>, <span class="st">'pg_cron'</span>);</pre>
+        </div>
+        <div class="callout info">
+          <div class="callout-icon">💡</div>
+          <div class="callout-body">
+            <h4>If pg_cron fails</h4>
+            <p>pg_cron requires the Pro plan. Skip it for now — add it in Sprint 6 when you upgrade the project for production. pg_net and pgcrypto work on free tier.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">5</div>
+      <div class="step-body">
+        <h4>Create sequences for human-readable IDs</h4>
+        <p>UUIDs are used as primary keys (for security and distribution), but guests and staff need readable reference numbers like PAN-00123 and EXP-00041.</p>
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">SQL</span><span class="code-label">Sequences for order and booking numbers</span></div>
+          <pre><span class="cm">-- Food order sequence: generates 00001, 00002, etc.</span>
+<span class="kw">CREATE SEQUENCE IF NOT EXISTS</span> order_number_seq
+  START <span class="nm">1</span> INCREMENT <span class="nm">1</span> MINVALUE <span class="nm">1</span> MAXVALUE <span class="nm">99999</span> CYCLE;
+
+<span class="cm">-- Activity booking sequence</span>
+<span class="kw">CREATE SEQUENCE IF NOT EXISTS</span> booking_number_seq
+  START <span class="nm">1</span> INCREMENT <span class="nm">1</span> MINVALUE <span class="nm">1</span> MAXVALUE <span class="nm">99999</span> CYCLE;
+
+<span class="cm">-- Test them</span>
+<span class="kw">SELECT</span> <span class="st">'PAN-'</span> <span class="op">||</span> <span class="fn">to_char</span>(<span class="fn">nextval</span>(<span class="st">'order_number_seq'</span>), <span class="st">'FM00000'</span>);
+<span class="cm">-- Returns: PAN-00001</span></pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">6</div>
+      <div class="step-body">
+        <h4>Set database-level config for Edge Function triggers</h4>
+        <p>The WhatsApp trigger (Sprint 6) needs to know the Edge Function URL. Set it now so the trigger SQL can reference it later without hardcoding.</p>
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">SQL</span></div>
+          <pre><span class="kw">ALTER DATABASE</span> postgres
+  <span class="kw">SET</span> app.edge_function_base_url <span class="kw">TO</span>
+  <span class="st">'https://[your-project-ref].supabase.co/functions/v1'</span>;
+
+<span class="kw">ALTER DATABASE</span> postgres
+  <span class="kw">SET</span> app.service_role_key <span class="kw">TO</span>
+  <span class="st">'[your-service-role-key]'</span>;</pre>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP GROUP 3 — TABLES -->
+  <h3 class="step-group" id="s1-tables">Part C — Table Migrations (in order)</h3>
+
+  <p class="body-text">Run these in order — each script depends on the previous one. Copy each block into Supabase SQL Editor and run. Check for errors before proceeding to the next.</p>
+
+  <div class="steps">
+    <div class="step">
+      <div class="step-num">7</div>
+      <div class="step-body">
+        <h4>Migration 001 — Core infrastructure tables</h4>
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">SQL</span><span class="code-label">001_core.sql — resorts, rooms, restaurant_tables, staff</span></div>
+          <pre><span class="cm">-- ── RESORTS (top-level entity — future-proofs for multiple clients)</span>
+<span class="kw">CREATE TABLE</span> resorts (
+  id          <span class="nm">UUID PRIMARY KEY DEFAULT</span> <span class="fn">gen_random_uuid</span>(),
+  name        <span class="nm">TEXT NOT NULL</span>,
+  slug        <span class="nm">TEXT UNIQUE NOT NULL</span>,   <span class="cm">-- 'shivalaya-resorts'</span>
+  timezone    <span class="nm">TEXT DEFAULT</span> <span class="st">'Asia/Kolkata'</span>,
+  created_at  <span class="nm">TIMESTAMPTZ DEFAULT</span> <span class="fn">now</span>()
+);
+
+<span class="cm">-- ── ROOMS</span>
+<span class="kw">CREATE TABLE</span> rooms (
+  id                <span class="nm">UUID PRIMARY KEY DEFAULT</span> <span class="fn">gen_random_uuid</span>(),
+  resort_id         <span class="nm">UUID NOT NULL REFERENCES</span> resorts(id) <span class="kw">ON DELETE CASCADE</span>,
+  room_number       <span class="nm">TEXT NOT NULL</span>,
+  room_type         <span class="nm">TEXT</span>,                    <span class="cm">-- 'Deluxe', 'Suite', 'Cottage'</span>
+  floor             <span class="nm">INTEGER</span>,
+  has_balcony       <span class="nm">BOOLEAN DEFAULT FALSE</span>,   <span class="cm">-- Bonfire/BBQ eligibility</span>
+  is_occupied       <span class="nm">BOOLEAN DEFAULT FALSE</span>,
+  current_guest_id  <span class="nm">UUID</span>,                    <span class="cm">-- FK added after guests table</span>
+  sort_order        <span class="nm">INTEGER DEFAULT 0</span>,
+  <span class="kw">UNIQUE</span>(resort_id, room_number)
+);
+
+<span class="cm">-- ── RESTAURANT TABLES</span>
+<span class="kw">CREATE TABLE</span> restaurant_tables (
+  id          <span class="nm">UUID PRIMARY KEY DEFAULT</span> <span class="fn">gen_random_uuid</span>(),
+  resort_id   <span class="nm">UUID NOT NULL REFERENCES</span> resorts(id) <span class="kw">ON DELETE CASCADE</span>,
+  table_number <span class="nm">TEXT NOT NULL</span>,
+  capacity    <span class="nm">INTEGER DEFAULT 4</span>,
+  is_occupied <span class="nm">BOOLEAN DEFAULT FALSE</span>,
+  <span class="kw">UNIQUE</span>(resort_id, table_number)
+);
+
+<span class="cm">-- ── STAFF</span>
+<span class="kw">CREATE TABLE</span> staff (
+  id               <span class="nm">UUID PRIMARY KEY DEFAULT</span> <span class="fn">gen_random_uuid</span>(),
+  resort_id        <span class="nm">UUID NOT NULL REFERENCES</span> resorts(id) <span class="kw">ON DELETE CASCADE</span>,
+  supabase_user_id <span class="nm">UUID REFERENCES</span> auth.users(id),
+  name             <span class="nm">TEXT NOT NULL</span>,
+  role             <span class="nm">TEXT NOT NULL CHECK</span> (role <span class="kw">IN</span> (<span class="st">'owner'</span>,<span class="st">'receptionist'</span>,<span class="st">'kitchen'</span>)),
+  pin_hash         <span class="nm">TEXT</span>,   <span class="cm">-- bcrypt hash of 4-digit PIN</span>
+  avatar_color     <span class="nm">TEXT DEFAULT</span> <span class="st">'#2C4A22'</span>,
+  is_active        <span class="nm">BOOLEAN DEFAULT TRUE</span>,
+  created_at       <span class="nm">TIMESTAMPTZ DEFAULT</span> <span class="fn">now</span>()
+);</pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">8</div>
+      <div class="step-body">
+        <h4>Migration 002 — Guests and orders</h4>
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">SQL</span><span class="code-label">002_guests_orders.sql</span></div>
+          <pre><span class="cm">-- ── GUESTS</span>
+<span class="kw">CREATE TABLE</span> guests (
+  id                  <span class="nm">UUID PRIMARY KEY DEFAULT</span> <span class="fn">gen_random_uuid</span>(),
+  resort_id           <span class="nm">UUID NOT NULL REFERENCES</span> resorts(id),
+  room_id             <span class="nm">UUID REFERENCES</span> rooms(id),
+  guest_name          <span class="nm">TEXT NOT NULL</span>,
+  guest_phone         <span class="nm">TEXT NOT NULL</span>,
+  number_of_adults    <span class="nm">INTEGER DEFAULT 1</span>,
+  check_in_date       <span class="nm">DATE NOT NULL</span>,
+  expected_checkout   <span class="nm">DATE</span>,
+  actual_checkout     <span class="nm">TIMESTAMPTZ</span>,
+  status              <span class="nm">TEXT DEFAULT</span> <span class="st">'checked_in'</span>
+                      <span class="kw">CHECK</span> (status <span class="kw">IN</span> (<span class="st">'checked_in'</span>,<span class="st">'checked_out'</span>)),
+  notes               <span class="nm">TEXT</span>,
+  checked_in_by       <span class="nm">UUID REFERENCES</span> staff(id),
+  created_at          <span class="nm">TIMESTAMPTZ DEFAULT</span> <span class="fn">now</span>()
+);
+
+<span class="cm">-- Now add the FK from rooms to guests (circular FK, added after both tables exist)</span>
+<span class="kw">ALTER TABLE</span> rooms
+  <span class="kw">ADD CONSTRAINT</span> fk_rooms_current_guest
+  <span class="kw">FOREIGN KEY</span> (current_guest_id) <span class="kw">REFERENCES</span> guests(id)
+  <span class="kw">ON DELETE SET NULL</span>;
+
+<span class="cm">-- ── ORDERS</span>
+<span class="kw">CREATE TABLE</span> orders (
+  id           <span class="nm">UUID PRIMARY KEY DEFAULT</span> <span class="fn">gen_random_uuid</span>(),
+  order_number <span class="nm">TEXT UNIQUE</span>,
+  resort_id    <span class="nm">UUID NOT NULL REFERENCES</span> resorts(id),
+  guest_id     <span class="nm">UUID REFERENCES</span> guests(id) <span class="kw">ON DELETE SET NULL</span>,
+  room_id      <span class="nm">UUID REFERENCES</span> rooms(id) <span class="kw">ON DELETE SET NULL</span>,
+  table_id     <span class="nm">UUID REFERENCES</span> restaurant_tables(id) <span class="kw">ON DELETE SET NULL</span>,
+  service_type <span class="nm">TEXT NOT NULL CHECK</span> (service_type <span class="kw">IN</span>
+               (<span class="st">'room_service'</span>,<span class="st">'dine_in'</span>,<span class="st">'pickup'</span>,<span class="st">'walk_in'</span>)),
+  guest_name   <span class="nm">TEXT NOT NULL</span>,
+  guest_phone  <span class="nm">TEXT</span>,
+  items        <span class="nm">JSONB NOT NULL DEFAULT</span> <span class="st">'[]'</span>,
+  <span class="cm">-- items structure: [{id, name, qty, price, variant_label}]</span>
+  subtotal     <span class="nm">INTEGER NOT NULL DEFAULT 0</span>,   <span class="cm">-- in rupees</span>
+  status       <span class="nm">TEXT DEFAULT</span> <span class="st">'new'</span>
+               <span class="kw">CHECK</span> (status <span class="kw">IN</span>
+               (<span class="st">'new'</span>,<span class="st">'confirmed'</span>,<span class="st">'preparing'</span>,<span class="st">'ready'</span>,<span class="st">'served'</span>,<span class="st">'cancelled'</span>)),
+  special_note <span class="nm">TEXT</span>,
+  created_at   <span class="nm">TIMESTAMPTZ DEFAULT</span> <span class="fn">now</span>(),
+  updated_at   <span class="nm">TIMESTAMPTZ DEFAULT</span> <span class="fn">now</span>()
+);
+
+<span class="cm">-- ── ORDER STATUS LOG</span>
+<span class="kw">CREATE TABLE</span> order_status_log (
+  id          <span class="nm">UUID PRIMARY KEY DEFAULT</span> <span class="fn">gen_random_uuid</span>(),
+  order_id    <span class="nm">UUID NOT NULL REFERENCES</span> orders(id) <span class="kw">ON DELETE CASCADE</span>,
+  old_status  <span class="nm">TEXT</span>,
+  new_status  <span class="nm">TEXT NOT NULL</span>,
+  changed_by  <span class="nm">UUID REFERENCES</span> staff(id),
+  changed_at  <span class="nm">TIMESTAMPTZ DEFAULT</span> <span class="fn">now</span>()
+);
+
+<span class="cm">-- ── INDEXES (performance on common queries)</span>
+<span class="kw">CREATE INDEX</span> idx_orders_resort_status <span class="kw">ON</span> orders(resort_id, status);
+<span class="kw">CREATE INDEX</span> idx_orders_guest_id      <span class="kw">ON</span> orders(guest_id);
+<span class="kw">CREATE INDEX</span> idx_orders_created_at    <span class="kw">ON</span> orders(created_at <span class="kw">DESC</span>);
+<span class="kw">CREATE INDEX</span> idx_orders_room_id       <span class="kw">ON</span> orders(room_id);</pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">9</div>
+      <div class="step-body">
+        <h4>Migration 003 — Menu tables</h4>
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">SQL</span><span class="code-label">003_menu.sql</span></div>
+          <pre><span class="cm">-- ── MENU CATEGORIES (sections like Breakfast, Starters)</span>
+<span class="kw">CREATE TABLE</span> menu_categories (
+  id             <span class="nm">UUID PRIMARY KEY DEFAULT</span> <span class="fn">gen_random_uuid</span>(),
+  resort_id      <span class="nm">UUID NOT NULL REFERENCES</span> resorts(id),
+  name           <span class="nm">TEXT NOT NULL</span>,
+  emoji          <span class="nm">TEXT DEFAULT</span> <span class="st">'🍽️'</span>,
+  available_from <span class="nm">TIME</span>,              <span class="cm">-- NULL = available all day</span>
+  available_until <span class="nm">TIME</span>,             <span class="cm">-- e.g. '16:00:00' for Breakfast cutoff</span>
+  is_available   <span class="nm">BOOLEAN DEFAULT TRUE</span>,
+  sort_order     <span class="nm">INTEGER DEFAULT 0</span>
+);
+
+<span class="cm">-- ── MENU ITEMS</span>
+<span class="kw">CREATE TABLE</span> menu_items (
+  id           <span class="nm">UUID PRIMARY KEY DEFAULT</span> <span class="fn">gen_random_uuid</span>(),
+  resort_id    <span class="nm">UUID NOT NULL REFERENCES</span> resorts(id),
+  category_id  <span class="nm">UUID NOT NULL REFERENCES</span> menu_categories(id) <span class="kw">ON DELETE CASCADE</span>,
+  name         <span class="nm">TEXT NOT NULL</span>,
+  description  <span class="nm">TEXT</span>,
+  price        <span class="nm">INTEGER NOT NULL</span>,  <span class="cm">-- rupees only, no paise</span>
+  item_type    <span class="nm">TEXT DEFAULT</span> <span class="st">'veg'</span>
+               <span class="kw">CHECK</span> (item_type <span class="kw">IN</span> (<span class="st">'veg'</span>,<span class="st">'nonveg'</span>,<span class="st">'egg'</span>)),
+  is_available <span class="nm">BOOLEAN DEFAULT TRUE</span>,
+  is_special   <span class="nm">BOOLEAN DEFAULT FALSE</span>,  <span class="cm">-- Chef's special tag</span>
+  has_variants <span class="nm">BOOLEAN DEFAULT FALSE</span>,  <span class="cm">-- True if item needs a choice</span>
+  sort_order   <span class="nm">INTEGER DEFAULT 0</span>
+);
+
+<span class="cm">-- ── MENU ITEM VARIANTS (e.g. Paratha stuffing choice)</span>
+<span class="kw">CREATE TABLE</span> menu_item_variants (
+  id          <span class="nm">UUID PRIMARY KEY DEFAULT</span> <span class="fn">gen_random_uuid</span>(),
+  item_id     <span class="nm">UUID NOT NULL REFERENCES</span> menu_items(id) <span class="kw">ON DELETE CASCADE</span>,
+  group_label <span class="nm">TEXT NOT NULL</span>,    <span class="cm">-- 'Choose Stuffing', 'Choose Dosa'</span>
+  option_name <span class="nm">TEXT NOT NULL</span>,    <span class="cm">-- 'Aloo', 'Paneer', 'Plain'</span>
+  price_delta <span class="nm">INTEGER DEFAULT 0</span>,<span class="cm">-- Additional cost (0 for Panache's menu)</span>
+  sort_order  <span class="nm">INTEGER DEFAULT 0</span>
+);
+
+<span class="kw">CREATE INDEX</span> idx_menu_items_category <span class="kw">ON</span> menu_items(category_id);
+<span class="kw">CREATE INDEX</span> idx_menu_items_available <span class="kw">ON</span> menu_items(is_available);</pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">10</div>
+      <div class="step-body">
+        <h4>Migration 004 — Activities, time slots, bookings, WhatsApp log</h4>
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">SQL</span><span class="code-label">004_activities.sql</span></div>
+          <pre><span class="cm">-- ── ACTIVITIES</span>
+<span class="kw">CREATE TABLE</span> activities (
+  id                   <span class="nm">UUID PRIMARY KEY DEFAULT</span> <span class="fn">gen_random_uuid</span>(),
+  resort_id            <span class="nm">UUID NOT NULL REFERENCES</span> resorts(id),
+  name                 <span class="nm">TEXT NOT NULL</span>,
+  description          <span class="nm">TEXT</span>,
+  short_description    <span class="nm">TEXT</span>,
+  pricing_type         <span class="nm">TEXT NOT NULL</span>
+                       <span class="kw">CHECK</span> (pricing_type <span class="kw">IN</span> (<span class="st">'per_person'</span>,<span class="st">'per_setup'</span>,<span class="st">'per_session'</span>)),
+  price_per_person     <span class="nm">INTEGER</span>,
+  price_per_setup      <span class="nm">INTEGER</span>,
+  price_per_session    <span class="nm">INTEGER</span>,
+  duration_minutes     <span class="nm">INTEGER</span>,
+  max_capacity_per_slot <span class="nm">INTEGER NOT NULL DEFAULT 6</span>,
+  requires_balcony     <span class="nm">BOOLEAN DEFAULT FALSE</span>,
+  min_advance_hours    <span class="nm">INTEGER DEFAULT 0</span>,
+  what_is_included     <span class="nm">TEXT[]</span>,
+  notes_for_guest      <span class="nm">TEXT</span>,
+  notes_for_staff      <span class="nm">TEXT</span>,
+  image_url            <span class="nm">TEXT</span>,
+  is_available         <span class="nm">BOOLEAN DEFAULT TRUE</span>,
+  sort_order           <span class="nm">INTEGER DEFAULT 0</span>,
+  category             <span class="nm">TEXT DEFAULT</span> <span class="st">'outdoor'</span>
+);
+
+<span class="cm">-- ── ACTIVITY TIME SLOTS</span>
+<span class="kw">CREATE TABLE</span> activity_time_slots (
+  id                    <span class="nm">UUID PRIMARY KEY DEFAULT</span> <span class="fn">gen_random_uuid</span>(),
+  activity_id           <span class="nm">UUID NOT NULL REFERENCES</span> activities(id) <span class="kw">ON DELETE CASCADE</span>,
+  label                 <span class="nm">TEXT NOT NULL</span>,
+  start_time            <span class="nm">TIME NOT NULL</span>,
+  end_time              <span class="nm">TIME NOT NULL</span>,
+  days_available        <span class="nm">INTEGER[] NOT NULL DEFAULT</span> <span class="st">'{0,1,2,3,4,5,6}'</span>,
+  max_capacity_override <span class="nm">INTEGER</span>,  <span class="cm">-- overrides activity default if set</span>
+  is_active             <span class="nm">BOOLEAN DEFAULT TRUE</span>,
+  sort_order            <span class="nm">INTEGER DEFAULT 0</span>
+);
+
+<span class="cm">-- ── ACTIVITY BOOKINGS</span>
+<span class="kw">CREATE TABLE</span> activity_bookings (
+  id                     <span class="nm">UUID PRIMARY KEY DEFAULT</span> <span class="fn">gen_random_uuid</span>(),
+  booking_number         <span class="nm">TEXT UNIQUE</span>,
+  activity_id            <span class="nm">UUID NOT NULL REFERENCES</span> activities(id),
+  slot_id                <span class="nm">UUID NOT NULL REFERENCES</span> activity_time_slots(id),
+  booking_date           <span class="nm">DATE NOT NULL</span>,
+  guest_id               <span class="nm">UUID REFERENCES</span> guests(id) <span class="kw">ON DELETE SET NULL</span>,
+  room_id                <span class="nm">UUID REFERENCES</span> rooms(id) <span class="kw">ON DELETE SET NULL</span>,
+  guest_name             <span class="nm">TEXT NOT NULL</span>,
+  guest_phone            <span class="nm">TEXT</span>,
+  number_of_guests       <span class="nm">INTEGER NOT NULL DEFAULT 1</span>,
+  pricing_type_snapshot  <span class="nm">TEXT NOT NULL</span>,
+  unit_price_snapshot    <span class="nm">INTEGER NOT NULL</span>,
+  total_amount           <span class="nm">INTEGER NOT NULL</span>,
+  status                 <span class="nm">TEXT DEFAULT</span> <span class="st">'pending'</span>
+                         <span class="kw">CHECK</span> (status <span class="kw">IN</span>
+                         (<span class="st">'pending'</span>,<span class="st">'confirmed'</span>,<span class="st">'completed'</span>,<span class="st">'cancelled'</span>,<span class="st">'no_show'</span>)),
+  special_requests       <span class="nm">TEXT</span>,
+  assigned_staff_name    <span class="nm">TEXT</span>,
+  staff_instructions     <span class="nm">TEXT</span>,
+  confirmed_by           <span class="nm">UUID REFERENCES</span> staff(id),
+  cancellation_reason    <span class="nm">TEXT</span>,
+  created_at             <span class="nm">TIMESTAMPTZ DEFAULT</span> <span class="fn">now</span>(),
+  updated_at             <span class="nm">TIMESTAMPTZ DEFAULT</span> <span class="fn">now</span>()
+);
+
+<span class="cm">-- ── WHATSAPP LOG</span>
+<span class="kw">CREATE TABLE</span> whatsapp_log (
+  id                  <span class="nm">UUID PRIMARY KEY DEFAULT</span> <span class="fn">gen_random_uuid</span>(),
+  guest_id            <span class="nm">UUID REFERENCES</span> guests(id) <span class="kw">ON DELETE SET NULL</span>,
+  phone_number        <span class="nm">TEXT NOT NULL</span>,
+  message_type        <span class="nm">TEXT NOT NULL</span>,   <span class="cm">-- 'checkin' | 'checkout'</span>
+  template_name       <span class="nm">TEXT</span>,
+  status              <span class="nm">TEXT DEFAULT</span> <span class="st">'sent'</span>,
+  provider_message_id <span class="nm">TEXT</span>,
+  sent_at             <span class="nm">TIMESTAMPTZ DEFAULT</span> <span class="fn">now</span>(),
+  error_message       <span class="nm">TEXT</span>
+);
+
+<span class="kw">CREATE INDEX</span> idx_activity_bookings_date_slot <span class="kw">ON</span> activity_bookings(slot_id, booking_date);
+<span class="kw">CREATE INDEX</span> idx_activity_bookings_guest     <span class="kw">ON</span> activity_bookings(guest_id);
+<span class="kw">CREATE INDEX</span> idx_activity_bookings_status    <span class="kw">ON</span> activity_bookings(status);</pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">11</div>
+      <div class="step-body">
+        <h4>Migration 005 — Create the guest_folio VIEW</h4>
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">SQL</span><span class="code-label">005_folio_view.sql</span></div>
+          <pre><span class="kw">CREATE OR REPLACE VIEW</span> guest_folio <span class="kw">AS</span>
+  <span class="kw">SELECT</span>
+    o.id, o.guest_id, o.room_id,
+    o.created_at        <span class="kw">AS</span> charge_at,
+    <span class="st">'food'</span>              <span class="kw">AS</span> charge_type,
+    o.order_number      <span class="kw">AS</span> reference_number,
+    <span class="st">'Food Order — Panache Restaurant'</span> <span class="kw">AS</span> description,
+    o.items             <span class="kw">AS</span> line_items,
+    o.subtotal          <span class="kw">AS</span> amount,
+    o.status,
+    o.service_type      <span class="kw">AS</span> detail
+  <span class="kw">FROM</span> orders o
+  <span class="kw">WHERE</span> o.status <span class="op">!=</span> <span class="st">'cancelled'</span>
+
+<span class="kw">UNION ALL</span>
+
+  <span class="kw">SELECT</span>
+    ab.id, ab.guest_id, ab.room_id,
+    ab.created_at       <span class="kw">AS</span> charge_at,
+    <span class="st">'activity'</span>          <span class="kw">AS</span> charge_type,
+    ab.booking_number   <span class="kw">AS</span> reference_number,
+    a.name <span class="op">||</span> <span class="st">' — '</span> <span class="op">||</span>
+      <span class="fn">to_char</span>(ab.booking_date, <span class="st">'DD Mon YYYY'</span>) <span class="op">||</span>
+      <span class="st">', '</span> <span class="op">||</span> <span class="fn">to_char</span>(ats.start_time, <span class="st">'HH12:MI AM'</span>) <span class="kw">AS</span> description,
+    <span class="nm">NULL</span>                <span class="kw">AS</span> line_items,
+    ab.total_amount     <span class="kw">AS</span> amount,
+    ab.status,
+    ab.number_of_guests::text <span class="op">||</span> <span class="st">' guest(s)'</span> <span class="kw">AS</span> detail
+  <span class="kw">FROM</span> activity_bookings ab
+  <span class="kw">JOIN</span> activities a        <span class="kw">ON</span> ab.activity_id = a.id
+  <span class="kw">JOIN</span> activity_time_slots ats <span class="kw">ON</span> ab.slot_id = ats.id
+  <span class="kw">WHERE</span> ab.status <span class="op">!=</span> <span class="st">'cancelled'</span>
+
+<span class="kw">ORDER BY</span> charge_at;</pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">12</div>
+      <div class="step-body">
+        <h4>Migration 006 — Auto-update triggers on orders and activity_bookings</h4>
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">SQL</span><span class="code-label">006_triggers.sql — status logging + updated_at</span></div>
+          <pre><span class="cm">-- Generic updated_at trigger function</span>
+<span class="kw">CREATE OR REPLACE FUNCTION</span> <span class="fn">set_updated_at</span>()
+<span class="kw">RETURNS TRIGGER AS</span> $$
+<span class="kw">BEGIN</span>
+  NEW.updated_at := <span class="fn">now</span>();
+  <span class="kw">RETURN</span> NEW;
+<span class="kw">END</span>;
+$$ <span class="kw">LANGUAGE</span> plpgsql;
+
+<span class="kw">CREATE TRIGGER</span> orders_updated_at
+  <span class="kw">BEFORE UPDATE ON</span> orders
+  <span class="kw">FOR EACH ROW EXECUTE FUNCTION</span> <span class="fn">set_updated_at</span>();
+
+<span class="kw">CREATE TRIGGER</span> bookings_updated_at
+  <span class="kw">BEFORE UPDATE ON</span> activity_bookings
+  <span class="kw">FOR EACH ROW EXECUTE FUNCTION</span> <span class="fn">set_updated_at</span>();
+
+<span class="cm">-- Order status change logging</span>
+<span class="kw">CREATE OR REPLACE FUNCTION</span> <span class="fn">log_order_status_change</span>()
+<span class="kw">RETURNS TRIGGER AS</span> $$
+<span class="kw">BEGIN</span>
+  <span class="kw">IF</span> OLD.status <span class="op">IS DISTINCT FROM</span> NEW.status <span class="kw">THEN</span>
+    <span class="kw">INSERT INTO</span> order_status_log(order_id, old_status, new_status)
+    <span class="kw">VALUES</span>(NEW.id, OLD.status, NEW.status);
+  <span class="kw">END IF</span>;
+  <span class="kw">RETURN</span> NEW;
+<span class="kw">END</span>;
+$$ <span class="kw">LANGUAGE</span> plpgsql;
+
+<span class="kw">CREATE TRIGGER</span> orders_status_log
+  <span class="kw">AFTER UPDATE ON</span> orders
+  <span class="kw">FOR EACH ROW EXECUTE FUNCTION</span> <span class="fn">log_order_status_change</span>();</pre>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- RLS -->
+  <h3 class="step-group" id="s1-rls">Part D — Row Level Security Policies</h3>
+
+  <div class="steps">
+    <div class="step">
+      <div class="step-num">13</div>
+      <div class="step-body">
+        <h4>Enable RLS and create all policies</h4>
+        <p>Run this entire block. RLS is enabled on every table before any policy is added — this means by default nobody can access anything. Each policy then grants specific access to specific roles.</p>
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">SQL</span><span class="code-label">007_rls.sql — enable + policies</span></div>
+          <pre><span class="cm">-- Enable RLS on all tables</span>
+<span class="kw">ALTER TABLE</span> resorts             <span class="kw">ENABLE ROW LEVEL SECURITY</span>;
+<span class="kw">ALTER TABLE</span> rooms               <span class="kw">ENABLE ROW LEVEL SECURITY</span>;
+<span class="kw">ALTER TABLE</span> restaurant_tables   <span class="kw">ENABLE ROW LEVEL SECURITY</span>;
+<span class="kw">ALTER TABLE</span> staff               <span class="kw">ENABLE ROW LEVEL SECURITY</span>;
+<span class="kw">ALTER TABLE</span> guests              <span class="kw">ENABLE ROW LEVEL SECURITY</span>;
+<span class="kw">ALTER TABLE</span> orders              <span class="kw">ENABLE ROW LEVEL SECURITY</span>;
+<span class="kw">ALTER TABLE</span> menu_categories     <span class="kw">ENABLE ROW LEVEL SECURITY</span>;
+<span class="kw">ALTER TABLE</span> menu_items          <span class="kw">ENABLE ROW LEVEL SECURITY</span>;
+<span class="kw">ALTER TABLE</span> activities          <span class="kw">ENABLE ROW LEVEL SECURITY</span>;
+<span class="kw">ALTER TABLE</span> activity_time_slots <span class="kw">ENABLE ROW LEVEL SECURITY</span>;
+<span class="kw">ALTER TABLE</span> activity_bookings   <span class="kw">ENABLE ROW LEVEL SECURITY</span>;
+
+<span class="cm">-- ── MENU: guests (anon) can read available items and categories</span>
+<span class="kw">CREATE POLICY</span> anon_read_menu_categories <span class="kw">ON</span> menu_categories
+  <span class="kw">FOR SELECT TO</span> anon <span class="kw">USING</span>(is_available = <span class="nm">true</span>);
+
+<span class="kw">CREATE POLICY</span> anon_read_menu_items <span class="kw">ON</span> menu_items
+  <span class="kw">FOR SELECT TO</span> anon <span class="kw">USING</span>(is_available = <span class="nm">true</span>);
+
+<span class="kw">CREATE POLICY</span> anon_read_variants <span class="kw">ON</span> menu_item_variants
+  <span class="kw">FOR SELECT TO</span> anon <span class="kw">USING</span>(<span class="nm">true</span>);
+
+<span class="cm">-- ── ORDERS: anon can insert; read own via RPC (RPC uses service role)</span>
+<span class="kw">CREATE POLICY</span> anon_insert_orders <span class="kw">ON</span> orders
+  <span class="kw">FOR INSERT TO</span> anon <span class="kw">WITH CHECK</span>(<span class="nm">true</span>);
+
+<span class="cm">-- Authenticated staff: read all orders for their resort</span>
+<span class="kw">CREATE POLICY</span> staff_read_orders <span class="kw">ON</span> orders
+  <span class="kw">FOR SELECT TO</span> authenticated
+  <span class="kw">USING</span>(resort_id = (<span class="kw">SELECT</span> resort_id <span class="kw">FROM</span> staff
+                      <span class="kw">WHERE</span> supabase_user_id = <span class="fn">auth.uid</span>()));
+
+<span class="kw">CREATE POLICY</span> staff_update_orders <span class="kw">ON</span> orders
+  <span class="kw">FOR UPDATE TO</span> authenticated
+  <span class="kw">USING</span>(resort_id = (<span class="kw">SELECT</span> resort_id <span class="kw">FROM</span> staff
+                      <span class="kw">WHERE</span> supabase_user_id = <span class="fn">auth.uid</span>()));
+
+<span class="cm">-- ── ACTIVITIES: anon can read available; authenticated can manage</span>
+<span class="kw">CREATE POLICY</span> anon_read_activities <span class="kw">ON</span> activities
+  <span class="kw">FOR SELECT TO</span> anon <span class="kw">USING</span>(is_available = <span class="nm">true</span>);
+
+<span class="kw">CREATE POLICY</span> anon_read_slots <span class="kw">ON</span> activity_time_slots
+  <span class="kw">FOR SELECT TO</span> anon <span class="kw">USING</span>(is_active = <span class="nm">true</span>);
+
+<span class="cm">-- Anon can insert bookings (book_activity_slot RPC validates)</span>
+<span class="kw">CREATE POLICY</span> anon_insert_bookings <span class="kw">ON</span> activity_bookings
+  <span class="kw">FOR INSERT TO</span> anon <span class="kw">WITH CHECK</span>(<span class="nm">true</span>);
+
+<span class="cm">-- Staff can read + update bookings</span>
+<span class="kw">CREATE POLICY</span> staff_manage_bookings <span class="kw">ON</span> activity_bookings
+  <span class="kw">FOR ALL TO</span> authenticated <span class="kw">USING</span>(<span class="nm">true</span>);
+
+<span class="cm">-- ── ROOMS: anon can read (for room picker dropdown)</span>
+<span class="kw">CREATE POLICY</span> anon_read_rooms <span class="kw">ON</span> rooms
+  <span class="kw">FOR SELECT TO</span> anon <span class="kw">USING</span>(<span class="nm">true</span>);</pre>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- RPC FUNCTIONS -->
+  <h3 class="step-group" id="s1-rpc">Part E — RPC Functions</h3>
+
+  <div class="steps">
+    <div class="step">
+      <div class="step-num">14</div>
+      <div class="step-body">
+        <h4>create_order — atomic order placement</h4>
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">SQL</span><span class="code-label">008_rpc_create_order.sql</span></div>
+          <pre><span class="kw">CREATE OR REPLACE FUNCTION</span> <span class="fn">create_order</span>(
+  p_resort_id    <span class="nm">UUID</span>,
+  p_service_type <span class="nm">TEXT</span>,
+  p_guest_name   <span class="nm">TEXT</span>,
+  p_guest_phone  <span class="nm">TEXT</span>,
+  p_room_number  <span class="nm">TEXT DEFAULT NULL</span>,
+  p_table_number <span class="nm">TEXT DEFAULT NULL</span>,
+  p_items        <span class="nm">JSONB DEFAULT</span> <span class="st">'[]'</span>,
+  p_subtotal     <span class="nm">INTEGER DEFAULT 0</span>,
+  p_special_note <span class="nm">TEXT DEFAULT NULL</span>
+)
+<span class="kw">RETURNS JSONB LANGUAGE</span> plpgsql <span class="kw">AS</span> $$
+<span class="kw">DECLARE</span>
+  v_order_id     <span class="nm">UUID</span>;
+  v_order_number <span class="nm">TEXT</span>;
+  v_room_id      <span class="nm">UUID</span>;
+  v_table_id     <span class="nm">UUID</span>;
+  v_guest_id     <span class="nm">UUID</span>;
+<span class="kw">BEGIN</span>
+  <span class="cm">-- Resolve room and guest from room number</span>
+  <span class="kw">IF</span> p_room_number <span class="op">IS NOT NULL</span> <span class="kw">THEN</span>
+    <span class="kw">SELECT</span> r.id, r.current_guest_id
+    <span class="kw">INTO</span> v_room_id, v_guest_id
+    <span class="kw">FROM</span> rooms r
+    <span class="kw">WHERE</span> r.resort_id = p_resort_id
+      <span class="kw">AND</span> r.room_number = p_room_number;
+  <span class="kw">END IF</span>;
+
+  <span class="kw">IF</span> p_table_number <span class="op">IS NOT NULL</span> <span class="kw">THEN</span>
+    <span class="kw">SELECT</span> id <span class="kw">INTO</span> v_table_id
+    <span class="kw">FROM</span> restaurant_tables
+    <span class="kw">WHERE</span> resort_id = p_resort_id <span class="kw">AND</span> table_number = p_table_number;
+  <span class="kw">END IF</span>;
+
+  <span class="cm">-- Generate human-readable order number</span>
+  v_order_number := <span class="st">'PAN-'</span> <span class="op">||</span> <span class="fn">to_char</span>(<span class="fn">nextval</span>(<span class="st">'order_number_seq'</span>), <span class="st">'FM00000'</span>);
+
+  <span class="kw">INSERT INTO</span> orders(
+    order_number, resort_id, guest_id, room_id, table_id,
+    service_type, guest_name, guest_phone, items, subtotal, special_note
+  ) <span class="kw">VALUES</span>(
+    v_order_number, p_resort_id, v_guest_id, v_room_id, v_table_id,
+    p_service_type, p_guest_name, p_guest_phone, p_items, p_subtotal, p_special_note
+  ) <span class="kw">RETURNING</span> id <span class="kw">INTO</span> v_order_id;
+
+  <span class="kw">RETURN</span> <span class="fn">jsonb_build_object</span>(
+    <span class="st">'success'</span>, <span class="nm">true</span>,
+    <span class="st">'order_id'</span>, v_order_id,
+    <span class="st">'order_number'</span>, v_order_number
+  );
+<span class="kw">EXCEPTION WHEN OTHERS THEN</span>
+  <span class="kw">RETURN</span> <span class="fn">jsonb_build_object</span>(<span class="st">'success'</span>,<span class="nm">false</span>,<span class="st">'error'</span>,<span class="fn">SQLERRM</span>);
+<span class="kw">END</span>;
+$$;
+
+<span class="cm">-- The get_available_slots and book_activity_slot RPCs were documented</span>
+<span class="cm">-- in the Architecture Reference — copy those two functions here now.</span>
+<span class="cm">-- They are in 009_rpc_slots.sql</span></pre>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SEED DATA -->
+  <h3 class="step-group" id="s1-seed">Part F — Seed Data</h3>
+
+  <div class="steps">
+    <div class="step">
+      <div class="step-num">15</div>
+      <div class="step-body">
+        <h4>Insert the resort, rooms, tables, and initial staff</h4>
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">SQL</span><span class="code-label">010_seed_core.sql</span></div>
+          <pre><span class="cm">-- Insert Shivalaya Resorts</span>
+<span class="kw">INSERT INTO</span> resorts (name, slug)
+<span class="kw">VALUES</span> (<span class="st">'Shivalaya Resorts'</span>, <span class="st">'shivalaya-resorts'</span>)
+<span class="kw">RETURNING</span> id;  <span class="cm">-- Copy this UUID — you need it for everything below</span>
+
+<span class="cm">-- Paste the resort UUID here for the rest of the seed script</span>
+<span class="kw">DO</span> $$
+<span class="kw">DECLARE</span>
+  rid <span class="nm">UUID</span> := <span class="st">'[resort-uuid-from-above]'</span>;
+<span class="kw">BEGIN</span>
+
+  <span class="cm">-- Rooms (confirm actual room numbers with client)</span>
+  <span class="kw">INSERT INTO</span> rooms (resort_id, room_number, room_type, floor, has_balcony, sort_order)
+  <span class="kw">VALUES</span>
+    (rid, <span class="st">'101'</span>, <span class="st">'Standard'</span>,  <span class="nm">1</span>, <span class="nm">false</span>, <span class="nm">1</span>),
+    (rid, <span class="st">'102'</span>, <span class="st">'Standard'</span>,  <span class="nm">1</span>, <span class="nm">false</span>, <span class="nm">2</span>),
+    (rid, <span class="st">'201'</span>, <span class="st">'Deluxe'</span>,    <span class="nm">2</span>, <span class="nm">true</span>,  <span class="nm">3</span>),
+    (rid, <span class="st">'202'</span>, <span class="st">'Deluxe'</span>,    <span class="nm">2</span>, <span class="nm">true</span>,  <span class="nm">4</span>),
+    (rid, <span class="st">'301'</span>, <span class="st">'Suite'</span>,     <span class="nm">3</span>, <span class="nm">true</span>,  <span class="nm">5</span>),
+    (rid, <span class="st">'302'</span>, <span class="st">'Suite'</span>,     <span class="nm">3</span>, <span class="nm">true</span>,  <span class="nm">6</span>);
+  <span class="cm">-- Add all rooms confirmed by client</span>
+
+  <span class="cm">-- Restaurant tables</span>
+  <span class="kw">INSERT INTO</span> restaurant_tables (resort_id, table_number, capacity)
+  <span class="kw">VALUES</span>
+    (rid, <span class="st">'1'</span>, <span class="nm">2</span>), (rid, <span class="st">'2'</span>, <span class="nm">4</span>), (rid, <span class="st">'3'</span>, <span class="nm">4</span>),
+    (rid, <span class="st">'4'</span>, <span class="nm">6</span>), (rid, <span class="st">'5'</span>, <span class="nm">4</span>), (rid, <span class="st">'6'</span>, <span class="nm">2</span>);
+
+<span class="kw">END</span>;
+$$;</pre>
+        </div>
+        <div class="callout warn">
+          <div class="callout-icon">⚠️</div>
+          <div class="callout-body">
+            <h4>Don't guess room numbers</h4>
+            <p>Get the actual room numbers, types, and floor plan from the client before running this seed. Wrong room numbers will break the check-in form dropdown and the QR code room pre-fill.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">16</div>
+      <div class="step-body">
+        <h4>Seed all 150+ Panache menu items</h4>
+        <p>The full menu data is in <code>js/menuData.js</code> from the Phase 1 prototype. Write a migration script that converts those JS objects into SQL INSERT statements. The fastest approach:</p>
+        <ol style="margin: 10px 0 10px 20px; display:flex; flex-direction:column; gap:6px;">
+          <li style="font-size:13px;color:var(--text2)">Insert all 23 menu_categories first, capturing their UUIDs</li>
+          <li style="font-size:13px;color:var(--text2)">Insert all 150+ menu_items referencing the category UUIDs</li>
+          <li style="font-size:13px;color:var(--text2)">Insert variant groups for items with <code>has_variants=true</code> (Parathas, Dosas)</li>
+          <li style="font-size:13px;color:var(--text2)">Set <code>available_from='07:00', available_until='16:00'</code> on the Breakfast category only</li>
+        </ol>
+        <p>This seed script will be about 300 lines. Write it once, save it as <code>supabase/seed.sql</code> in the repo so it can be re-run on fresh environments.</p>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">17</div>
+      <div class="step-body">
+        <h4>Seed activities and time slots (placeholder data — update when client confirms)</h4>
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">SQL</span><span class="code-label">011_seed_activities.sql — placeholder, update with real pricing</span></div>
+          <pre><span class="kw">DO</span> $$
+<span class="kw">DECLARE</span>
+  rid     <span class="nm">UUID</span> := <span class="st">'[resort-uuid]'</span>;
+  a_bird  <span class="nm">UUID</span>;
+  a_fire  <span class="nm">UUID</span>;
+  a_hike  <span class="nm">UUID</span>;
+  a_ps5   <span class="nm">UUID</span>;
+<span class="kw">BEGIN</span>
+
+  <span class="kw">INSERT INTO</span> activities
+    (resort_id, name, short_description, pricing_type, price_per_person,
+     max_capacity_per_slot, duration_minutes, is_available, sort_order)
+  <span class="kw">VALUES</span>
+    (rid, <span class="st">'Bird Cage Experience'</span>,
+     <span class="st">'Step inside the aviary — feed, observe, and connect with rare birds'</span>,
+     <span class="st">'per_person'</span>, <span class="nm">500</span>, <span class="nm">6</span>, <span class="nm">90</span>, <span class="nm">true</span>, <span class="nm">1</span>)
+  <span class="kw">RETURNING</span> id <span class="kw">INTO</span> a_bird;
+
+  <span class="kw">INSERT INTO</span> activity_time_slots
+    (activity_id, label, start_time, end_time, days_available)
+  <span class="kw">VALUES</span>
+    (a_bird, <span class="st">'Early Morning'</span>,  <span class="st">'07:00'</span>, <span class="st">'08:30'</span>, <span class="st">'{0,1,2,3,4,5,6}'</span>),
+    (a_bird, <span class="st">'Morning Session'</span>, <span class="st">'08:30'</span>, <span class="st">'10:00'</span>, <span class="st">'{0,1,2,3,4,5,6}'</span>);
+
+  <span class="kw">INSERT INTO</span> activities
+    (resort_id, name, short_description, pricing_type, price_per_setup,
+     max_capacity_per_slot, duration_minutes, requires_balcony, is_available, sort_order)
+  <span class="kw">VALUES</span>
+    (rid, <span class="st">'Bonfire Setup'</span>,
+     <span class="st">'Cosy bonfire on your private balcony under Kumaon stars'</span>,
+     <span class="st">'per_setup'</span>, <span class="nm">1200</span>, <span class="nm">3</span>, <span class="nm">180</span>, <span class="nm">true</span>, <span class="nm">true</span>, <span class="nm">2</span>)
+  <span class="kw">RETURNING</span> id <span class="kw">INTO</span> a_fire;
+
+  <span class="kw">INSERT INTO</span> activity_time_slots (activity_id, label, start_time, end_time)
+  <span class="kw">VALUES</span>
+    (a_fire, <span class="st">'Evening Setup'</span>, <span class="st">'18:00'</span>, <span class="st">'21:00'</span>);
+
+  <span class="cm">-- PS5 Gaming — per session, open all day</span>
+  <span class="kw">INSERT INTO</span> activities
+    (resort_id, name, short_description, pricing_type, price_per_session,
+     max_capacity_per_slot, duration_minutes, is_available, sort_order)
+  <span class="kw">VALUES</span>
+    (rid, <span class="st">'PS5 Gaming Session'</span>,
+     <span class="st">'60 minutes of gaming on the latest PlayStation — FIFA, GTA, and more'</span>,
+     <span class="st">'per_session'</span>, <span class="nm">800</span>, <span class="nm">2</span>, <span class="nm">60</span>, <span class="nm">true</span>, <span class="nm">5</span>)
+  <span class="kw">RETURNING</span> id <span class="kw">INTO</span> a_ps5;
+
+  <span class="kw">INSERT INTO</span> activity_time_slots (activity_id, label, start_time, end_time)
+  <span class="kw">VALUES</span>
+    (a_ps5, <span class="st">'Morning'</span>,   <span class="st">'09:00'</span>, <span class="st">'10:00'</span>),
+    (a_ps5, <span class="st">'Afternoon'</span>, <span class="st">'12:00'</span>, <span class="st">'13:00'</span>),
+    (a_ps5, <span class="st">'Afternoon'</span>, <span class="st">'14:00'</span>, <span class="st">'15:00'</span>),
+    (a_ps5, <span class="st">'Evening'</span>,   <span class="st">'16:00'</span>, <span class="st">'17:00'</span>),
+    (a_ps5, <span class="st">'Evening'</span>,   <span class="st">'18:00'</span>, <span class="st">'19:00'</span>);
+<span class="kw">END</span>;
+$$;</pre>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TESTING S1 -->
+  <h3 class="step-group" id="s1-test">Part G — Sprint 1 Testing</h3>
+
+  <div class="test-sequence">
+    <h4>🧪 Sprint 1 Test Sequence — run all before proceeding</h4>
+    <div class="test-item"><span class="test-n">T1</span><div class="test-desc">In SQL Editor: <code>SELECT * FROM resorts</code> — should return 1 row for Shivalaya Resorts</div></div>
+    <div class="test-item"><span class="test-n">T2</span><div class="test-desc">In SQL Editor: <code>SELECT COUNT(*) FROM menu_items</code> — should return 150+</div></div>
+    <div class="test-item"><span class="test-n">T3</span><div class="test-desc">In SQL Editor: <code>SELECT * FROM get_available_slots('[bird-cage-uuid]', CURRENT_DATE)</code> — should return 2 slot rows with remaining_capacity = 6</div></div>
+    <div class="test-item"><span class="test-n">T4</span><div class="test-desc">In SQL Editor: test the concurrency function — call <code>book_activity_slot()</code> twice for the same slot with 4 guests each (max 6). First call returns success. Second returns <code>SLOT_FULL</code>.</div></div>
+    <div class="test-item"><span class="test-n">T5</span><div class="test-desc">In SQL Editor: call <code>create_order()</code> — should return <code>&#123;success: true, order_number: 'PAN-00001'&#125;</code></div></div>
+    <div class="test-item"><span class="test-n">T6</span><div class="test-desc">In Supabase Dashboard → Database → Replication — verify orders and activity_bookings have Realtime enabled (green checkmark)</div></div>
+    <div class="test-item"><span class="test-n">T7</span><div class="test-desc">Query <code>guest_folio</code> view after inserting a test order and test booking — should see both rows with correct amounts</div></div>
+    <div class="test-item"><span class="test-n">T8</span><div class="test-desc">Verify RLS: using the anon key in Supabase client, try to read from <code>guests</code> table directly — should return 0 rows (RLS blocks it)</div></div>
+  </div>
+
+  <div class="unlock-box">
+    <h4>Sprint 1 Unlocks</h4>
+    <ul>
+      <li>Sprint 2 — Guest Portal can now connect to real menu data</li>
+      <li>Sprint 3 — Kitchen Panel can subscribe to real order events</li>
+      <li>Sprint 4 — Reception can read rooms and create guests</li>
+      <li>Sprint 5 — Activities module has its full schema ready</li>
+      <li>Sprint 6 — WhatsApp triggers have the database hooks available</li>
+    </ul>
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════════════
+     SPRINT 2 — GUEST PORTAL FOOD ORDERING
+     ═══════════════════════════════════════════════════ -->
+<section class="sprint" id="sprint2" style="--accent:var(--s2l);--num-bg:var(--s2p)">
+  <div class="sprint-banner sb2">
+    <span class="sprint-num sn2">Sprint 2</span>
+    <div class="banner-text">
+      <h2>Shivalaya Guest Portal — Food Ordering</h2>
+      <p>Vite + React setup · Menu fetching + time-gating · Cart · Order submission · Live tracking</p>
+    </div>
+    <div class="banner-meta">
+      <div class="banner-days" style="color:var(--s2l)">4 days</div>
+      <div class="banner-unlock">Unlocks: End-to-end food ordering flow</div>
+    </div>
+  </div>
+
+  <p class="body-text">Sprint 2 transforms the HTML prototype into a live React app that reads real menu data from Supabase, submits real orders, and shows real-time status tracking. The UI is already designed — you're wiring it to the backend built in Sprint 1.</p>
+
+  <h3 class="step-group" id="s2-setup">Part A — Project Setup</h3>
+
+  <div class="steps">
+    <div class="step">
+      <div class="step-num">1</div>
+      <div class="step-body">
+        <h4>Create the monorepo structure</h4>
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">BASH</span></div>
+          <pre><span class="cm"># Root monorepo (all three apps live here)</span>
+mkdir shivalaya-platform && cd shivalaya-platform
+mkdir -p apps/guest-portal apps/kitchen-panel apps/resort-reception
+mkdir -p packages/shared-types supabase/functions
+
+<span class="cm"># Initialize each app with Vite + React + TypeScript</span>
+cd apps/guest-portal
+npm create vite@latest . -- --template react-ts
+npm install @supabase/supabase-js zustand react-router-dom
+npm install -D tailwindcss postcss autoprefixer
+npx tailwindcss init -p
+
+<span class="cm"># Create .env.local in apps/guest-portal/</span>
+echo "VITE_SUPABASE_URL=https://[ref].supabase.co" >> .env.local
+echo "VITE_SUPABASE_ANON_KEY=[anon-key]"          >> .env.local
+echo "VITE_RESORT_ID=[resort-uuid-from-seed]"     >> .env.local</pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">2</div>
+      <div class="step-body">
+        <h4>Create the Supabase client singleton</h4>
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">TypeScript</span><span class="code-label">src/lib/supabase.ts — shared by all components</span></div>
+          <pre><span class="kw">import</span> { createClient } <span class="kw">from</span> <span class="st">'@supabase/supabase-js'</span>
+
+<span class="kw">export const</span> supabase = <span class="fn">createClient</span>(
+  <span class="kw">import</span>.meta.env.VITE_SUPABASE_URL,
+  <span class="kw">import</span>.meta.env.VITE_SUPABASE_ANON_KEY
+)
+
+<span class="kw">export const</span> RESORT_ID = <span class="kw">import</span>.meta.env.VITE_RESORT_ID</pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">3</div>
+      <div class="step-body">
+        <h4>Set up React Router with all routes</h4>
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">TypeScript</span><span class="code-label">src/App.tsx</span></div>
+          <pre><span class="kw">import</span> { BrowserRouter, Routes, Route } <span class="kw">from</span> <span class="st">'react-router-dom'</span>
+<span class="kw">import</span> LandingPage     <span class="kw">from</span> <span class="st">'./pages/LandingPage'</span>
+<span class="kw">import</span> MenuPage        <span class="kw">from</span> <span class="st">'./pages/MenuPage'</span>
+<span class="kw">import</span> OrderTrack      <span class="kw">from</span> <span class="st">'./pages/OrderTrack'</span>
+<span class="kw">import</span> ExperiencesPage <span class="kw">from</span> <span class="st">'./pages/ExperiencesPage'</span>
+
+<span class="kw">export default function</span> <span class="fn">App</span>() {
+  <span class="kw">return</span> (
+    &lt;BrowserRouter&gt;
+      &lt;Routes&gt;
+        &lt;Route path=<span class="st">"/"</span>         element={&lt;LandingPage /&gt;}  /&gt;
+        &lt;Route path=<span class="st">"/menu"</span>     element={&lt;MenuPage /&gt;}    /&gt;
+        &lt;Route path=<span class="st">"/order/:id"</span> element={&lt;OrderTrack /&gt;}  /&gt;
+        &lt;Route path=<span class="st">"/experiences"</span> element={&lt;ExperiencesPage /&gt;} /&gt;
+      &lt;/Routes&gt;
+    &lt;/BrowserRouter&gt;
+  )
+}</pre>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <h3 class="step-group" id="s2-menu">Part B — Menu Fetching with Time-Gating</h3>
+
+  <div class="steps">
+    <div class="step">
+      <div class="step-num">4</div>
+      <div class="step-body">
+        <h4>Build the useMenu hook — fetches categories + items with time-gating</h4>
+        <p>The time-gate check is done in the frontend, not the database. The database stores <code>available_from</code> and <code>available_until</code> on each category. The frontend fetches all categories and filters at render time based on the current hour. This means if a guest opens the menu at 3:59 PM, Breakfast shows. At 4:00 PM it disappears. No server round-trip needed for the hide/show toggle.</p>
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">TypeScript</span><span class="code-label">src/hooks/useMenu.ts</span></div>
+          <pre><span class="kw">import</span> { useEffect, useState } <span class="kw">from</span> <span class="st">'react'</span>
+<span class="kw">import</span> { supabase, RESORT_ID } <span class="kw">from</span> <span class="st">'../lib/supabase'</span>
+
+<span class="kw">export function</span> <span class="fn">useMenu</span>() {
+  <span class="kw">const</span> [categories, setCategories] = <span class="fn">useState</span>([])
+  <span class="kw">const</span> [items, setItems]           = <span class="fn">useState</span>([])
+  <span class="kw">const</span> [loading, setLoading]       = <span class="fn">useState</span>(<span class="nm">true</span>)
+
+  <span class="fn">useEffect</span>(<span class="kw">async</span> () => {
+    <span class="cm">// Fetch categories</span>
+    <span class="kw">const</span> { data: cats } = <span class="kw">await</span> supabase
+      .from(<span class="st">'menu_categories'</span>)
+      .select(<span class="st">'*'</span>)
+      .eq(<span class="st">'resort_id'</span>, RESORT_ID)
+      .eq(<span class="st">'is_available'</span>, <span class="nm">true</span>)
+      .order(<span class="st">'sort_order'</span>)
+
+    <span class="cm">// Fetch all items</span>
+    <span class="kw">const</span> { data: menuItems } = <span class="kw">await</span> supabase
+      .from(<span class="st">'menu_items'</span>)
+      .select(<span class="st">'*'</span>)
+      .eq(<span class="st">'resort_id'</span>, RESORT_ID)
+      .eq(<span class="st">'is_available'</span>, <span class="nm">true</span>)
+      .order(<span class="st">'sort_order'</span>)
+
+    <span class="cm">// Time-gate: filter categories by current time</span>
+    <span class="kw">const</span> now = <span class="kw">new</span> <span class="fn">Date</span>()
+    <span class="kw">const</span> currentMinutes = now.<span class="fn">getHours</span>() * <span class="nm">60</span> + now.<span class="fn">getMinutes</span>()
+
+    <span class="kw">const</span> <span class="fn">toMinutes</span> = (t: string | null) => {
+      <span class="kw">if</span> (!t) <span class="kw">return null</span>
+      <span class="kw">const</span> [h, m] = t.split(<span class="st">':'</span>).map(Number)
+      <span class="kw">return</span> h * <span class="nm">60</span> + m
+    }
+
+    <span class="kw">const</span> activeCats = (cats ?? []).filter(cat => {
+      <span class="kw">const</span> from  = <span class="fn">toMinutes</span>(cat.available_from)
+      <span class="kw">const</span> until = <span class="fn">toMinutes</span>(cat.available_until)
+      <span class="cm">// No time restriction = always available</span>
+      <span class="kw">if</span> (!from || !until) <span class="kw">return true</span>
+      <span class="kw">return</span> currentMinutes >= from && currentMinutes < until
+    })
+
+    <span class="fn">setCategories</span>(activeCats)
+    <span class="fn">setItems</span>(menuItems ?? [])
+    <span class="fn">setLoading</span>(<span class="nm">false</span>)
+  }, [])
+
+  <span class="cm">// Re-check time-gate every 5 minutes</span>
+  <span class="fn">useEffect</span>(() => {
+    <span class="kw">const</span> interval = <span class="fn">setInterval</span>(() => {
+      <span class="cm">// Trigger a re-render to re-apply time-gate</span>
+      <span class="fn">setCategories</span>(prev => [...prev])
+    }, <span class="nm">5</span> * <span class="nm">60</span> * <span class="nm">1000</span>)
+    <span class="kw">return</span> () => <span class="fn">clearInterval</span>(interval)
+  }, [])
+
+  <span class="kw">return</span> { categories, items, loading }
+}</pre>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <h3 class="step-group" id="s2-cart">Part C — Cart State + Variant Picker</h3>
+
+  <div class="steps">
+    <div class="step">
+      <div class="step-num">5</div>
+      <div class="step-body">
+        <h4>Zustand cart store</h4>
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">TypeScript</span><span class="code-label">src/store/useCart.ts</span></div>
+          <pre><span class="kw">import</span> { create } <span class="kw">from</span> <span class="st">'zustand'</span>
+
+<span class="kw">interface</span> CartItem {
+  id: string; name: string; price: number
+  qty: number; variant_label?: string
+}
+
+<span class="kw">interface</span> CartStore {
+  items: CartItem[]
+  add: (item: CartItem) => void
+  remove: (id: string, variantLabel?: string) => void
+  clear: () => void
+  total: () => number
+  count: () => number
+}
+
+<span class="kw">export const</span> useCart = <span class="fn">create</span>&lt;CartStore&gt;((set, get) => ({
+  items: [],
+
+  add: (newItem) => <span class="fn">set</span>(state => {
+    <span class="kw">const</span> existing = state.items.find(
+      i => i.id === newItem.id && i.variant_label === newItem.variant_label
+    )
+    <span class="kw">if</span> (existing) {
+      <span class="kw">return</span> { items: state.items.map(i =>
+        i.id === newItem.id && i.variant_label === newItem.variant_label
+          ? { ...i, qty: i.qty + <span class="nm">1</span> }
+          : i
+      )}
+    }
+    <span class="kw">return</span> { items: [...state.items, { ...newItem, qty: <span class="nm">1</span> }] }
+  }),
+
+  remove: (id, variantLabel) => <span class="fn">set</span>(state => ({
+    items: state.items
+      .map(i => i.id === id && i.variant_label === variantLabel
+        ? { ...i, qty: i.qty - <span class="nm">1</span> } : i)
+      .filter(i => i.qty > <span class="nm">0</span>)
+  })),
+
+  clear: () => <span class="fn">set</span>({ items: [] }),
+  total: () => <span class="fn">get</span>().items.reduce((s,i) => s + i.price * i.qty, <span class="nm">0</span>),
+  count: () => <span class="fn">get</span>().items.reduce((s,i) => s + i.qty, <span class="nm">0</span>),
+}))</pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">6</div>
+      <div class="step-body">
+        <h4>Variant picker — blocks Add until selection is made</h4>
+        <p>When a guest taps "Add" on a Paratha or Dosa, the variant picker bottom sheet opens. It fetches variants for that item on-demand (only items with <code>has_variants=true</code>). The "Add to Cart" button inside the picker is disabled until a variant is selected. This prevents any order going to the kitchen without the stuffing/dosa choice.</p>
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">TypeScript</span><span class="code-label">src/components/VariantPicker.tsx — key logic</span></div>
+          <pre><span class="kw">const</span> <span class="fn">fetchVariants</span> = <span class="kw">async</span> (itemId: string) => {
+  <span class="kw">const</span> { data } = <span class="kw">await</span> supabase
+    .from(<span class="st">'menu_item_variants'</span>)
+    .select(<span class="st">'*'</span>)
+    .eq(<span class="st">'item_id'</span>, itemId)
+    .order(<span class="st">'sort_order'</span>)
+  <span class="kw">return</span> data ?? []
+}
+
+<span class="cm">// In the component:</span>
+<span class="cm">// - Show variants grouped by group_label</span>
+<span class="cm">// - Single selection per group (radio button style)</span>
+<span class="cm">// - "Add to Cart" button: disabled until all groups have a selection</span>
+<span class="cm">// - On confirm: cart.add({ ...item, variant_label: selectedOption.option_name })</span></pre>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <h3 class="step-group" id="s2-order">Part D — Order Submission</h3>
+
+  <div class="steps">
+    <div class="step">
+      <div class="step-num">7</div>
+      <div class="step-body">
+        <h4>Call the create_order RPC on checkout confirmation</h4>
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">TypeScript</span><span class="code-label">src/hooks/useOrder.ts</span></div>
+          <pre"><span class="kw">import</span> { supabase, RESORT_ID } <span class="kw">from</span> <span class="st">'../lib/supabase'</span>
+<span class="kw">import</span> { useCart } <span class="kw">from</span> <span class="st">'../store/useCart'</span>
+<span class="kw">import</span> { useNavigate } <span class="kw">from</span> <span class="st">'react-router-dom'</span>
+
+<span class="kw">export function</span> <span class="fn">usePlaceOrder</span>() {
+  <span class="kw">const</span> cart     = <span class="fn">useCart</span>()
+  <span class="kw">const</span> navigate = <span class="fn">useNavigate</span>()
+
+  <span class="kw">return async</span> (formData: {
+    guestName: string, guestPhone: string,
+    serviceType: string, roomNumber?: string,
+    tableNumber?: string, specialNote?: string
+  }) => {
+    <span class="kw">const</span> items = cart.items.map(i => ({
+      id: i.id, name: i.name, qty: i.qty,
+      price: i.price, variant_label: i.variant_label
+    }))
+
+    <span class="kw">const</span> { data, error } = <span class="kw">await</span> supabase.rpc(<span class="st">'create_order'</span>, {
+      p_resort_id:    RESORT_ID,
+      p_service_type: formData.serviceType,
+      p_guest_name:   formData.guestName,
+      p_guest_phone:  formData.guestPhone,
+      p_room_number:  formData.roomNumber ?? null,
+      p_table_number: formData.tableNumber ?? null,
+      p_items:        items,
+      p_subtotal:     cart.total(),
+      p_special_note: formData.specialNote ?? null,
+    })
+
+    <span class="kw">if</span> (error || !data?.success) {
+      <span class="kw">return</span> { success: <span class="nm">false</span>, error: error?.message || data?.error }
+    }
+
+    cart.clear()
+
+    <span class="cm">// Save guest info to session so it pre-fills on next order</span>
+    <span class="fn">sessionStorage.setItem</span>(<span class="st">'guestName'</span>,  formData.guestName)
+    <span class="fn">sessionStorage.setItem</span>(<span class="st">'guestPhone'</span>, formData.guestPhone)
+    <span class="kw">if</span> (formData.roomNumber)
+      <span class="fn">sessionStorage.setItem</span>(<span class="st">'roomNumber'</span>, formData.roomNumber)
+
+    <span class="cm">// Navigate to the real-time tracking page</span>
+    <span class="fn">navigate</span>(`/order/${data.order_id}`, {
+      state: { orderNumber: data.order_number }
+    })
+
+    <span class="kw">return</span> { success: <span class="nm">true</span>, orderId: data.order_id }
+  }
+}</pre>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <h3 class="step-group" id="s2-track">Part E — Live Order Tracking Page</h3>
+
+  <div class="steps">
+    <div class="step">
+      <div class="step-num">8</div>
+      <div class="step-body">
+        <h4>The /order/:id page — subscribes to real-time status updates</h4>
+        <p>This page is what makes the system feel magical to the guest. They see their order status change live on their phone without refreshing. The tracker moves from "Received" → "Confirmed" → "Preparing" → "Ready" as the kitchen updates the status in the Kitchen Panel.</p>
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">TypeScript</span><span class="code-label">src/pages/OrderTrack.tsx — real-time subscription</span></div>
+          <pre><span class="kw">import</span> { useEffect, useState } <span class="kw">from</span> <span class="st">'react'</span>
+<span class="kw">import</span> { useParams } <span class="kw">from</span> <span class="st">'react-router-dom'</span>
+<span class="kw">import</span> { supabase } <span class="kw">from</span> <span class="st">'../lib/supabase'</span>
+
+<span class="kw">const</span> STATUS_STEPS = [
+  { key: <span class="st">'new'</span>,       label: <span class="st">'Order Received'</span>,  icon: <span class="st">'✓'</span>  },
+  { key: <span class="st">'confirmed'</span>, label: <span class="st">'Confirmed'</span>,       icon: <span class="st">'👍'</span> },
+  { key: <span class="st">'preparing'</span>, label: <span class="st">'Preparing'</span>,       icon: <span class="st">'🍳'</span> },
+  { key: <span class="st">'ready'</span>,     label: <span class="st">'Ready!'</span>,           icon: <span class="st">'✅'</span> },
+]
+
+<span class="kw">export default function</span> <span class="fn">OrderTrack</span>() {
+  <span class="kw">const</span> { id } = <span class="fn">useParams</span>()
+  <span class="kw">const</span> [order, setOrder] = <span class="fn">useState</span>(null)
+
+  <span class="fn">useEffect</span>(() => {
+    <span class="cm">// Initial fetch</span>
+    supabase.from(<span class="st">'orders'</span>).select(<span class="st">'*'</span>).eq(<span class="st">'id'</span>, id).single()
+      .then(({ data }) => <span class="fn">setOrder</span>(data))
+
+    <span class="cm">// Real-time subscription: only this specific order</span>
+    <span class="kw">const</span> channel = supabase
+      .channel(`order_track_${id}`)
+      .on(
+        <span class="st">'postgres_changes'</span>,
+        { event: <span class="st">'UPDATE'</span>, schema: <span class="st">'public'</span>, table: <span class="st">'orders'</span>,
+          filter: `id=eq.${id}` },
+        (payload) => {
+          <span class="fn">setOrder</span>(payload.new)
+          <span class="cm">// If status is 'ready', show a vibration on mobile</span>
+          <span class="kw">if</span> (payload.new.status === <span class="st">'ready'</span> && navigator.vibrate) {
+            navigator.<span class="fn">vibrate</span>([<span class="nm">200</span>, <span class="nm">100</span>, <span class="nm">200</span>])
+          }
+        }
+      )
+      .subscribe()
+
+    <span class="kw">return</span> () => supabase.<span class="fn">removeChannel</span>(channel)
+  }, [id])
+
+  <span class="cm">// Render tracker UI using order.status to determine active step</span>
+  <span class="kw">const</span> currentIndex = STATUS_STEPS.<span class="fn">findIndex</span>(s => s.key === order?.status)
+  <span class="cm">// Each step before currentIndex = 'done', currentIndex = 'active', after = 'pending'</span>
+}</pre>
+        </div>
+        <div class="callout ok">
+          <div class="callout-icon">📳</div>
+          <div class="callout-body">
+            <h4>Mobile vibration on Ready</h4>
+            <p>When <code>status === 'ready'</code>, call <code>navigator.vibrate([200, 100, 200])</code>. This vibrates the guest's phone with a double-pulse pattern when their food is ready. No app install required — it's a standard Web API. Works on Android Chrome. No vibration on iOS (Apple doesn't expose this API), but the visual tracker update is enough.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <h3 class="step-group" id="s2-qr">Part F — QR Code URL Param Reading + Session Pre-fill</h3>
+
+  <div class="steps">
+    <div class="step">
+      <div class="step-num">9</div>
+      <div class="step-body">
+        <h4>Read room/table from URL, save to session, pre-fill on checkout</h4>
+        <p>This is the "smart QR" system. A room's QR contains <code>?room=302</code>. A table QR contains <code>?table=5&type=dine_in</code>. When the guest lands on the landing page, the app reads these params, stores them, and the checkout form auto-fills without the guest typing anything.</p>
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">TypeScript</span><span class="code-label">src/hooks/useQRSession.ts — runs on app mount</span></div>
+          <pre><span class="kw">import</span> { useEffect } <span class="kw">from</span> <span class="st">'react'</span>
+
+<span class="kw">export function</span> <span class="fn">useQRSession</span>() {
+  <span class="fn">useEffect</span>(() => {
+    <span class="kw">const</span> params = <span class="kw">new</span> <span class="fn">URLSearchParams</span>(window.location.search)
+    <span class="kw">const</span> room   = params.<span class="fn">get</span>(<span class="st">'room'</span>)
+    <span class="kw">const</span> table  = params.<span class="fn">get</span>(<span class="st">'table'</span>)
+    <span class="kw">const</span> type   = params.<span class="fn">get</span>(<span class="st">'type'</span>)
+
+    <span class="kw">if</span> (room)  <span class="fn">sessionStorage.setItem</span>(<span class="st">'qr_room'</span>,  room)
+    <span class="kw">if</span> (table) <span class="fn">sessionStorage.setItem</span>(<span class="st">'qr_table'</span>, table)
+    <span class="kw">if</span> (type)  <span class="fn">sessionStorage.setItem</span>(<span class="st">'qr_type'</span>,  type)
+  }, [])
+}
+
+<span class="cm">// In the checkout form component, pre-fill from session:</span>
+<span class="cm">// const roomNumber    = sessionStorage.getItem('qr_room')  || ''</span>
+<span class="cm">// const tableNumber   = sessionStorage.getItem('qr_table') || ''</span>
+<span class="cm">// const serviceType   = sessionStorage.getItem('qr_type')  || 'dine_in'</span>
+<span class="cm">// Also pre-fill guestName/guestPhone from previous order in session</span></pre>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <h3 class="step-group" id="s2-deploy">Part G — Deploy to Vercel</h3>
+
+  <div class="steps">
+    <div class="step">
+      <div class="step-num">10</div>
+      <div class="step-body">
+        <h4>Deploy Guest Portal to Vercel</h4>
+        <ul>
+          <li>Push code to GitHub repo (private): <code>asvextech/shivalaya-platform</code></li>
+          <li>Connect Vercel to GitHub. Create new Vercel project. Root directory: <code>apps/guest-portal</code></li>
+          <li>Add environment variables in Vercel dashboard (same as <code>.env.local</code>)</li>
+          <li>Deploy. Vercel gives a preview URL: <code>shivalaya-guest-portal.vercel.app</code></li>
+          <li>Test the full flow on this preview URL. Share with client for review.</li>
+          <li>Custom domain configured in Sprint 6: <code>order.shivalayaresorts.com</code></li>
+        </ul>
+        <div class="callout warn">
+          <div class="callout-icon">⚠️</div>
+          <div class="callout-body">
+            <h4>Mobile testing is mandatory before showing the client</h4>
+            <p>Open the Vercel preview URL on a real Android phone. Test: QR scan flow, menu scrolling, variant picker, cart, checkout, order tracking. The prototype looked good on desktop — the live app must be tested on a 375px viewport with real touch events. Fix any layout issues before the client demo.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="test-sequence">
+    <h4>🧪 Sprint 2 Test Sequence</h4>
+    <div class="test-item"><span class="test-n">T1</span><div class="test-desc">Open menu page — confirm all 23 sections load with real items from Supabase (not mock data)</div></div>
+    <div class="test-item"><span class="test-n">T2</span><div class="test-desc">Before 7 AM or after 4 PM: open menu — Breakfast section should NOT appear. Between those hours: should appear.</div></div>
+    <div class="test-item"><span class="test-n">T3</span><div class="test-desc">Add a Paratha item — variant picker should appear and block checkout until stuffing is selected</div></div>
+    <div class="test-item"><span class="test-n">T4</span><div class="test-desc">Complete a checkout — check Supabase Dashboard → Table Editor → orders table — new row should appear with status='new'</div></div>
+    <div class="test-item"><span class="test-n">T5</span><div class="test-desc">Open /order/[uuid] — manually update the order status in Supabase SQL Editor (<code>UPDATE orders SET status='confirmed'</code>) — tracking page should update live without refresh</div></div>
+    <div class="test-item"><span class="test-n">T6</span><div class="test-desc">Open <code>[vercel-url]?room=302</code> → go to menu → checkout form → Room Number field should pre-fill with "302"</div></div>
+    <div class="test-item"><span class="test-n">T7</span><div class="test-desc">Test on real mobile (Android Chrome) — every interaction should work touch-correctly, no layout overflow</div></div>
+  </div>
+
+  <div class="unlock-box">
+    <h4>Sprint 2 Unlocks</h4>
+    <ul>
+      <li>Sprint 3 — Kitchen Panel can now receive real orders and test the Realtime subscription with real data</li>
+      <li>Sprint 5 — /experiences page is added to the same React app, same router</li>
+      <li>Client demo — the Guest Portal is now ready to show to Vikas sir</li>
+    </ul>
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════════════
+     SPRINT 3 — KITCHEN PANEL
+     ═══════════════════════════════════════════════════ -->
+<section class="sprint" id="sprint3" style="--accent:var(--s3l);--num-bg:var(--s3p)">
+  <div class="sprint-banner sb3">
+    <span class="sprint-num sn3">Sprint 3</span>
+    <div class="banner-text">
+      <h2>Panache Kitchen Panel</h2>
+      <p>PIN login · Real-time order queue · KOT view · Sound alerts · Status management</p>
+    </div>
+    <div class="banner-meta">
+      <div class="banner-days" style="color:var(--s3l)">3 days</div>
+      <div class="banner-unlock">Unlocks: Full food ordering end-to-end</div>
+    </div>
+  </div>
+
+  <p class="body-text">The Kitchen Panel is the simplest of the three apps in features but the most demanding in real-time reliability. If it misses a new order notification, food is delayed and a guest is unhappy. Every architectural decision here prioritizes that a new order always appears, always fast, and never silently fails.</p>
+
+  <h3 class="step-group" id="s3-auth">Part A — PIN Login System</h3>
+
+  <div class="steps">
+    <div class="step">
+      <div class="step-num">1</div>
+      <div class="step-body">
+        <h4>Create Supabase Auth users for kitchen staff and link to staff table</h4>
+        <p>Kitchen staff don't type emails. They select their profile from a grid (like Netflix) and type a 4-digit PIN. Behind the scenes, each staff member has a real Supabase Auth user account — this is what the Realtime RLS policies validate against. The PIN login flow works by:</p>
+        <ol style="margin: 10px 0 10px 20px; display:flex; flex-direction:column; gap:6px;">
+          <li style="font-size:13px;color:var(--text2)">Guest selects "Main Kitchen" profile on screen</li>
+          <li style="font-size:13px;color:var(--text2)">Types 4-digit PIN</li>
+          <li style="font-size:13px;color:var(--text2)">App calls an RPC function <code>verify_staff_pin(staff_id, pin)</code></li>
+          <li style="font-size:13px;color:var(--text2)">RPC checks bcrypt hash: <code>crypt(pin, pin_hash) = pin_hash</code></li>
+          <li style="font-size:13px;color:var(--text2)">If valid: RPC calls <code>supabase.auth.signInWithPassword</code> using the staff's linked email/password (stored securely by you, never shown)</li>
+          <li style="font-size:13px;color:var(--text2)">Session is established. All subsequent Supabase calls use this session — RLS policies allow kitchen staff access to orders.</li>
+        </ol>
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">SQL</span><span class="code-label">Create staff users and set PIN hashes (run once)</span></div>
+          <pre><span class="cm">-- Use pgcrypto to hash PINs — never store plain text</span>
+<span class="cm">-- Staff PIN "1234" → hash it before storing</span>
+<span class="kw">UPDATE</span> staff
+<span class="kw">SET</span> pin_hash = <span class="fn">crypt</span>(<span class="st">'1234'</span>, <span class="fn">gen_salt</span>(<span class="st">'bf'</span>))
+<span class="kw">WHERE</span> name = <span class="st">'Main Kitchen'</span>;
+
+<span class="cm">-- Verify PIN function (called from frontend)</span>
+<span class="kw">CREATE OR REPLACE FUNCTION</span> <span class="fn">verify_staff_pin</span>(
+  p_staff_id <span class="nm">UUID</span>,
+  p_pin      <span class="nm">TEXT</span>
+)
+<span class="kw">RETURNS JSONB LANGUAGE</span> plpgsql <span class="kw">SECURITY DEFINER AS</span> $$
+<span class="kw">DECLARE</span>
+  v_staff staff%ROWTYPE;
+<span class="kw">BEGIN</span>
+  <span class="kw">SELECT</span> * <span class="kw">INTO</span> v_staff <span class="kw">FROM</span> staff <span class="kw">WHERE</span> id = p_staff_id;
+
+  <span class="kw">IF NOT FOUND OR NOT</span> v_staff.is_active <span class="kw">THEN</span>
+    <span class="kw">RETURN</span> <span class="fn">jsonb_build_object</span>(<span class="st">'valid'</span>, <span class="nm">false</span>);
+  <span class="kw">END IF</span>;
+
+  <span class="kw">IF</span> v_staff.pin_hash = <span class="fn">crypt</span>(p_pin, v_staff.pin_hash) <span class="kw">THEN</span>
+    <span class="kw">RETURN</span> <span class="fn">jsonb_build_object</span>(
+      <span class="st">'valid'</span>,  <span class="nm">true</span>,
+      <span class="st">'name'</span>,   v_staff.name,
+      <span class="st">'role'</span>,   v_staff.role,
+      <span class="st">'email'</span>,  v_staff.supabase_email   <span class="cm">-- used to sign in via Auth</span>
+    );
+  <span class="kw">ELSE</span>
+    <span class="kw">RETURN</span> <span class="fn">jsonb_build_object</span>(<span class="st">'valid'</span>, <span class="nm">false</span>);
+  <span class="kw">END IF</span>;
+<span class="kw">END</span>;
+$$;</pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">2</div>
+      <div class="step-body">
+        <h4>Login page — profile grid + PIN keypad</h4>
+        <p>Design: dark background (kitchen panels are often viewed in bright kitchens — dark UI with high contrast reduces eye strain). Profile cards show name and role. PIN keypad is large-touch (44px minimum target) for greasy hands. Three wrong PIN attempts → 30 second lockout, then they can try again.</p>
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">TypeScript</span><span class="code-label">src/pages/LoginPage.tsx — PIN verification flow</span></div>
+          <pre><span class="kw">const</span> <span class="fn">handlePinSubmit</span> = <span class="kw">async</span> (pin: string) => {
+  <span class="kw">const</span> { data } = <span class="kw">await</span> supabase.rpc(<span class="st">'verify_staff_pin'</span>, {
+    p_staff_id: selectedStaff.id,
+    p_pin:      pin
+  })
+
+  <span class="kw">if</span> (!data?.valid) {
+    <span class="fn">setAttempts</span>(a => a + <span class="nm">1</span>)
+    <span class="kw">if</span> (attempts >= <span class="nm">2</span>) <span class="fn">setLockedUntil</span>(<span class="kw">new</span> <span class="fn">Date</span>(Date.now() + <span class="nm">30000</span>))
+    <span class="fn">shakeKeypad</span>()
+    <span class="kw">return</span>
+  }
+
+  <span class="cm">// Valid PIN — sign in with the staff's linked Supabase Auth account</span>
+  <span class="kw">await</span> supabase.auth.<span class="fn">signInWithPassword</span>({
+    email:    data.email,
+    password: <span class="fn">getStaffSystemPassword</span>(selectedStaff.id) <span class="cm">// stored as env var</span>
+  })
+
+  <span class="cm">// Save staff info to localStorage for session display</span>
+  <span class="fn">localStorage.setItem</span>(<span class="st">'staffName'</span>, data.name)
+  <span class="fn">localStorage.setItem</span>(<span class="st">'staffRole'</span>, data.role)
+
+  navigate(<span class="st">'/'</span>) <span class="cm">// → dashboard</span>
+}</pre>
+        </div>
+        <div class="callout info">
+          <div class="callout-icon">🔒</div>
+          <div class="callout-body">
+            <h4>Staff system passwords</h4>
+            <p>Each staff member's Supabase Auth account has a long random password set by you (e.g., <code>sh1v@laya_k1tch3n_2026!</code>). These are stored as environment variables in the Vercel kitchen panel deployment — <strong>not</strong> in the database or frontend code. The PIN is just the user-facing authentication layer; the real authentication is Supabase Auth under the hood.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <h3 class="step-group" id="s3-queue">Part B — Order Queue UI</h3>
+
+  <div class="steps">
+    <div class="step">
+      <div class="step-num">3</div>
+      <div class="step-body">
+        <h4>Three-column layout: New | In Progress | Ready</h4>
+        <p>On page load, fetch all today's active orders as the initial state. Then subscribe to Realtime for live updates. The initial fetch ensures orders placed before this session opened are visible — critical if the kitchen PC is restarted mid-service.</p>
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">TypeScript</span><span class="code-label">src/hooks/useOrders.ts — initial load + realtime subscription</span></div>
+          <pre"><span class="kw">export function</span> <span class="fn">useOrders</span>() {
+  <span class="kw">const</span> [orders, setOrders] = <span class="fn">useState</span>([])
+
+  <span class="fn">useEffect</span>(<span class="kw">async</span> () => {
+    <span class="cm">// ① Initial load — all non-served, non-cancelled orders from today</span>
+    <span class="kw">const</span> today = <span class="kw">new</span> <span class="fn">Date</span>().<span class="fn">toISOString</span>().<span class="fn">split</span>(<span class="st">'T'</span>)[<span class="nm">0</span>]
+    <span class="kw">const</span> { data } = <span class="kw">await</span> supabase
+      .from(<span class="st">'orders'</span>)
+      .select(<span class="st">'*'</span>)
+      .gte(<span class="st">'created_at'</span>, `${today}T00:00:00Z`)
+      .not(<span class="st">'status'</span>, <span class="st">'in'</span>, <span class="st">'("served","cancelled")'</span>)
+      .order(<span class="st">'created_at'</span>, { ascending: <span class="nm">true</span> })
+    <span class="fn">setOrders</span>(data ?? [])
+
+    <span class="cm">// ② Realtime subscription</span>
+    <span class="kw">const</span> channel = supabase
+      .channel(<span class="st">'kitchen_orders'</span>)
+      .on(<span class="st">'postgres_changes'</span>, {
+        event: <span class="st">'INSERT'</span>, schema: <span class="st">'public'</span>, table: <span class="st">'orders'</span>
+      }, (p) => {
+        <span class="fn">setOrders</span>(prev => [p.new, ...prev]) <span class="cm">// new orders at top</span>
+        <span class="fn">playBeep</span>()
+        <span class="fn">showBrowserNotification</span>(p.new)
+      })
+      .on(<span class="st">'postgres_changes'</span>, {
+        event: <span class="st">'UPDATE'</span>, schema: <span class="st">'public'</span>, table: <span class="st">'orders'</span>
+      }, (p) => {
+        <span class="fn">setOrders</span>(prev => prev.map(o => o.id === p.new.id ? p.new : o)
+          .filter(o => !(<span class="st">'served'</span>,<span class="st">'cancelled'</span>).includes(o.status)))
+      })
+      .subscribe()
+
+    <span class="kw">return</span> () => supabase.<span class="fn">removeChannel</span>(channel)
+  }, [])
+
+  <span class="kw">return</span> {
+    newOrders:      orders.filter(o => o.status === <span class="st">'new'</span>),
+    inProgress:     orders.filter(o => [<span class="st">'confirmed'</span>,<span class="st">'preparing'</span>].includes(o.status)),
+    readyOrders:    orders.filter(o => o.status === <span class="st">'ready'</span>),
+    totalToday:     orders.length
+  }
+}</pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">4</div>
+      <div class="step-body">
+        <h4>Age timer on In-Progress orders</h4>
+        <p>Every order card in the "In Progress" column shows how long ago it was accepted. A running clock: "14 min ago." This turns amber at 20 minutes and red at 35 minutes, giving the kitchen a visual alert for orders that are taking too long without anyone having to say anything.</p>
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">TypeScript</span><span class="code-label">src/components/OrderAge.tsx</span></div>
+          <pre><span class="kw">export function</span> <span class="fn">OrderAge</span>({ confirmedAt }: { confirmedAt: string }) {
+  <span class="kw">const</span> [minutes, setMinutes] = <span class="fn">useState</span>(<span class="nm">0</span>)
+
+  <span class="fn">useEffect</span>(() => {
+    <span class="kw">const</span> <span class="fn">calc</span> = () => {
+      <span class="kw">const</span> mins = Math.<span class="fn">floor</span>(
+        (Date.<span class="fn">now</span>() - <span class="kw">new</span> <span class="fn">Date</span>(confirmedAt).<span class="fn">getTime</span>()) / <span class="nm">60000</span>
+      )
+      <span class="fn">setMinutes</span>(mins)
+    }
+    <span class="fn">calc</span>()
+    <span class="kw">const</span> t = <span class="fn">setInterval</span>(calc, <span class="nm">60000</span>)
+    <span class="kw">return</span> () => <span class="fn">clearInterval</span>(t)
+  }, [confirmedAt])
+
+  <span class="kw">const</span> color = minutes >= <span class="nm">35</span> ? <span class="st">'#E85555'</span>
+              : minutes >= <span class="nm">20</span> ? <span class="st">'#E8A020'</span>
+              : <span class="st">'#6E7681'</span>
+
+  <span class="kw">return</span> &lt;span style={{ color }}&gt;{minutes} min ago&lt;/span&gt;
+}</pre>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <h3 class="step-group" id="s3-realtime">Part C — Status Update Actions</h3>
+
+  <div class="steps">
+    <div class="step">
+      <div class="step-num">5</div>
+      <div class="step-body">
+        <h4>Accept, Mark Ready, Mark Served — each updates the DB</h4>
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">TypeScript</span><span class="code-label">src/hooks/useOrderActions.ts</span></div>
+          <pre><span class="kw">export function</span> <span class="fn">useOrderActions</span>() {
+  <span class="kw">const</span> <span class="fn">updateStatus</span> = <span class="kw">async</span> (orderId: string, status: string) => {
+    <span class="kw">const</span> { error } = <span class="kw">await</span> supabase
+      .from(<span class="st">'orders'</span>)
+      .update({ status })
+      .eq(<span class="st">'id'</span>, orderId)
+
+    <span class="kw">if</span> (error) console.<span class="fn">error</span>(<span class="st">'Status update failed:'</span>, error)
+    <span class="cm">// The trigger on the DB automatically writes to order_status_log</span>
+    <span class="cm">// The Realtime event automatically updates all subscribed clients</span>
+  }
+
+  <span class="kw">return</span> {
+    accept:   (id: string) => <span class="fn">updateStatus</span>(id, <span class="st">'confirmed'</span>),
+    toKitchen:(id: string) => <span class="fn">updateStatus</span>(id, <span class="st">'preparing'</span>),
+    markReady:(id: string) => <span class="fn">updateStatus</span>(id, <span class="st">'ready'</span>),
+    markServed:(id: string) => <span class="fn">updateStatus</span>(id, <span class="st">'served'</span>),
+  }
+}</pre>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <h3 class="step-group" id="s3-kot">Part D — KOT View (Kitchen Order Ticket)</h3>
+
+  <div class="steps">
+    <div class="step">
+      <div class="step-num">6</div>
+      <div class="step-body">
+        <h4>KOT — print-optimized view, no prices</h4>
+        <p>When the kitchen accepts an order, the KOT is shown as a modal that the staff can print. In the browser, use <code>window.print()</code> with a print stylesheet that shows only the KOT and hides everything else.</p>
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">CSS</span><span class="code-label">KOT print stylesheet — add to index.css</span></div>
+          <pre><span class="kw">@media print</span> {
+  <span class="cm">/* Hide everything except the KOT */</span>
+  body > *:not(#kot-container) { <span class="kw">display</span>: none !important; }
+  #kot-container {
+    <span class="kw">width</span>: 80mm;          <span class="cm">/* Standard receipt printer width */</span>
+    <span class="kw">font-family</span>: monospace;
+    <span class="kw">font-size</span>: 12pt;
+    <span class="kw">color</span>: black;
+    <span class="kw">background</span>: white;
+  }
+  .kot-item { <span class="kw">display</span>: flex; <span class="kw">justify-content</span>: space-between; }
+  .kot-divider { <span class="kw">border-top</span>: 1px dashed black; <span class="kw">margin</span>: 6px 0; }
+}</pre>
+        </div>
+        <p>KOT content: Order number, service type (ROOM 302 / TABLE 5 / PICKUP), items with quantities and variant labels, special note. No prices — kitchen doesn't need to know cost, only what to make.</p>
+      </div>
+    </div>
+  </div>
+
+  <h3 class="step-group" id="s3-sound">Part E — Browser Notification + Sound</h3>
+
+  <div class="steps">
+    <div class="step">
+      <div class="step-num">7</div>
+      <div class="step-body">
+        <h4>Sound alert + browser notification on new order</h4>
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">TypeScript</span><span class="code-label">src/lib/notifications.ts</span></div>
+          <pre"><span class="cm">// Request notification permission on login</span>
+<span class="kw">export const</span> <span class="fn">requestNotificationPermission</span> = <span class="kw">async</span> () => {
+  <span class="kw">if</span> (<span class="st">'Notification'</span> <span class="kw">in</span> window) {
+    <span class="kw">await</span> Notification.<span class="fn">requestPermission</span>()
+  }
+}
+
+<span class="cm">// Play a beep using Web Audio API (no audio file needed)</span>
+<span class="kw">export const</span> <span class="fn">playBeep</span> = () => {
+  <span class="kw">const</span> ctx = <span class="kw">new</span> AudioContext()
+  <span class="kw">const</span> osc = ctx.<span class="fn">createOscillator</span>()
+  <span class="kw">const</span> gain = ctx.<span class="fn">createGain</span>()
+  osc.<span class="fn">connect</span>(gain)
+  gain.<span class="fn">connect</span>(ctx.destination)
+  osc.type = <span class="st">'sine'</span>
+  osc.frequency.value = <span class="nm">880</span>   <span class="cm">// A5 tone</span>
+  gain.gain.<span class="fn">setValueAtTime</span>(<span class="nm">0.4</span>, ctx.currentTime)
+  gain.gain.<span class="fn">exponentialRampToValueAtTime</span>(<span class="nm">0.001</span>, ctx.currentTime + <span class="nm">0.6</span>)
+  osc.<span class="fn">start</span>(ctx.currentTime)
+  osc.<span class="fn">stop</span>(ctx.currentTime + <span class="nm">0.6</span>)
+}
+
+<span class="cm">// Browser notification (shows even when tab is in background)</span>
+<span class="kw">export const</span> <span class="fn">showBrowserNotification</span> = (order: any) => {
+  <span class="kw">if</span> (Notification.permission !== <span class="st">'granted'</span>) <span class="kw">return</span>
+  <span class="kw">new</span> <span class="fn">Notification</span>(<span class="st">`🍽️ New Order — ${order.order_number}`</span>, {
+    body: `${order.guest_name} · ${order.service_type} · ₹${order.subtotal}`,
+    icon: <span class="st">'/favicon.ico'</span>,
+    tag:  order.id   <span class="cm">// prevents duplicate notifications for same order</span>
+  })
+}</pre>
+        </div>
+        <div class="callout info">
+          <div class="callout-icon">💡</div>
+          <div class="callout-body">
+            <h4>Browser notifications work on background tabs</h4>
+            <p>If the kitchen PC has the panel open in one tab and someone opens another tab, the notification still fires when a new order comes in. This is the key advantage over an app — no install, works in Chrome, and the browser notification appears as a system notification on Windows/Mac regardless of which app is in focus.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="test-sequence">
+    <h4>🧪 Sprint 3 Test Sequence</h4>
+    <div class="test-item"><span class="test-n">T1</span><div class="test-desc"><strong>Full end-to-end test:</strong> Open Guest Portal on a phone. Open Kitchen Panel on a laptop. Place an order on the phone → it appears in Kitchen Panel's "New" column within 2 seconds with a beep.</div></div>
+    <div class="test-item"><span class="test-n">T2</span><div class="test-desc">Click "Accept" in Kitchen Panel → order moves to "In Progress" → Guest Portal tracking page updates to "Confirmed" without refresh.</div></div>
+    <div class="test-item"><span class="test-n">T3</span><div class="test-desc">Click "Mark Ready" → Guest's tracking page shows "Ready ✅" and phone vibrates (Android).</div></div>
+    <div class="test-item"><span class="test-n">T4</span><div class="test-desc">Wrong PIN entry → keypad shakes. Three wrong attempts → 30-second lockout appears.</div></div>
+    <div class="test-item"><span class="test-n">T5</span><div class="test-desc">Print KOT for an order → print preview shows only the ticket content at 80mm width, no UI chrome.</div></div>
+    <div class="test-item"><span class="test-n">T6</span><div class="test-desc">Navigate away from the Kitchen Panel tab and come back after a new order is placed — the order should appear (was received via Realtime while tab was inactive).</div></div>
+  </div>
+
+  <div class="unlock-box">
+    <h4>Sprint 3 Unlocks</h4>
+    <ul>
+      <li>The entire food ordering cycle is now complete and production-ready</li>
+      <li>Client can observe the real-time flow in the demo</li>
+      <li>Milestone 3 payment trigger — beta launch on staging</li>
+    </ul>
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════════════
+     SPRINT 4 — RESORT RECEPTION CORE
+     ═══════════════════════════════════════════════════ -->
+<section class="sprint" id="sprint4" style="--accent:var(--s4l);--num-bg:var(--s4p)">
+  <div class="sprint-banner sb4">
+    <span class="sprint-num sn4">Sprint 4</span>
+    <div class="banner-text">
+      <h2>Shivalaya Resort Reception — Core</h2>
+      <p>Owner login · Guest check-in/out · Guest list · Orders overview · Menu management · Analytics</p>
+    </div>
+    <div class="banner-meta">
+      <div class="banner-days" style="color:var(--s4l)">4 days</div>
+      <div class="banner-unlock">Unlocks: Complete guest management system</div>
+    </div>
+  </div>
+
+  <p class="body-text">The Reception app is the largest in scope. It has six distinct sections. Build them in the order listed — each section adds to what the previous one established. The check-in system and guest folio are the most critical; analytics and settings can be polished after the core is working.</p>
+
+  <h3 class="step-group" id="s4-auth">Part A — Owner and Receptionist Login</h3>
+
+  <div class="steps">
+    <div class="step">
+      <div class="step-num">1</div>
+      <div class="step-body">
+        <h4>Login page — email + password (not PIN-based)</h4>
+        <p>The reception login is more secure than the kitchen PIN. Owner uses email + password via Supabase Auth. Receptionist uses email + password or a longer PIN (6 digits). Session is 24 hours (owner) or 8 hours (receptionist). After the session expires, the login screen appears automatically.</p>
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">TypeScript</span><span class="code-label">src/hooks/useAuth.ts</span></div>
+          <pre"><span class="kw">export function</span> <span class="fn">useAuth</span>() {
+  <span class="kw">const</span> [staff, setStaff] = <span class="fn">useState</span>(null)
+
+  <span class="fn">useEffect</span>(() => {
+    <span class="cm">// Listen for auth state changes</span>
+    <span class="kw">const</span> { data: { subscription } } = supabase.auth.<span class="fn">onAuthStateChange</span>(
+      (<span class="kw">async</span> (event, session) => {
+        <span class="kw">if</span> (session) {
+          <span class="kw">const</span> { data: staffData } = <span class="kw">await</span> supabase
+            .from(<span class="st">'staff'</span>)
+            .select(<span class="st">'*'</span>)
+            .eq(<span class="st">'supabase_user_id'</span>, session.user.id)
+            .single()
+          <span class="fn">setStaff</span>(staffData)
+        } <span class="kw">else</span> {
+          <span class="fn">setStaff</span>(null)
+        }
+      })
+    )
+    <span class="kw">return</span> () => subscription.<span class="fn">unsubscribe</span>()
+  }, [])
+
+  <span class="kw">const</span> login = (email: string, password: string) =>
+    supabase.auth.<span class="fn">signInWithPassword</span>({ email, password })
+
+  <span class="kw">const</span> logout = () => supabase.auth.<span class="fn">signOut</span>()
+
+  <span class="kw">return</span> { staff, login, logout, isOwner: staff?.role === <span class="st">'owner'</span> }
+}</pre>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <h3 class="step-group" id="s4-checkin">Part B — Guest Check-in and Check-out</h3>
+
+  <div class="steps">
+    <div class="step">
+      <div class="step-num">2</div>
+      <div class="step-body">
+        <h4>Check-in form — creates guest record + updates room occupancy atomically</h4>
+        <p>The form shows: Room Number (dropdown — fetches all unoccupied rooms), Guest Name, Guest WhatsApp Phone, Number of Adults, Expected Check-out Date, Notes. On submit, call the <code>check_in_guest</code> RPC which does both writes in one transaction and triggers the WhatsApp Edge Function (Sprint 6).</p>
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">SQL</span><span class="code-label">check_in_guest RPC — called from Reception on check-in</span></div>
+          <pre><span class="kw">CREATE OR REPLACE FUNCTION</span> <span class="fn">check_in_guest</span>(
+  p_resort_id        <span class="nm">UUID</span>,
+  p_room_id          <span class="nm">UUID</span>,
+  p_guest_name       <span class="nm">TEXT</span>,
+  p_guest_phone      <span class="nm">TEXT</span>,
+  p_number_of_adults <span class="nm">INTEGER DEFAULT 1</span>,
+  p_expected_checkout <span class="nm">DATE DEFAULT NULL</span>,
+  p_notes            <span class="nm">TEXT DEFAULT NULL</span>
+)
+<span class="kw">RETURNS JSONB LANGUAGE</span> plpgsql <span class="kw">AS</span> $$
+<span class="kw">DECLARE</span>
+  v_guest_id <span class="nm">UUID</span>;
+<span class="kw">BEGIN</span>
+  <span class="cm">-- Check room is not already occupied</span>
+  <span class="kw">IF</span> (<span class="kw">SELECT</span> is_occupied <span class="kw">FROM</span> rooms <span class="kw">WHERE</span> id = p_room_id) <span class="kw">THEN</span>
+    <span class="kw">RETURN</span> <span class="fn">jsonb_build_object</span>(<span class="st">'success'</span>,<span class="nm">false</span>,<span class="st">'error'</span>,<span class="st">'ROOM_OCCUPIED'</span>);
+  <span class="kw">END IF</span>;
+
+  <span class="cm">-- Create guest record</span>
+  <span class="kw">INSERT INTO</span> guests(
+    resort_id, room_id, guest_name, guest_phone,
+    number_of_adults, check_in_date, expected_checkout, notes, status
+  ) <span class="kw">VALUES</span>(
+    p_resort_id, p_room_id, p_guest_name, p_guest_phone,
+    p_number_of_adults, CURRENT_DATE, p_expected_checkout, p_notes, <span class="st">'checked_in'</span>
+  ) <span class="kw">RETURNING</span> id <span class="kw">INTO</span> v_guest_id;
+
+  <span class="cm">-- Mark room as occupied and link to guest</span>
+  <span class="kw">UPDATE</span> rooms
+  <span class="kw">SET</span> is_occupied = <span class="nm">true</span>, current_guest_id = v_guest_id
+  <span class="kw">WHERE</span> id = p_room_id;
+
+  <span class="cm">-- WhatsApp trigger fires automatically via the DB trigger</span>
+  <span class="cm">-- (on_guest_checkin_whatsapp trigger on guests table)</span>
+
+  <span class="kw">RETURN</span> <span class="fn">jsonb_build_object</span>(<span class="st">'success'</span>,<span class="nm">true</span>,<span class="st">'guest_id'</span>,v_guest_id);
+<span class="kw">END</span>;
+$$;</pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">3</div>
+      <div class="step-body">
+        <h4>Check-out flow — shows folio total, confirms, triggers WhatsApp</h4>
+        <p>Click a guest in the active list → "Check Out" button appears. A drawer opens showing the full folio (using the <code>guest_folio</code> view). Receptionist reviews, can add any manual charges (room tariff, phone calls, laundry — whatever the resort tracks manually). Clicks "Confirm Checkout."</p>
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">TypeScript</span><span class="code-label">Folio fetch for a specific guest</span></div>
+          <pre"><span class="kw">const</span> <span class="fn">fetchGuestFolio</span> = <span class="kw">async</span> (guestId: string, checkInDate: string) => {
+  <span class="kw">const</span> { data } = <span class="kw">await</span> supabase
+    .from(<span class="st">'guest_folio'</span>)
+    .select(<span class="st">'*'</span>)
+    .eq(<span class="st">'guest_id'</span>, guestId)
+    .gte(<span class="st">'charge_at'</span>, checkInDate)
+    .order(<span class="st">'charge_at'</span>)
+
+  <span class="kw">const</span> total = (data ?? []).reduce((s, r) => s + r.amount, <span class="nm">0</span>)
+  <span class="kw">return</span> { lines: data, total }
+}</pre>
+        </div>
+        <p>The checkout RPC sets <code>status='checked_out'</code> on guests, <code>is_occupied=false</code> and <code>current_guest_id=NULL</code> on rooms, and fires the WhatsApp checkout message trigger.</p>
+      </div>
+    </div>
+  </div>
+
+  <h3 class="step-group" id="s4-guests">Part C — Guest List View</h3>
+
+  <div class="steps">
+    <div class="step">
+      <div class="step-num">4</div>
+      <div class="step-body">
+        <h4>Active stays table — with live running tab column</h4>
+        <p>The main guests view is a table with columns: Room, Guest Name, Adults, Check-in Date, Expected Checkout, Running Tab (live sum of food + activities), Actions. The "Running Tab" column queries <code>guest_folio</code> for each guest — this can be expensive if done per-row. Use a single query joining the folio view grouped by guest_id instead of N+1 queries.</p>
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">SQL</span><span class="code-label">Efficient folio totals for all active guests at once</span></div>
+          <pre"><span class="kw">SELECT</span>
+  g.id, g.guest_name, r.room_number,
+  g.check_in_date, g.expected_checkout,
+  <span class="fn">COALESCE</span>(f.total, <span class="nm">0</span>) <span class="kw">AS</span> running_tab
+<span class="kw">FROM</span> guests g
+<span class="kw">JOIN</span> rooms r <span class="kw">ON</span> g.room_id = r.id
+<span class="kw">LEFT JOIN</span> (
+  <span class="kw">SELECT</span> guest_id, <span class="kw">SUM</span>(amount) <span class="kw">AS</span> total
+  <span class="kw">FROM</span> guest_folio
+  <span class="kw">GROUP BY</span> guest_id
+) f <span class="kw">ON</span> g.id = f.guest_id
+<span class="kw">WHERE</span> g.resort_id = <span class="st">'[resort-id]'</span>
+  <span class="kw">AND</span> g.status = <span class="st">'checked_in'</span>
+<span class="kw">ORDER BY</span> r.room_number;</pre>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <h3 class="step-group" id="s4-orders">Part D — Orders Overview</h3>
+
+  <div class="steps">
+    <div class="step">
+      <div class="step-num">5</div>
+      <div class="step-body">
+        <h4>Order history search — by room, by date, by status</h4>
+        <p>Not a real-time panel like the Kitchen Panel. This is a search/filter view for historical lookup and manual order entry. Three filters: Room Number (text input), Date Range (date pickers), Status (multi-select chips). Results in a sortable table. The Reception can also create a manual order here — for guests who call the desk instead of scanning the QR.</p>
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">TypeScript</span><span class="code-label">Manual order creation from Reception</span></div>
+          <pre"><span class="cm">// Reception staff creates order on behalf of guest who called in</span>
+<span class="kw">const</span> { data } = <span class="kw">await</span> supabase.rpc(<span class="st">'create_order'</span>, {
+  p_resort_id:    RESORT_ID,
+  p_service_type: <span class="st">'room_service'</span>,
+  p_guest_name:   guestName,
+  p_guest_phone:  guestPhone,
+  p_room_number:  roomNumber,
+  p_items:        selectedItems,   <span class="cm">// selected via item picker UI</span>
+  p_subtotal:     calculatedTotal,
+  p_special_note: <span class="st">'Manual order — via reception'</span>
+})
+<span class="cm">// This order immediately appears in Kitchen Panel via Realtime</span></pre>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <h3 class="step-group" id="s4-menu-mgmt">Part E — Menu Management</h3>
+
+  <div class="steps">
+    <div class="step">
+      <div class="step-num">6</div>
+      <div class="step-body">
+        <h4>86 items instantly from the Reception dashboard</h4>
+        <p>Owner's most-needed daily power: toggle an item as unavailable when it runs out. A simple table of all menu items with an availability toggle switch. Flipping the switch fires <code>UPDATE menu_items SET is_available=false WHERE id=[item_id]</code>. The Guest Portal's <code>useMenu</code> hook polls every 5 minutes, so within 5 minutes the item disappears from the ordering menu. In the future, the Guest Portal can subscribe to Realtime on menu_items for instant removal.</p>
+        <div class="callout ok">
+          <div class="callout-icon">✅</div>
+          <div class="callout-body">
+            <h4>Category time-gating management</h4>
+            <p>Also show the <code>available_from</code> and <code>available_until</code> fields for each category as editable time inputs. If the owner wants Breakfast to extend to 5 PM during a holiday weekend, they change it here and it takes effect immediately — no code change needed.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <h3 class="step-group" id="s4-analytics">Part F — Analytics Dashboard</h3>
+
+  <div class="steps">
+    <div class="step">
+      <div class="step-num">7</div>
+      <div class="step-body">
+        <h4>Build analytics using the same V2 chart system</h4>
+        <p>The V2 Owner Dashboard HTML file we built earlier already has the visual design. Now wire it to real Supabase queries. The three key queries:</p>
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">SQL</span><span class="code-label">Analytics queries — run based on date filter selection</span></div>
+          <pre"><span class="cm">-- Today's totals (period = 'today')</span>
+<span class="kw">SELECT</span>
+  <span class="kw">COUNT</span>(*) <span class="kw">AS</span> total_orders,
+  <span class="fn">COALESCE</span>(<span class="kw">SUM</span>(subtotal), <span class="nm">0</span>) <span class="kw">AS</span> food_revenue
+<span class="kw">FROM</span> orders
+<span class="kw">WHERE</span> resort_id = <span class="st">'[id]'</span>
+  <span class="kw">AND</span> created_at::date = CURRENT_DATE
+  <span class="kw">AND</span> status != <span class="st">'cancelled'</span>;
+
+<span class="cm">-- Top 5 items</span>
+<span class="kw">SELECT</span>
+  item->><span class="st">'name'</span> <span class="kw">AS</span> item_name,
+  <span class="kw">SUM</span>((item->><span class="st">'qty'</span>)::<span class="nm">int</span>) <span class="kw">AS</span> total_ordered
+<span class="kw">FROM</span> orders, <span class="fn">jsonb_array_elements</span>(items) <span class="kw">AS</span> item
+<span class="kw">WHERE</span> resort_id = <span class="st">'[id]'</span>
+  <span class="kw">AND</span> created_at::date = CURRENT_DATE
+<span class="kw">GROUP BY</span> item->><span class="st">'name'</span>
+<span class="kw">ORDER BY</span> total_ordered <span class="kw">DESC</span>
+<span class="kw">LIMIT</span> <span class="nm">5</span>;
+
+<span class="cm">-- Revenue by day (last 7 days)</span>
+<span class="kw">SELECT</span>
+  created_at::date <span class="kw">AS</span> day,
+  <span class="kw">SUM</span>(subtotal)   <span class="kw">AS</span> revenue
+<span class="kw">FROM</span> orders
+<span class="kw">WHERE</span> resort_id = <span class="st">'[id]'</span>
+  <span class="kw">AND</span> created_at >= CURRENT_DATE - <span class="kw">INTERVAL</span> <span class="st">'7 days'</span>
+  <span class="kw">AND</span> status != <span class="st">'cancelled'</span>
+<span class="kw">GROUP BY</span> day <span class="kw">ORDER BY</span> day;</pre>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="test-sequence">
+    <h4>🧪 Sprint 4 Test Sequence</h4>
+    <div class="test-item"><span class="test-n">T1</span><div class="test-desc">Check-in Guest to Room 302 → room dropdown should only show unoccupied rooms. After check-in, Room 302 disappears from the dropdown.</div></div>
+    <div class="test-item"><span class="test-n">T2</span><div class="test-desc">Place a food order for Room 302 from Guest Portal → running tab in Reception guest list should now show that amount.</div></div>
+    <div class="test-item"><span class="test-n">T3</span><div class="test-desc">Check-out Room 302 → folio drawer shows all orders placed during the stay. After checkout, Room 302 reappears in the check-in room dropdown as available.</div></div>
+    <div class="test-item"><span class="test-n">T4</span><div class="test-desc">Toggle a menu item as unavailable in Reception → within 5 minutes, open Guest Portal menu → that item should not appear.</div></div>
+    <div class="test-item"><span class="test-n">T5</span><div class="test-desc">Analytics section → today's totals should match the sum of orders placed during testing.</div></div>
+    <div class="test-item"><span class="test-n">T6</span><div class="test-desc">Owner role: can see all sections including analytics. Create a receptionist staff member with limited access and verify they cannot see analytics (role-gated in frontend routing).</div></div>
+  </div>
+
+  <div class="unlock-box">
+    <h4>Sprint 4 Unlocks</h4>
+    <ul>
+      <li>Sprint 5 — Activities module adds to the Reception app built here</li>
+      <li>Sprint 6 — WhatsApp automation triggers are wired into the check-in/out RPCs already in place</li>
+      <li>The full system is now functional without activities — clients can begin soft-testing</li>
+    </ul>
+  </div>
+</section>
+
+
+<!-- ═══════════════════════════════════════════════════
+     SPRINT 5 — ACTIVITIES MODULE
+     ═══════════════════════════════════════════════════ -->
+<section class="sprint" id="sprint5" style="--accent:var(--s5l);--num-bg:var(--s5p)">
+  <div class="sprint-banner sb5">
+    <span class="sprint-num sn5">Sprint 5</span>
+    <div class="banner-text">
+      <h2>Activities & Experiences Module</h2>
+      <p>Guest booking flow · Slot picker · Concurrency-safe RPC · Reception confirmation · Folio integration · Activity management</p>
+    </div>
+    <div class="banner-meta">
+      <div class="banner-days" style="color:var(--s5l)">5 days</div>
+      <div class="banner-unlock">Unlocks: Complete guest experience platform</div>
+    </div>
+  </div>
+
+  <p class="body-text">Sprint 5 is the second-largest feature set. It touches all three apps and introduces the most complex backend logic — the concurrency-safe time slot booking system. The RPC functions for this were already added to Supabase in Sprint 1 (from the architecture reference document). Sprint 5 builds all the UI that calls them.</p>
+
+  <div class="callout stop">
+    <div class="callout-icon">🚫</div>
+    <div class="callout-body">
+      <h4>Prerequisite: Activities list confirmed by client</h4>
+      <p>Do not start Sprint 5 until you have the complete list of activities, their pricing, time slots, and capacity from Vikas sir. You need real data to seed the database. Building the UI with placeholder data wastes time if the slot structure changes. Get the WhatsApp voice note or call confirmation before writing the first component of Sprint 5.</p>
+    </div>
+  </div>
+
+  <h3 class="step-group" id="s5-portal">Part A — /experiences Page in Guest Portal</h3>
+
+  <div class="steps">
+    <div class="step">
+      <div class="step-num">1</div>
+      <div class="step-body">
+        <h4>Activities listing page — fetches all available activities</h4>
+        <p>The page loads all activities from Supabase where <code>is_available=true</code>. Each activity is a card with: image, name, short description, pricing display (₹500/person or ₹1,200/setup), duration, and a "Check Slots" button. Activities with <code>requires_balcony=true</code> show a small "Balcony Required" badge — this warns room service guests who may not have one. Activities that are disabled show nothing (filtered server-side).</p>
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">TypeScript</span><span class="code-label">Pricing display logic — handles all three pricing types</span></div>
+          <pre"><span class="kw">function</span> <span class="fn">formatPricing</span>(activity: Activity): string {
+  <span class="kw">switch</span> (activity.pricing_type) {
+    <span class="kw">case</span> <span class="st">'per_person'</span>:
+      <span class="kw">return</span> `₹${activity.price_per_person?.toLocaleString(<span class="st">'en-IN'</span>)} / person`
+    <span class="kw">case</span> <span class="st">'per_setup'</span>:
+      <span class="kw">return</span> `₹${activity.price_per_setup?.toLocaleString(<span class="st">'en-IN'</span>)} / setup`
+    <span class="kw">case</span> <span class="st">'per_session'</span>:
+      <span class="kw">return</span> `₹${activity.price_per_session?.toLocaleString(<span class="st">'en-IN'</span>)} / session`
+  }
+}</pre>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <h3 class="step-group" id="s5-slots">Part B — The Slot Picker</h3>
+
+  <div class="steps">
+    <div class="step">
+      <div class="step-num">2</div>
+      <div class="step-body">
+        <h4>Date selector + slot chips with real-time availability</h4>
+        <p>When guest taps "Check Slots" on an activity, a full-screen modal opens. At the top: a horizontal date picker showing Today, Tomorrow, Day+2, Day+3 as chips. Below: time slot chips for the selected date, fetched by calling <code>get_available_slots</code> RPC.</p>
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">TypeScript</span><span class="code-label">Slot fetching with error states</span></div>
+          <pre"><span class="kw">const</span> <span class="fn">fetchSlots</span> = <span class="kw">async</span> (activityId: string, date: string) => {
+  <span class="fn">setLoadingSlots</span>(<span class="nm">true</span>)
+  <span class="kw">const</span> { data, error } = <span class="kw">await</span> supabase.rpc(<span class="st">'get_available_slots'</span>, {
+    p_activity_id: activityId,
+    p_date:        date
+  })
+  <span class="fn">setLoadingSlots</span>(<span class="nm">false</span>)
+
+  <span class="kw">if</span> (error) {
+    <span class="fn">setSlotError</span>(<span class="st">'Could not load available slots. Please try again.'</span>)
+    <span class="kw">return</span>
+  }
+  <span class="fn">setSlots</span>(data ?? [])
+}
+
+<span class="cm">// Slot chip render:
+// - remaining_capacity > 0 AND is_available: Green chip, shows "X spots left"
+// - remaining_capacity == 0: Grey chip, "Full" label, not clickable
+// - is_available == false (slot inactive): Not shown at all</span></pre>
+        </div>
+        <p>Showing remaining capacity ("3 spots left") is a nudge mechanism. Guests who see limited availability book faster. It also builds trust — they can see the system is live and accurate.</p>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">3</div>
+      <div class="step-body">
+        <h4>Dynamic total price calculator in the booking form</h4>
+        <p>Below the slot picker, the booking form appears. The total price auto-updates as the guest changes the guest count input.</p>
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">TypeScript</span><span class="code-label">Total amount calculation — runs on every guest count change</span></div>
+          <pre"><span class="kw">function</span> <span class="fn">calculateTotal</span>(activity: Activity, numberOfGuests: number): number {
+  <span class="kw">switch</span> (activity.pricing_type) {
+    <span class="kw">case</span> <span class="st">'per_person'</span>:
+      <span class="kw">return</span> (activity.price_per_person ?? <span class="nm">0</span>) * numberOfGuests
+    <span class="kw">case</span> <span class="st">'per_setup'</span>:
+      <span class="kw">return</span> activity.price_per_setup ?? <span class="nm">0</span>  <span class="cm">// Fixed — guest count doesn't matter</span>
+    <span class="kw">case</span> <span class="st">'per_session'</span>:
+      <span class="kw">return</span> activity.price_per_session ?? <span class="nm">0</span> <span class="cm">// Fixed — per session</span>
+  }
+}</pre>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <h3 class="step-group" id="s5-booking">Part C — Booking Submission and Confirmation</h3>
+
+  <div class="steps">
+    <div class="step">
+      <div class="step-num">4</div>
+      <div class="step-body">
+        <h4>Call book_activity_slot RPC — handle all response cases</h4>
+        <div class="code-block">
+          <div class="code-header"><span class="code-lang">TypeScript</span><span class="code-label">src/hooks/useBookActivity.ts</span></div>
+          <pre"><span class="kw">export function</span> <span class="fn">useBookActivity</span>() {
+  <span class="kw">const</span> [status, setStatus] = <span class="fn">useState</span>&lt;<span class="nm">null</span>|<span class="st">'loading'</span>|<span class="st">'success'</span>|<span class="st">'slot_full'</span>|<span class="st">'error'</span>&gt;(null)
+  <span class="kw">const</span> [booking, setBooking] = <span class="fn">useState</span>(null)
+
+  <span class="kw">const</span> book = <span class="kw">async</span> (params: BookParams) => {
+    <span class="fn">setStatus</span>(<span class="st">'loading'</span>)
+
+    <span class="kw">const</span> { data, error } = <span class="kw">await</span> supabase.rpc(<span class="st">'book_activity_slot'</span>, {
+      p_activity_id:    params.activityId,
+      p_slot_id:        params.slotId,
+      p_booking_date:   params.date,
+      p_number_guests:  params.numberOfGuests,
+      p_guest_name:     params.guestName,
+      p_guest_phone:    params.guestPhone,
+      p_room_number:    params.roomNumber,
+      p_special_requests: params.specialRequests ?? null
+    })
+
+    <span class="kw">if</span> (error || !data) {
+      <span class="fn">setStatus</span>(<span class="st">'error'</span>)
+      <span class="kw">return</span>
+    }
+
+    <span class="kw">if</span> (data.error === <span class="st">'SLOT_FULL'</span>) {
+      <span class="fn">setStatus</span>(<span class="st">'slot_full'</span>)
+      <span class="cm">// UI shows: "Sorry, this slot just filled up. Please choose another time."</span>
+      <span class="cm">// Then re-fetch slots to show updated availability</span>
+      <span class="kw">return</span>
+    }
+
+    <span class="fn">setBooking</span>(data)
+    <span class="fn">setStatus</span>(<span class="st">'success'</span>)
+
+    <span class="cm">// Save to session for "My Bookings" page</span>
+    <span class="kw">const</span> existing = <span class="fn">JSON.parse</span>(<span class="fn">sessionStorage.getItem</span>(<span class="st">'myBookings'</span>) || <span class="st">'[]'</span>)
+    <span class="fn">sessionStorage.setItem</span>(<span class="st">'myBookings'</span>,
+      <span class="fn">JSON.stringify</span>([...existing, data.booking_id]))
+  }
+
+  <span class="kw">return</span> { book, status, booking }
+}</pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">5</div>
+      <div class="step-body">
+        <h4>Confirmation screen — sets correct expectations</h4>
+        <p>After successful booking, the confirmation screen shows: booking reference (EXP-XXXXX), activity name, date, time slot, guests, total amount, and the key message: <em>"Our team at the resort will confirm this booking shortly. Payment will be settled at checkout."</em></p>
+        <p>The "Pending Confirmation" status is shown in a distinct amber color. Once reception confirms it in their dashboard, this status updates to "Confirmed ✓" — the guest sees it live on their booking detail page via Realtime subscription.</p>
+        <div class="callout ok">
+          <div class="callout-icon">✅</div>
+          <div class="callout-body">
+            <h4>Subscribe to booking status after creation</h4>
+            <p>After a successful booking, subscribe to the <code>activity_bookings</code> channel filtered by <code>id=eq.[bookingId]</code>. When reception confirms, the guest's screen updates from "Pending" to "Confirmed" with a smooth animation — no refresh needed. Same real-time UX as the food order tracker.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <h3 class="step-group" id="s5-reception">Part D — Reception Activities Section</h3>
+
+  <div class="steps">
+    <div class="step">
+      <div class="step-num">6</div>
+      <div class="step-body">
+        <h4>Pending queue with real-time updates</h4>
+        <p>A new tab "Activities" appears in the Resort Reception app. On entering this tab, the app fetches all pending bookings and subscribes to Realtime for new ones. A notification badge on the tab shows the count of unconfirmed bookings.</p>
+        <p>Each booking card shows: Activity name, Date, Time slot, Guest name, Room, Guest count, Total amount, Special requests, and the activity's <code>notes_for_staff</code> (the internal instruction field you set when configuring the activity).</p>
+        <p>Two buttons: <strong>Confirm</strong> (opens an inline form to enter assigned staff name and instructions) and <strong>Cancel</strong> (requires a cancellation reason). On confirm, the UPDATE fires and the guest's portal updates in real-time.</p>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">7</div>
+      <div class="step-body">
+        <h4>Calendar view — today's schedule at a glance</h4>
+        <p>A day-view calendar (not a full month — just today and tomorrow) showing all confirmed bookings in chronological order. Each block shows: time, activity name, assigned staff, room number. Color-coded by activity type.</p>
+        <p>This is the morning briefing tool. The owner or head receptionist looks at this at the start of each day to assign guides and prepare for the day's activities. No real-time subscription needed here — refresh on demand is fine for a planning view.</p>
+      </div>
+    </div>
+  </div>
+
+  <h3 class="step-group" id="s5-folio">Part E — Complete Guest Folio</h3>
+
+  <div class="steps">
+    <div class="step">
+      <div class="step-num">8</div>
+      <div class="step-body">
+        <h4>Upgrade the folio drawer to show food + activities together</h4>
+        <p>The folio drawer already exists from Sprint 4 (food only). Now it uses the full <code>guest_folio</code> VIEW which includes activity bookings. The line items are grouped by type with subtotals:</p>
+        <p>Food & Beverage — subtotal<br>Experiences & Activities — subtotal<br>Grand Total</p>
+        <p>Each food line is expandable to show the individual items ordered. Each activity line shows the activity name, date, and guest count. A "Download Folio PDF" button triggers <code>window.print()</code> with a print stylesheet optimized for A4 paper.</p>
+      </div>
+    </div>
+  </div>
+
+  <h3 class="step-group" id="s5-activity-mgmt">Part F — Activity Management Panel</h3>
+
+  <div class="steps">
+    <div class="step">
+      <div class="step-num">9</div>
+      <div class="step-body">
+        <h4>Owner-only panel to add, edit, and disable activities</h4>
+        <p>Inside Reception → Settings → Activity Management. A list of all activities with an availability toggle (identical in behavior to the menu item toggle). Clicking an activity opens an edit drawer with all fields. Clicking "Add Activity" opens a create drawer.</p>
+        <p>The time slots for each activity are shown as a sub-list with their own toggles, plus an "Add Slot" button that opens a minimal form: label, start time, end time, days available (checkboxes Mon–Sun), capacity override.</p>
+        <div class="callout warn">
+          <div class="callout-icon">⚠️</div>
+          <div class="callout-body">
+            <h4>Route this behind isOwner check</h4>
+            <p>Activity management (add/edit/delete activities, change pricing) should only be accessible to staff with <code>role === 'owner'</code>. A receptionist can confirm bookings and assign staff, but cannot change prices or add new activity types. Enforce this in both the frontend routing and RLS policies.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="test-sequence">
+    <h4>🧪 Sprint 5 Test Sequence</h4>
+    <div class="test-item"><span class="test-n">T1</span><div class="test-desc">Open /experiences on Guest Portal → all seeded activities appear with correct pricing labels</div></div>
+    <div class="test-item"><span class="test-n">T2</span><div class="test-desc">Tap "Bird Cage" → slot picker opens → both morning slots appear with "6 spots remaining"</div></div>
+    <div class="test-item"><span class="test-n">T3</span><div class="test-desc">Book Bird Cage for 4 guests on today's Early Morning slot → confirmation screen shows EXP-XXXXX, total ₹2,000</div></div>
+    <div class="test-item"><span class="test-n">T4</span><div class="test-desc">Open Reception Activities tab → new pending booking appears within 2 seconds (Realtime). Badge count shows 1.</div></div>
+    <div class="test-item"><span class="test-n">T5</span><div class="test-desc">Confirm the booking in Reception, type "Guide: Ramesh, meet at garden gate 6:50 AM" → Guest Portal booking page updates status to "Confirmed ✓" live.</div></div>
+    <div class="test-item"><span class="test-n">T6</span><div class="test-desc"><strong>Concurrency test:</strong> In two separate browser windows, simultaneously try to book the same Bird Cage Early Morning slot for 4 guests each (capacity 6). Only the first should succeed. The second should show "SLOT_FULL — only 2 spots remain."</div></div>
+    <div class="test-item"><span class="test-n">T7</span><div class="test-desc">After booking activity + food order for same room, go to Reception → Guest Folio for that room → shows both food lines and activity line with correct grand total.</div></div>
+    <div class="test-item"><span class="test-n">T8</span><div class="test-desc">Disable "Bonfire Setup" in Activity Management → reload /experiences → Bonfire card no longer appears.</div></div>
+    <div class="test-item"><span class="test-n">T9</span><div class="test-desc">Calendar view → shows today's confirmed Bird Cage booking with Ramesh's name and room number at the correct time slot.</div></div>
+    <div class="test-item"><span class="test-n">T10</span><div class="test-desc">Download Folio PDF → print preview shows clean A4 layout with all charges, no UI chrome visible.</div></div>
+  </div>
+
+  <div class="unlock-box">
+    <h4>Sprint 5 Unlocks</h4>
+    <ul>
+      <li>Sprint 6 (WhatsApp + Production) — the full platform is feature-complete and ready for automation and deployment</li>
+      <li>Milestone 4 payment trigger — complete system including activities live on staging</li>
+      <li>Client demo of the full platform — all three apps, end-to-end, food + activities + folio</li>
+      <li>Training sessions can be scheduled — the system is ready to show real staff</li>
+    </ul>
+  </div>
+
+</section>
+
+<!-- FOOTER -->
+<div style="padding:24px 52px;border-top:1px solid var(--border);background:var(--bg2)">
+  <p style="font-family:var(--mono);font-size:11px;color:var(--text3)">ASVEX Technologies · Shivalaya Guest Experience Platform · Sprint Implementation Guide v1.0 · August 2026 · INTERNAL — Development Team Reference</p>
+</div>
+
+</main>
+</body>
+</html>

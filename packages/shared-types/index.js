@@ -1,5 +1,5 @@
 /**
- * @typedef {'room_service' | 'dine_in' | 'pickup'} ServiceType
+ * @typedef {'room_service' | 'dine_in' | 'pickup' | 'walk_in'} ServiceType
  */
 
 /**
@@ -36,11 +36,15 @@
  * @property {string} restaurant_id
  * @property {ServiceType} service_type
  * @property {string|null} room_number
+ * @property {string|null} table_number
  * @property {string} guest_name
  * @property {string} guest_phone
  * @property {string|null} note
  * @property {CartLineItem[]} items
  * @property {number} total
+ * @property {number} [tax_amount]
+ * @property {number} [grand_total]
+ * @property {string} [payment_status]
  * @property {OrderStatus} status
  * @property {string} created_at
  */
@@ -60,6 +64,7 @@ export const SERVICE_TYPES = /** @type {const} */ ([
   'room_service',
   'dine_in',
   'pickup',
+  'walk_in',
 ]);
 
 export const ORDER_STATUSES = /** @type {const} */ ([
@@ -73,8 +78,9 @@ export const ORDER_STATUSES = /** @type {const} */ ([
 
 export const SERVICE_LABELS = {
   room_service: 'Room Service',
-  dine_in: 'Dine In',
-  pickup: 'Pick Up',
+  dine_in: 'Dine In (Table)',
+  pickup: 'Pick Up / Takeaway',
+  walk_in: 'Walk-In Dining',
 };
 
 export const STATUS_LABELS = {

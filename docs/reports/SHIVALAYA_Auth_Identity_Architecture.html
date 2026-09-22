@@ -1,0 +1,1575 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Shivalaya — Auth, Identity & Room-Guest Binding</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&family=Fraunces:ital,wght@0,600;1,500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:#0D1117; --bg2:#161B22; --bg3:#1E2530; --bg4:#0A0D14;
+  --border:rgba(255,255,255,0.07); --border2:rgba(255,255,255,0.13);
+  --text:#E6EDF3; --text2:#8B949E; --text3:#6E7681;
+  --auth:#7C3AED; --auth-l:#A78BFA; --auth-p:rgba(124,58,237,0.12);
+  --room:#0D6E6E; --room-l:#2DD4BF; --room-p:rgba(13,110,110,0.14);
+  --food:#8B4513; --food-l:#FB923C; --food-p:rgba(139,69,19,0.14);
+  --act:#15572A; --act-l:#4ADE80; --act-p:rgba(21,87,42,0.14);
+  --sec:#7C1D1D; --sec-l:#F87171; --sec-p:rgba(124,29,29,0.14);
+  --brass:#AD8A3F; --brass-l:#D9BA72;
+  --mono:'IBM Plex Mono',monospace; --sans:'Inter',sans-serif;
+}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{font-family:var(--sans);background:var(--bg);color:var(--text);line-height:1.6;font-size:14px;display:flex}
+
+/* SIDEBAR */
+.sidebar{width:270px;min-height:100vh;flex-shrink:0;background:var(--bg2);border-right:1px solid var(--border);position:sticky;top:0;height:100vh;overflow-y:auto;padding:24px 0;scrollbar-width:thin}
+.sl{padding:0 20px 20px;border-bottom:1px solid var(--border);margin-bottom:16px}
+.sl .n{font-family:'Fraunces',serif;font-style:italic;font-size:16px;color:var(--brass-l)}
+.sl .s{font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:1.5px;margin-top:2px;font-family:var(--mono)}
+.ng{margin-bottom:4px}
+.nl{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:var(--text3);padding:8px 20px 4px;font-family:var(--mono)}
+.na{display:block;padding:7px 20px;font-size:12.5px;color:var(--text2);text-decoration:none;transition:all .15s;border-left:2px solid transparent}
+.na:hover{color:var(--text);background:rgba(255,255,255,0.04)}
+.a1:hover{border-left-color:var(--auth-l)} .a2:hover{border-left-color:var(--room-l)}
+.a3:hover{border-left-color:var(--food-l)} .a4:hover{border-left-color:var(--act-l)}
+.a5:hover{border-left-color:var(--sec-l)}  .a6:hover{border-left-color:var(--brass-l)}
+
+/* MAIN */
+.main{flex:1;overflow-x:hidden}
+
+/* HERO */
+.hero{padding:52px 52px 40px;border-bottom:1px solid var(--border);position:relative;overflow:hidden;background:linear-gradient(170deg,#0D1117 0%,#111620 100%)}
+.hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 30% 50%,rgba(124,58,237,0.08) 0%,transparent 55%),radial-gradient(ellipse at 70% 80%,rgba(13,110,110,0.07) 0%,transparent 55%)}
+.hc{position:relative;z-index:1}
+.he{font-family:var(--mono);font-size:10.5px;color:var(--brass-l);letter-spacing:2.5px;text-transform:uppercase;margin-bottom:14px}
+.ht{font-size:clamp(24px,3vw,36px);font-weight:800;line-height:1.2;margin-bottom:10px}
+.ht span{color:var(--brass-l)}
+.hs{font-size:14px;color:var(--text2);max-width:620px;line-height:1.7;margin-bottom:24px}
+.chips{display:flex;gap:9px;flex-wrap:wrap}
+.chip{font-family:var(--mono);font-size:11px;font-weight:700;padding:5px 12px;border-radius:6px;cursor:default}
+.ch-auth{background:var(--auth-p);color:var(--auth-l);border:1px solid rgba(167,139,250,0.25)}
+.ch-room{background:var(--room-p);color:var(--room-l);border:1px solid rgba(45,212,191,0.25)}
+.ch-food{background:var(--food-p);color:var(--food-l);border:1px solid rgba(251,146,60,0.25)}
+.ch-act {background:var(--act-p); color:var(--act-l); border:1px solid rgba(74,222,128,0.25)}
+.ch-sec {background:var(--sec-p); color:var(--sec-l); border:1px solid rgba(248,113,113,0.25)}
+
+/* SECTIONS */
+.sec{padding:48px 52px 44px;border-bottom:1px solid var(--border)}
+.se{font-family:var(--mono);font-size:10.5px;letter-spacing:2px;text-transform:uppercase;margin-bottom:10px}
+.st{font-size:clamp(20px,2.5vw,28px);font-weight:800;margin-bottom:8px}
+.ss{font-size:14px;color:var(--text2);max-width:740px;line-height:1.7;margin-bottom:28px}
+.s-auth .se{color:var(--auth-l)} .s-room .se{color:var(--room-l)}
+.s-food .se{color:var(--food-l)} .s-act  .se{color:var(--act-l)}
+.s-sec  .se{color:var(--sec-l)}  .s-brass .se{color:var(--brass-l)}
+
+/* BODY TEXT */
+.bt{font-size:13.5px;color:var(--text2);line-height:1.75;margin-bottom:16px;max-width:780px}
+.bt strong{color:var(--text);font-weight:600}
+.bt code{font-family:var(--mono);font-size:12px;color:var(--brass-l);background:rgba(173,138,63,0.1);padding:1px 5px;border-radius:3px}
+
+h3.sg{font-size:15px;font-weight:700;color:var(--text);margin:28px 0 16px;display:flex;align-items:center;gap:10px}
+h3.sg::after{content:'';flex:1;height:1px;background:var(--border2)}
+
+/* FLOW STEPS */
+.steps{display:flex;flex-direction:column;margin:18px 0}
+.step{display:flex;gap:18px;position:relative;padding-bottom:0}
+.step:not(:last-child)::after{content:'';position:absolute;left:19px;top:40px;width:2px;height:calc(100% - 10px);background:linear-gradient(to bottom,var(--ac,var(--brass)),transparent)}
+.sn{width:38px;height:38px;border-radius:50%;flex-shrink:0;z-index:1;background:var(--ap,rgba(173,138,63,.1));border:2px solid var(--ac,var(--brass));display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-weight:700;font-size:12px;color:var(--ac,var(--brass-l))}
+.sb{flex:1;padding:7px 0 26px}
+.sb h4{font-size:13.5px;font-weight:700;color:var(--text);margin-bottom:5px}
+.sb p{font-size:13px;color:var(--text2);line-height:1.7;margin-bottom:5px}
+.sb ul{margin:7px 0 7px 18px;display:flex;flex-direction:column;gap:4px}
+.sb li{font-size:13px;color:var(--text2);line-height:1.6}
+.sb li strong{color:var(--text)}
+.sb code{font-family:var(--mono);font-size:11.5px;color:var(--brass-l);background:rgba(173,138,63,.08);padding:1px 5px;border-radius:3px}
+.tr{display:inline-flex;align-items:center;gap:6px;margin-top:7px;font-family:var(--mono);font-size:10.5px;color:var(--text3);background:rgba(255,255,255,.03);padding:4px 10px;border-radius:6px;border:1px solid var(--border2)}
+
+/* CODE */
+.cb{background:var(--bg4);border:1px solid var(--border2);border-radius:10px;overflow:hidden;margin:16px 0}
+.ch{display:flex;align-items:center;justify-content:space-between;padding:9px 16px;border-bottom:1px solid var(--border);background:rgba(255,255,255,.025)}
+.cl{font-family:var(--mono);font-size:10.5px;font-weight:600;color:var(--text3);letter-spacing:1px;text-transform:uppercase}
+.cv{font-size:11px;color:var(--text3)}
+pre{padding:18px;overflow-x:auto;font-family:var(--mono);font-size:12.5px;line-height:1.75;color:#CDD9E5;scrollbar-width:thin}
+.kw{color:#F47067}.cm{color:#6A737D;font-style:italic}.st{color:#96D0FF}
+.nm{color:#D2A8FF}.fn{color:#79C0FF}.op{color:#F47067}
+
+/* CALLOUTS */
+.cal{display:flex;gap:14px;padding:15px 18px;border-radius:10px;margin:16px 0;border:1px solid var(--border2);background:rgba(255,255,255,.02)}
+.ci{font-size:18px;flex-shrink:0;margin-top:1px}
+.cb2 h4{font-size:13px;font-weight:700;margin-bottom:4px}
+.cb2 p{font-size:12.5px;color:var(--text2);line-height:1.65}
+.cb2 code{font-family:var(--mono);font-size:11.5px;color:var(--brass-l)}
+.cal.info{border-color:rgba(56,189,248,.3);background:rgba(56,189,248,.05)}
+.cal.warn{border-color:rgba(248,113,113,.3);background:rgba(248,113,113,.05)}
+.cal.ok{border-color:rgba(74,222,128,.3);background:rgba(74,222,128,.05)}
+.cal.auth-c{border-color:rgba(167,139,250,.3);background:rgba(124,58,237,.07)}
+
+/* TABLES */
+.dt{width:100%;border-collapse:collapse;font-size:12.5px;margin:12px 0}
+.dt th{text-align:left;padding:9px 12px;background:rgba(255,255,255,.04);color:var(--text3);font-weight:700;text-transform:uppercase;letter-spacing:.8px;font-size:10.5px;border-bottom:1px solid var(--border2)}
+.dt td{padding:9px 12px;border-bottom:1px solid var(--border);color:var(--text2);vertical-align:top}
+.dt tr:hover td{background:rgba(255,255,255,.02)}
+.mn{font-family:var(--mono);color:var(--text);font-weight:500}
+.mc{font-family:var(--mono);color:var(--auth-l)}
+
+/* GRID */
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:14px 0}
+.g3{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin:14px 0}
+@media(max-width:900px){.g2,.g3{grid-template-columns:1fr}}
+.card{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:18px 20px}
+.ct{font-weight:700;font-size:13px;color:var(--text);margin-bottom:7px;display:flex;align-items:center;gap:8px}
+.cd{font-size:12.5px;color:var(--text2);line-height:1.65}
+.cd code{font-family:var(--mono);font-size:11px;color:var(--brass-l)}
+
+/* STATE MACHINE */
+.sm{display:flex;flex-wrap:wrap;gap:10px;margin:16px 0;align-items:center}
+.sm-state{background:var(--bg3);border:1.5px solid var(--border2);border-radius:8px;padding:10px 16px;font-family:var(--mono);font-size:12px;font-weight:600;color:var(--text)}
+.sm-arrow{color:var(--text3);font-size:16px;font-family:var(--mono)}
+.sm-state.active{border-color:var(--auth-l);color:var(--auth-l);background:var(--auth-p)}
+.sm-state.done{border-color:var(--act-l);color:var(--act-l);background:var(--act-p)}
+.sm-state.warn{border-color:var(--food-l);color:var(--food-l);background:var(--food-p)}
+.sm-state.danger{border-color:var(--sec-l);color:var(--sec-l);background:var(--sec-p)}
+
+/* TAG */
+.tag{display:inline-block;font-family:var(--mono);font-size:9.5px;font-weight:700;padding:2px 7px;border-radius:4px;text-transform:uppercase;letter-spacing:.3px}
+.t-auth{background:var(--auth-p);color:var(--auth-l);border:1px solid rgba(167,139,250,.25)}
+.t-room{background:var(--room-p);color:var(--room-l);border:1px solid rgba(45,212,191,.25)}
+.t-food{background:var(--food-p);color:var(--food-l);border:1px solid rgba(251,146,60,.25)}
+.t-act{background:var(--act-p);color:var(--act-l);border:1px solid rgba(74,222,128,.25)}
+.t-sec{background:var(--sec-p);color:var(--sec-l);border:1px solid rgba(248,113,113,.25)}
+
+.dl{display:flex;align-items:center;gap:12px;margin:24px 0;font-family:var(--mono);font-size:10.5px;color:var(--text3);text-transform:uppercase;letter-spacing:1.5px}
+.dl::before,.dl::after{content:'';flex:1;height:1px;background:var(--border)}
+
+@media(max-width:768px){.sidebar{display:none}.sec,.hero{padding:32px 22px}}
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+  <div class="sl"><div class="n">Shivalaya</div><div class="s">Auth & Identity Reference</div></div>
+  <div class="ng"><div class="nl">Authentication</div>
+    <a class="na a1" href="#account-types">User Types Overview</a>
+    <a class="na a1" href="#owner-creation">Owner Account Creation</a>
+    <a class="na a1" href="#staff-creation">Staff Account Creation</a>
+    <a class="na a1" href="#kitchen-login">Kitchen PIN Login</a>
+    <a class="na a1" href="#reception-login">Reception Login</a>
+    <a class="na a1" href="#guest-identity">Guest Identity (No Account)</a>
+    <a class="na a1" href="#jwt-lifecycle">JWT Lifecycle</a>
+    <a class="na a1" href="#auth-audit">Auth Audit Logs</a>
+  </div>
+  <div class="ng"><div class="nl">Room-Guest Binding</div>
+    <a class="na a2" href="#room-model">Data Model</a>
+    <a class="na a2" href="#checkin-algo">Check-in Algorithm</a>
+    <a class="na a2" href="#guest-pointer">current_guest_id Pointer</a>
+    <a class="na a2" href="#date-range">Date Range Queries</a>
+    <a class="na a2" href="#checkout-algo">Check-out Algorithm</a>
+    <a class="na a2" href="#edge-cases">Edge Cases</a>
+  </div>
+  <div class="ng"><div class="nl">Food Order Linking</div>
+    <a class="na a3" href="#order-link">Room→Guest Auto-Link</a>
+    <a class="na a3" href="#anon-order">Anonymous Order Flow</a>
+    <a class="na a3" href="#walkin">Walk-in Handling</a>
+  </div>
+  <div class="ng"><div class="nl">Activity Booking Linking</div>
+    <a class="na a4" href="#booking-link">Booking→Guest Binding</a>
+    <a class="na a4" href="#stay-validation">Stay Date Validation</a>
+    <a class="na a4" href="#slot-algo">Concurrency Algorithm</a>
+  </div>
+  <div class="ng"><div class="nl">Security Model</div>
+    <a class="na a5" href="#defense-depth">Defense in Depth</a>
+    <a class="na a5" href="#rls-complete">Complete RLS Map</a>
+    <a class="na a5" href="#pin-security">PIN Security</a>
+    <a class="na a5" href="#audit-tables">All Audit Tables</a>
+  </div>
+  <div class="ng"><div class="nl">Guest Journey</div>
+    <a class="na a6" href="#full-journey">QR → Checkout: Full Map</a>
+    <a class="na a6" href="#state-machine">Guest State Machine</a>
+    <a class="na a6" href="#algo-summary">Algorithm Summary</a>
+  </div>
+</aside>
+
+<main class="main">
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hc">
+    <div class="he">ASVEX Technologies · Deep Technical Reference</div>
+    <h1 class="ht">Authentication, Identity &<br><span>Room-Guest Binding System</span></h1>
+    <p class="hs">Every algorithm, function, SQL trigger, security layer, and data model governing how users are created, authenticated, and how a guest's identity is bound to their room — powering every food order, activity booking, and checkout folio.</p>
+    <div class="chips">
+      <span class="chip ch-auth">Auth Architecture</span>
+      <span class="chip ch-room">Room-Guest Binding</span>
+      <span class="chip ch-food">Order Linking</span>
+      <span class="chip ch-act">Activity Linking</span>
+      <span class="chip ch-sec">Security Model</span>
+    </div>
+  </div>
+</div>
+
+
+<!-- ════════════════════════════════════════════════
+     SECTION 1 — USER TYPES & ACCOUNT CREATION
+     ════════════════════════════════════════════════ -->
+<section class="sec s-auth" id="account-types">
+  <div class="se">01 · Authentication</div>
+  <h2 class="st">User Types — Who Can Access What</h2>
+  <p class="ss">There are exactly four identity types in the system. Three have Supabase Auth accounts. One — the guest — has no account at all. Understanding this separation is the foundation of every security decision.</p>
+
+  <table class="dt">
+    <thead><tr><th>Identity Type</th><th>Auth Method</th><th>Account Exists?</th><th>Created By</th><th>Session Length</th><th>Can Do</th></tr></thead>
+    <tbody>
+      <tr>
+        <td><span class="tag t-auth">Guest (Anon)</span></td>
+        <td>No login. Room number + phone = identity.</td>
+        <td>No Supabase Auth account</td>
+        <td>N/A — Supabase anon key</td>
+        <td>Browser session only</td>
+        <td>Browse menu, place orders, book activities, track own order</td>
+      </tr>
+      <tr>
+        <td><span class="tag t-food">Kitchen Staff</span></td>
+        <td>Profile select + 4-digit PIN → Supabase Auth signIn</td>
+        <td>Yes — auth.users + staff table</td>
+        <td>Owner via Reception dashboard</td>
+        <td>12 hours (auto-logout)</td>
+        <td>View/update food orders only</td>
+      </tr>
+      <tr>
+        <td><span class="tag t-room">Receptionist</span></td>
+        <td>Email + 6-digit PIN → Supabase Auth signIn</td>
+        <td>Yes — auth.users + staff table</td>
+        <td>Owner via Reception dashboard</td>
+        <td>8 hours</td>
+        <td>Guest check-in/out, activity confirmation, folio view</td>
+      </tr>
+      <tr>
+        <td><span class="tag t-act">Owner</span></td>
+        <td>Email + strong password → Supabase Auth signIn</td>
+        <td>Yes — auth.users + staff table</td>
+        <td>ASVEX Technologies (one-time setup)</td>
+        <td>24 hours</td>
+        <td>Full access — all data, settings, analytics, staff management</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="cal auth-c">
+    <div class="ci">🔑</div>
+    <div class="cb2">
+      <h4>Critical Design Decision: Guests Never Have Accounts</h4>
+      <p>A guest ordering food at 2 AM should not have to create an account, remember a password, or verify an email. Their room number is their identity for the duration of their stay. Supabase's anonymous session (using the anon key) handles their API access, while RLS policies strictly limit what anonymous sessions can read and write. The <code>guest</code> record in the guests table is created by the <strong>receptionist</strong> at check-in — not by the guest themselves.</p>
+    </div>
+  </div>
+</section>
+
+
+<!-- OWNER ACCOUNT CREATION -->
+<section class="sec s-auth" id="owner-creation">
+  <div class="se">01 · Authentication</div>
+  <h2 class="st">Owner Account Creation</h2>
+  <p class="ss">This happens exactly once, performed by ASVEX during initial platform setup. The owner account has the highest privilege level and is never created via the app's own UI — only via the Supabase Admin API using the service role key.</p>
+
+  <h3 class="sg">Step-by-Step: Creating the Owner Account</h3>
+
+  <div class="steps" style="--ac:var(--auth-l);--ap:var(--auth-p)">
+    <div class="step">
+      <div class="sn">1</div>
+      <div class="sb">
+        <h4>ASVEX creates auth.users entry via Admin API</h4>
+        <p>Using the Supabase service role key (never exposed to browser), ASVEX calls the Admin API to create the Supabase Auth user. The email becomes the owner's login identity permanently.</p>
+        <div class="cb">
+          <div class="ch"><span class="cl">TypeScript</span><span class="cv">Run once — initial setup script</span></div>
+          <pre><span class="cm">// supabase/scripts/create-owner.ts — ASVEX runs this once</span>
+<span class="kw">import</span> { createClient } <span class="kw">from</span> <span class="st">'@supabase/supabase-js'</span>
+
+<span class="kw">const</span> supabaseAdmin = <span class="fn">createClient</span>(
+  process.env.SUPABASE_URL!,
+  process.env.SUPABASE_SERVICE_ROLE_KEY!  <span class="cm">// Admin key — never in browser</span>
+)
+
+<span class="kw">async function</span> <span class="fn">createOwnerAccount</span>() {
+  <span class="cm">// Step 1: Create Supabase Auth user</span>
+  <span class="kw">const</span> { data: authUser, error: authError } =
+    <span class="kw">await</span> supabaseAdmin.auth.admin.<span class="fn">createUser</span>({
+      email:         <span class="st">'vikas@shivalayaresorts.com'</span>,
+      password:      <span class="st">'[strong-random-32-char-password]'</span>,
+      email_confirm: <span class="nm">true</span>,       <span class="cm">// Skip email verification</span>
+      user_metadata: { name: <span class="st">'Vikas Dubey'</span>, role: <span class="st">'owner'</span> }
+    })
+
+  <span class="kw">if</span> (authError) <span class="kw">throw</span> authError
+  console.<span class="fn">log</span>(<span class="st">'Auth user created:'</span>, authUser.user.id)
+
+  <span class="cm">// Step 2: Get resort ID from resorts table</span>
+  <span class="kw">const</span> { data: resort } = <span class="kw">await</span> supabaseAdmin
+    .from(<span class="st">'resorts'</span>).select(<span class="st">'id'</span>).eq(<span class="st">'slug'</span>, <span class="st">'shivalaya-resorts'</span>).single()
+
+  <span class="cm">// Step 3: Create corresponding staff record</span>
+  <span class="kw">const</span> { error: staffError } = <span class="kw">await</span> supabaseAdmin
+    .from(<span class="st">'staff'</span>)
+    .insert({
+      resort_id:        resort.id,
+      supabase_user_id: authUser.user.id,
+      name:             <span class="st">'Vikas Dubey'</span>,
+      role:             <span class="st">'owner'</span>,
+      is_active:        <span class="nm">true</span>,
+      pin_hash:         <span class="nm">null</span>  <span class="cm">// Owner uses password, not PIN</span>
+    })
+
+  <span class="kw">if</span> (staffError) <span class="kw">throw</span> staffError
+  console.<span class="fn">log</span>(<span class="st">'Owner setup complete. Auth ID:'</span>, authUser.user.id)
+}
+
+<span class="fn">createOwnerAccount</span>()</pre>
+        </div>
+        <span class="tr">DB WRITE: auth.users (Supabase-managed) + staff table</span>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="sn">2</div>
+      <div class="sb">
+        <h4>Password policy and delivery</h4>
+        <p>The initial password is generated as a cryptographically random 32-character string (letters, numbers, symbols). It is delivered to the owner via a secure channel — a password manager shared link or encrypted WhatsApp message. The owner changes it on first login.</p>
+        <p>Password requirements enforced at Supabase Auth level: minimum 12 characters, at least one number, one symbol. No maximum limit.</p>
+        <div class="cb">
+          <div class="ch"><span class="cl">Node.js</span><span class="cv">Random password generator used for initial setup</span></div>
+          <pre><span class="kw">import</span> crypto <span class="kw">from</span> <span class="st">'crypto'</span>
+
+<span class="cm">// Generates: 'K7#mQ2pXwL9!rNsT4vYd8@bJeH3cF6'</span>
+<span class="kw">const</span> <span class="fn">generatePassword</span> = () =>
+  crypto.<span class="fn">randomBytes</span>(<span class="nm">24</span>)
+    .toString(<span class="st">'base64'</span>)
+    .replace(/[+/=]/g, <span class="st">'X'</span>)
+    .slice(<span class="nm">0</span>, <span class="nm">32</span>)</pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="sn">3</div>
+      <div class="sb">
+        <h4>What the owner's Supabase Auth session looks like</h4>
+        <p>When the owner logs into the Reception app, Supabase Auth returns a JWT (JSON Web Token) with these claims. The JWT is stored in the browser's memory (not localStorage) for security against XSS attacks.</p>
+        <div class="cb">
+          <div class="ch"><span class="cl">JWT Payload</span><span class="cv">Decoded access token — valid for 1 hour, refreshed automatically</span></div>
+          <pre>{
+  <span class="st">"iss"</span>: <span class="st">"https://[ref].supabase.co/auth/v1"</span>,
+  <span class="st">"sub"</span>: <span class="st">"[uuid — owner's auth.users id]"</span>,  <span class="cm">// Used by RLS</span>
+  <span class="st">"role"</span>: <span class="st">"authenticated"</span>,
+  <span class="st">"email"</span>: <span class="st">"vikas@shivalayaresorts.com"</span>,
+  <span class="st">"iat"</span>: <span class="nm">1723543200</span>,   <span class="cm">// Issued At</span>
+  <span class="st">"exp"</span>: <span class="nm">1723546800</span>,   <span class="cm">// Expires (1 hour) — auto-refreshed by SDK</span>
+  <span class="st">"user_metadata"</span>: {
+    <span class="st">"name"</span>: <span class="st">"Vikas Dubey"</span>,
+    <span class="st">"role"</span>: <span class="st">"owner"</span>
+  }
+}
+
+<span class="cm">// The Supabase SDK automatically uses the refresh token (valid 7 days)</span>
+<span class="cm">// to get a new access token before it expires. The session is transparent.</span></pre>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- STAFF ACCOUNT CREATION -->
+<section class="sec s-auth" id="staff-creation">
+  <div class="se">01 · Authentication</div>
+  <h2 class="st">Staff Account Creation — Owner Creates via Reception</h2>
+  <p class="ss">After the owner account exists, all other staff accounts (receptionist, kitchen) are created by the owner through the Reception dashboard's Staff Management panel. This never requires ASVEX involvement for day-to-day staff changes.</p>
+
+  <h3 class="sg">How the Owner Creates a New Staff Member</h3>
+
+  <div class="steps" style="--ac:var(--auth-l);--ap:var(--auth-p)">
+    <div class="step">
+      <div class="sn">1</div>
+      <div class="sb">
+        <h4>Owner opens Staff Management in Reception → "Add Staff"</h4>
+        <p>Form fields: Staff Name, Role (kitchen/receptionist), PIN (4-digit for kitchen, 6-digit for receptionist). The email is auto-generated as <code>[name-slug]@staff.shivalayaresorts.com</code> — the staff member never sees this email, it's just a technical identifier.</p>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="sn">2</div>
+      <div class="sb">
+        <h4>Frontend calls the create_staff_account RPC (SECURITY DEFINER)</h4>
+        <p>This RPC runs with elevated privileges (SECURITY DEFINER) so it can call the Supabase Admin API functions — which anonymous or regular authenticated sessions cannot do. The owner's session is authenticated, but the Admin API call itself uses the service role.</p>
+        <div class="cb">
+          <div class="ch"><span class="cl">SQL</span><span class="cv">create_staff_account RPC — callable only by owner role</span></div>
+          <pre><span class="kw">CREATE OR REPLACE FUNCTION</span> <span class="fn">create_staff_account</span>(
+  p_resort_id  <span class="nm">UUID</span>,
+  p_name       <span class="nm">TEXT</span>,
+  p_role       <span class="nm">TEXT</span>,  <span class="cm">-- 'kitchen' | 'receptionist'</span>
+  p_pin        <span class="nm">TEXT</span>   <span class="cm">-- raw PIN (e.g. '2847')</span>
+)
+<span class="kw">RETURNS JSONB LANGUAGE</span> plpgsql <span class="kw">SECURITY DEFINER AS</span> $$
+<span class="kw">DECLARE</span>
+  v_email       <span class="nm">TEXT</span>;
+  v_password    <span class="nm">TEXT</span>;
+  v_auth_result <span class="nm">JSONB</span>;
+  v_auth_uid    <span class="nm">UUID</span>;
+  v_staff_id    <span class="nm">UUID</span>;
+<span class="kw">BEGIN</span>
+  <span class="cm">-- Guard: only owner can create staff</span>
+  <span class="kw">IF NOT EXISTS</span> (
+    <span class="kw">SELECT</span> <span class="nm">1</span> <span class="kw">FROM</span> staff
+    <span class="kw">WHERE</span> supabase_user_id = <span class="fn">auth.uid</span>()
+      <span class="kw">AND</span> role = <span class="st">'owner'</span>
+      <span class="kw">AND</span> resort_id = p_resort_id
+  ) <span class="kw">THEN</span>
+    <span class="kw">RAISE EXCEPTION</span> <span class="st">'Unauthorized: only owner can create staff'</span>;
+  <span class="kw">END IF</span>;
+
+  <span class="cm">-- Generate system email and strong password</span>
+  v_email    := <span class="fn">lower</span>(<span class="fn">regexp_replace</span>(p_name, <span class="st">'\s+'</span>, <span class="st">'-'</span>, <span class="st">'g'</span>))
+                || <span class="st">'@staff.shivalayaresorts.com'</span>;
+  v_password := <span class="fn">encode</span>(<span class="fn">gen_random_bytes</span>(<span class="nm">24</span>), <span class="st">'hex'</span>); <span class="cm">-- 48-char hex</span>
+
+  <span class="cm">-- Call Supabase Admin API via pg_net (HTTP from inside Postgres)</span>
+  <span class="kw">SELECT</span> content::jsonb <span class="kw">INTO</span> v_auth_result
+  <span class="kw">FROM</span> net.<span class="fn">http_post</span>(
+    url     := <span class="fn">current_setting</span>(<span class="st">'app.edge_function_base_url'</span>) <span class="op">||</span> <span class="st">'/create-staff-auth'</span>,
+    headers := <span class="fn">jsonb_build_object</span>(
+      <span class="st">'Authorization'</span>, <span class="st">'Bearer '</span> <span class="op">||</span> <span class="fn">current_setting</span>(<span class="st">'app.service_role_key'</span>),
+      <span class="st">'Content-Type'</span>,  <span class="st">'application/json'</span>
+    ),
+    body := <span class="fn">jsonb_build_object</span>(
+      <span class="st">'email'</span>,    v_email,
+      <span class="st">'password'</span>, v_password,
+      <span class="st">'name'</span>,     p_name,
+      <span class="st">'role'</span>,     p_role
+    )
+  );
+
+  v_auth_uid := (v_auth_result->><span class="st">'user_id'</span>)::uuid;
+
+  <span class="cm">-- Store bcrypt-hashed PIN in staff table</span>
+  <span class="kw">INSERT INTO</span> staff(
+    resort_id, supabase_user_id, name, role,
+    pin_hash, supabase_system_email, is_active
+  ) <span class="kw">VALUES</span>(
+    p_resort_id, v_auth_uid, p_name, p_role,
+    <span class="fn">crypt</span>(p_pin, <span class="fn">gen_salt</span>(<span class="st">'bf'</span>, <span class="nm">12</span>)),  <span class="cm">-- bcrypt work factor 12</span>
+    v_email, <span class="nm">true</span>
+  ) <span class="kw">RETURNING</span> id <span class="kw">INTO</span> v_staff_id;
+
+  <span class="cm">-- Log the account creation</span>
+  <span class="kw">INSERT INTO</span> auth_audit_log(
+    event_type, actor_id, target_id, metadata
+  ) <span class="kw">VALUES</span>(
+    <span class="st">'staff_account_created'</span>,
+    <span class="fn">auth.uid</span>(),
+    v_auth_uid,
+    <span class="fn">jsonb_build_object</span>(<span class="st">'name'</span>, p_name, <span class="st">'role'</span>, p_role)
+  );
+
+  <span class="kw">RETURN</span> <span class="fn">jsonb_build_object</span>(
+    <span class="st">'success'</span>, <span class="nm">true</span>,
+    <span class="st">'staff_id'</span>, v_staff_id,
+    <span class="st">'name'</span>,     p_name
+  );
+<span class="kw">END</span>;
+$$;</pre>
+        </div>
+        <span class="tr">DB WRITE: auth.users (via Edge Function) + staff table + auth_audit_log</span>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="sn">3</div>
+      <div class="sb">
+        <h4>The create-staff-auth Edge Function (called by the RPC)</h4>
+        <p>This Deno function receives the staff details and uses the Supabase Admin API to create the auth user — something only possible with the service role key, kept exclusively server-side.</p>
+        <div class="cb">
+          <div class="ch"><span class="cl">TypeScript</span><span class="cv">supabase/functions/create-staff-auth/index.ts</span></div>
+          <pre><span class="kw">import</span> { serve } <span class="kw">from</span> <span class="st">'https://deno.land/std/http/server.ts'</span>
+<span class="kw">import</span> { createClient } <span class="kw">from</span> <span class="st">'https://esm.sh/@supabase/supabase-js@2'</span>
+
+<span class="fn">serve</span>(<span class="kw">async</span> (req) => {
+  <span class="cm">// Verify the call came from our own DB trigger/RPC</span>
+  <span class="kw">const</span> token = req.headers.<span class="fn">get</span>(<span class="st">'Authorization'</span>)?.split(<span class="st">' '</span>)[<span class="nm">1</span>]
+  <span class="kw">if</span> (token !== <span class="fn">Deno.env.get</span>(<span class="st">'SUPABASE_SERVICE_ROLE_KEY'</span>)) {
+    <span class="kw">return new</span> <span class="fn">Response</span>(<span class="st">'Unauthorized'</span>, { status: <span class="nm">401</span> })
+  }
+
+  <span class="kw">const</span> { email, password, name, role } = <span class="kw">await</span> req.<span class="fn">json</span>()
+
+  <span class="kw">const</span> admin = <span class="fn">createClient</span>(
+    <span class="fn">Deno.env.get</span>(<span class="st">'SUPABASE_URL'</span>)!,
+    <span class="fn">Deno.env.get</span>(<span class="st">'SUPABASE_SERVICE_ROLE_KEY'</span>)!
+  )
+
+  <span class="kw">const</span> { data, error } = <span class="kw">await</span> admin.auth.admin.<span class="fn">createUser</span>({
+    email,
+    password,
+    email_confirm: <span class="nm">true</span>,   <span class="cm">// Staff never see or use email directly</span>
+    user_metadata: { name, role, created_by: <span class="st">'owner'</span> }
+  })
+
+  <span class="kw">if</span> (error) <span class="kw">return new</span> <span class="fn">Response</span>(
+    <span class="fn">JSON.stringify</span>({ error: error.message }), { status: <span class="nm">400</span> }
+  )
+
+  <span class="kw">return new</span> <span class="fn">Response</span>(
+    <span class="fn">JSON.stringify</span>({ user_id: data.user.id })
+  )
+})</pre>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="cal ok">
+    <div class="ci">✅</div>
+    <div class="cb2">
+      <h4>PIN Reset Flow</h4>
+      <p>When a staff member's PIN needs to be changed (forgotten or security rotation), the owner opens their staff record in Reception → Staff Management → "Reset PIN." This calls an <code>update_staff_pin(staff_id, new_pin)</code> RPC which updates <code>pin_hash = crypt(new_pin, gen_salt('bf', 12))</code>. The old PIN immediately stops working. No involvement from ASVEX needed. Logged in <code>auth_audit_log</code> with actor (owner), target (staff), and timestamp.</p>
+    </div>
+  </div>
+</section>
+
+
+<!-- KITCHEN PIN LOGIN FLOW -->
+<section class="sec s-auth" id="kitchen-login">
+  <div class="se">01 · Authentication</div>
+  <h2 class="st">Kitchen Staff PIN Login — Complete Flow</h2>
+  <p class="ss">Kitchen staff select their profile from a grid, type a 4-digit PIN, and are authenticated in under 2 seconds. Behind this simple UX is a two-layer verification: first a bcrypt check against the database, then a real Supabase Auth session establishment.</p>
+
+  <div class="steps" style="--ac:var(--food-l);--ap:var(--food-p)">
+    <div class="step">
+      <div class="sn">1</div>
+      <div class="sb">
+        <h4>Kitchen Panel loads — fetches all active kitchen staff profiles</h4>
+        <div class="cb">
+          <div class="ch"><span class="cl">TypeScript</span></div>
+          <pre><span class="kw">const</span> { data: profiles } = <span class="kw">await</span> supabase
+  .from(<span class="st">'staff'</span>)
+  .select(<span class="st">'id, name, role, avatar_color'</span>)  <span class="cm">// NO pin_hash — never sent to browser</span>
+  .eq(<span class="st">'resort_id'</span>, RESORT_ID)
+  .eq(<span class="st">'is_active'</span>, <span class="nm">true</span>)
+  .in(<span class="st">'role'</span>, [<span class="st">'kitchen'</span>])</pre>
+        </div>
+        <p>Note: <code>pin_hash</code> is never included in any SELECT from the frontend. RLS policy on the staff table explicitly excludes it from anon/unauthenticated reads.</p>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="sn">2</div>
+      <div class="sb">
+        <h4>Staff selects profile — PIN keypad appears</h4>
+        <p>Large 44px touch targets. Digits 0–9. Backspace. After each digit, a filled circle appears (never shows the digit). After 3 failed attempts: 30-second lockout with countdown timer. After 10 cumulative failed attempts in 24 hours: account locked, requires owner to unlock.</p>
+
+        <div class="cb">
+          <div class="ch"><span class="cl">TypeScript</span><span class="cv">PIN attempt tracking with lockout</span></div>
+          <pre><span class="kw">const</span> LOCKOUT_AFTER_ATTEMPTS = <span class="nm">3</span>
+<span class="kw">const</span> LOCKOUT_DURATION_MS    = <span class="nm">30_000</span>   <span class="cm">// 30 seconds</span>
+
+<span class="kw">interface</span> PinAttemptState {
+  staffId:    string
+  attempts:   number
+  lockedUntil: Date | null
+}
+
+<span class="kw">const</span> attemptStore = <span class="kw">new</span> <span class="fn">Map</span>&lt;string, PinAttemptState&gt;()
+
+<span class="kw">function</span> <span class="fn">checkLockout</span>(staffId: string): boolean {
+  <span class="kw">const</span> state = attemptStore.<span class="fn">get</span>(staffId)
+  <span class="kw">if</span> (!state?.lockedUntil) <span class="kw">return false</span>
+  <span class="kw">if</span> (Date.<span class="fn">now</span>() > state.lockedUntil.<span class="fn">getTime</span>()) {
+    state.lockedUntil = <span class="nm">null</span>   <span class="cm">// Lockout expired</span>
+    state.attempts    = <span class="nm">0</span>
+    <span class="kw">return false</span>
+  }
+  <span class="kw">return true</span>   <span class="cm">// Still locked</span>
+}</pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="sn">3</div>
+      <div class="sb">
+        <h4>PIN submitted → verify_staff_pin RPC (bcrypt comparison)</h4>
+        <div class="cb">
+          <div class="ch"><span class="cl">SQL</span><span class="cv">verify_staff_pin — SECURITY DEFINER — reads pin_hash internally</span></div>
+          <pre><span class="kw">CREATE OR REPLACE FUNCTION</span> <span class="fn">verify_staff_pin</span>(
+  p_staff_id <span class="nm">UUID</span>,
+  p_pin      <span class="nm">TEXT</span>
+)
+<span class="kw">RETURNS JSONB LANGUAGE</span> plpgsql <span class="kw">SECURITY DEFINER AS</span> $$
+<span class="kw">DECLARE</span>
+  v_staff staff%ROWTYPE;
+<span class="kw">BEGIN</span>
+  <span class="cm">-- Fetch full staff record (SECURITY DEFINER bypasses RLS)</span>
+  <span class="kw">SELECT</span> * <span class="kw">INTO</span> v_staff
+  <span class="kw">FROM</span> staff <span class="kw">WHERE</span> id = p_staff_id;
+
+  <span class="kw">IF NOT FOUND</span> <span class="kw">THEN</span>
+    <span class="kw">RETURN</span> <span class="fn">jsonb_build_object</span>(<span class="st">'valid'</span>,<span class="nm">false</span>,<span class="st">'error'</span>,<span class="st">'NOT_FOUND'</span>);
+  <span class="kw">END IF</span>;
+
+  <span class="kw">IF NOT</span> v_staff.is_active <span class="kw">THEN</span>
+    <span class="kw">RETURN</span> <span class="fn">jsonb_build_object</span>(<span class="st">'valid'</span>,<span class="nm">false</span>,<span class="st">'error'</span>,<span class="st">'ACCOUNT_INACTIVE'</span>);
+  <span class="kw">END IF</span>;
+
+  <span class="cm">-- bcrypt comparison: crypt(input_pin, stored_hash) must equal stored_hash</span>
+  <span class="cm">-- bcrypt is self-salted — the salt is embedded in the hash string</span>
+  <span class="kw">IF</span> v_staff.pin_hash = <span class="fn">crypt</span>(p_pin, v_staff.pin_hash) <span class="kw">THEN</span>
+    <span class="cm">-- Log successful login</span>
+    <span class="kw">INSERT INTO</span> auth_audit_log(event_type, actor_id, metadata)
+    <span class="kw">VALUES</span>(<span class="st">'staff_pin_login_success'</span>, v_staff.supabase_user_id,
+      <span class="fn">jsonb_build_object</span>(<span class="st">'name'</span>, v_staff.name, <span class="st">'role'</span>, v_staff.role));
+
+    <span class="kw">RETURN</span> <span class="fn">jsonb_build_object</span>(
+      <span class="st">'valid'</span>,              <span class="nm">true</span>,
+      <span class="st">'staff_name'</span>,         v_staff.name,
+      <span class="st">'role'</span>,              v_staff.role,
+      <span class="st">'supabase_user_id'</span>,   v_staff.supabase_user_id::text,
+      <span class="st">'system_email'</span>,       v_staff.supabase_system_email
+    );
+  <span class="kw">ELSE</span>
+    <span class="cm">-- Log failed attempt</span>
+    <span class="kw">INSERT INTO</span> auth_audit_log(event_type, actor_id, metadata)
+    <span class="kw">VALUES</span>(<span class="st">'staff_pin_login_failed'</span>, v_staff.supabase_user_id,
+      <span class="fn">jsonb_build_object</span>(<span class="st">'staff_id'</span>, p_staff_id));
+
+    <span class="kw">RETURN</span> <span class="fn">jsonb_build_object</span>(<span class="st">'valid'</span>,<span class="nm">false</span>,<span class="st">'error'</span>,<span class="st">'INVALID_PIN'</span>);
+  <span class="kw">END IF</span>;
+<span class="kw">END</span>;
+$$;</pre>
+        </div>
+        <div class="cal info">
+          <div class="ci">🔐</div>
+          <div class="cb2">
+            <h4>How bcrypt works here</h4>
+            <p>bcrypt is a password-hashing algorithm that includes the salt inside the hash output. When the PIN "2847" is hashed with <code>gen_salt('bf', 12)</code>, the result looks like: <code>$2a$12$[22-char-salt][31-char-hash]</code>. When verifying, <code>crypt('2847', stored_hash)</code> extracts the salt from the stored_hash, hashes the input with that same salt, and compares. This means even if the staff table is somehow leaked, attackers cannot reverse the PINs — bcrypt with work factor 12 takes ~300ms per attempt, making brute force of 10,000 possible 4-digit PINs take 50 minutes per hash.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="sn">4</div>
+      <div class="sb">
+        <h4>Successful PIN → establish Supabase Auth session</h4>
+        <p>The RPC returns the staff member's <code>system_email</code>. The frontend uses this with the system password (stored as env variable) to sign in via Supabase Auth. This establishes a real JWT session — required for RLS policies to grant kitchen access.</p>
+        <div class="cb">
+          <div class="ch"><span class="cl">TypeScript</span><span class="cv">After PIN verified — establish Auth session</span></div>
+          <pre"><span class="kw">const</span> result = <span class="kw">await</span> supabase.rpc(<span class="st">'verify_staff_pin'</span>, {
+  p_staff_id: selectedProfile.id,
+  p_pin:      enteredPin
+})
+
+<span class="kw">if</span> (!result.data?.valid) {
+  <span class="fn">handleFailedAttempt</span>(selectedProfile.id)
+  <span class="kw">return</span>
+}
+
+<span class="cm">// Sign in with Supabase Auth using system credentials</span>
+<span class="cm">// STAFF_SYSTEM_PASSWORDS is a Vite env var: JSON mapping of system_email → password</span>
+<span class="kw">const</span> staffPasswords = <span class="fn">JSON.parse</span>(<span class="kw">import</span>.meta.env.VITE_STAFF_PASSWORDS)
+<span class="kw">const</span> systemPassword = staffPasswords[result.data.system_email]
+
+<span class="kw">const</span> { data: session, error } = <span class="kw">await</span> supabase.auth.<span class="fn">signInWithPassword</span>({
+  email:    result.data.system_email,
+  password: systemPassword
+})
+
+<span class="kw">if</span> (error) { <span class="fn">showError</span>(<span class="st">'Login failed. Contact owner.'</span>); <span class="kw">return</span> }
+
+<span class="cm">// Store display info (NOT credentials)</span>
+<span class="fn">setStaffSession</span>({
+  name:      result.data.staff_name,
+  role:      result.data.role,
+  loggedInAt: <span class="kw">new</span> <span class="fn">Date</span>()
+})
+
+<span class="cm">// Schedule auto-logout after 12 hours</span>
+<span class="fn">scheduleAutoLogout</span>(<span class="nm">12</span> * <span class="nm">60</span> * <span class="nm">60</span> * <span class="nm">1000</span>)</pre>
+        </div>
+        <span class="tr">AUTH SESSION: JWT access token (1hr) + refresh token (7 days) stored in memory</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- GUEST IDENTITY -->
+<section class="sec s-auth" id="guest-identity">
+  <div class="se">01 · Authentication</div>
+  <h2 class="st">Guest Identity — No Account, No Login</h2>
+  <p class="ss">Guests interact with the platform entirely without creating an account. Their identity is their room number and phone number — both of which are known because the receptionist entered them during check-in. The QR code begins the session, the room number links everything.</p>
+
+  <div class="g2">
+    <div class="card" style="border-left:3px solid var(--room-l)">
+      <div class="ct">How Guests Access the API</div>
+      <div class="cd">
+        <p>All Guest Portal API calls use the Supabase <strong>anon key</strong>. This key is public — it's embedded in the JavaScript bundle. Security comes from RLS policies, not from keeping the key secret. Every anon session has identical minimal privileges. No anon session can read another guest's data.</p>
+      </div>
+    </div>
+    <div class="card" style="border-left:3px solid var(--room-l)">
+      <div class="ct">What "Guest Identity" Actually Means</div>
+      <div class="cd">
+        <p>When a guest places an order, they submit their name, phone, and room number in the checkout form. The <code>create_order</code> RPC uses the room number to look up <code>rooms.current_guest_id</code> — linking the order to the checked-in guest record automatically. The guest doesn't authenticate; the <strong>room occupancy</strong> authenticates their identity.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="cb">
+    <div class="ch"><span class="cl">Security Model</span><span class="cv">What an anon guest can and cannot do — enforced by RLS</span></div>
+    <pre><span class="cm">ANON (guest) CAN:
+  SELECT menu_items WHERE is_available = true
+  SELECT menu_categories WHERE is_available = true  
+  SELECT menu_item_variants (all)
+  SELECT activities WHERE is_available = true
+  SELECT activity_time_slots WHERE is_active = true
+  INSERT orders (via create_order RPC)
+  INSERT activity_bookings (via book_activity_slot RPC)
+  SELECT orders WHERE id = [specific order UUID they just created]
+  SELECT activity_bookings WHERE id = [specific booking UUID]
+
+ANON (guest) CANNOT:
+  SELECT guests (any row)
+  SELECT staff (any row, including name or role)
+  SELECT rooms (is_occupied, current_guest_id)
+  SELECT other guests' orders or bookings
+  UPDATE any row directly
+  DELETE any row
+  ACCESS analytics, folios, reports
+
+The RPCs (create_order, book_activity_slot) run as SECURITY DEFINER —
+they do the room lookup with elevated privileges internally,
+then return only the booking_id/order_id to the guest.</pre>
+  </div>
+</section>
+
+
+<!-- ROOM-GUEST BINDING -->
+<section class="sec s-room" id="room-model">
+  <div class="se">02 · Room-Guest Binding</div>
+  <h2 class="st">Data Model — How Rooms and Guests Connect</h2>
+  <p class="ss">The binding between a guest and their room is maintained through two synchronized state pointers. Understanding both is essential to understanding how every order and activity booking gets attributed to the right guest.</p>
+
+  <div class="cb">
+    <div class="ch"><span class="cl">SQL</span><span class="cv">The two-pointer system — rooms and guests cross-reference each other</span></div>
+    <pre><span class="cm">┌─────────────────────────────────────┐    ┌──────────────────────────────────────┐
+│            rooms                    │    │             guests                   │
+├─────────────────────────────────────┤    ├──────────────────────────────────────┤
+│ id               UUID PK            │    │ id               UUID PK             │
+│ room_number      TEXT  '302'        │    │ room_id          UUID FK → rooms.id  │
+│ is_occupied      BOOL  TRUE   ◄─┐   │    │ guest_name       TEXT  'Rajesh Kumar' │
+│ current_guest_id UUID FK ──────┼──┐ │    │ guest_phone      TEXT  '9876543210'  │
+└─────────────────────────────────┼──┼─┘   │ check_in_date    DATE  '2026-08-13' │
+                                  │  │     │ expected_checkout DATE '2026-08-16'  │
+                                  │  │     │ actual_checkout   TIMESTAMPTZ null   │
+                                  │  └─────│ status           TEXT  'checked_in' │
+                                  │        └──────────────────────────────────────┘
+                                  │
+                   current_guest_id is the LIVE POINTER.
+                   It answers: "Who is in this room RIGHT NOW?"
+                   It becomes NULL on checkout.
+
+ORDER / ACTIVITY BOOKING LINKS:
+┌──────────────────────────────────────┐
+│            orders                    │
+│ room_id    UUID FK → rooms.id        │ ← Static: which room ordered
+│ guest_id   UUID FK → guests.id ◄──── │ ← Set at create time via current_guest_id lookup
+└──────────────────────────────────────┘</pre>
+  </div>
+
+  <div class="g3">
+    <div class="card">
+      <div class="ct" style="color:var(--room-l)">current_guest_id</div>
+      <div class="cd">The live pointer. Changes on every check-in and check-out. Answers "who is in Room 302 right now." Used by <code>create_order</code> and <code>book_activity_slot</code> to auto-link charges to the active guest.</div>
+    </div>
+    <div class="card">
+      <div class="ct" style="color:var(--room-l)">guests.room_id</div>
+      <div class="cd">The historical link. Never changes after check-in. Answers "which room did this guest stay in." Used for historical folio queries long after checkout.</div>
+    </div>
+    <div class="card">
+      <div class="ct" style="color:var(--room-l)">orders.guest_id</div>
+      <div class="cd">Set at order creation time by looking up <code>rooms.current_guest_id</code>. This snapshot means even if the guest checks out mid-day, the order is still correctly attributed to them forever.</div>
+    </div>
+  </div>
+</section>
+
+
+<!-- CHECK-IN ALGORITHM -->
+<section class="sec s-room" id="checkin-algo">
+  <div class="se">02 · Room-Guest Binding</div>
+  <h2 class="st">Check-In Algorithm — Every Database State Change</h2>
+  <p class="ss">A guest check-in triggers a precise sequence of database writes. All writes happen in a single transaction — if any step fails, all changes roll back and the room stays unoccupied.</p>
+
+  <div class="steps" style="--ac:var(--room-l);--ap:var(--room-p)">
+    <div class="step">
+      <div class="sn">1</div>
+      <div class="sb">
+        <h4>Pre-flight validation</h4>
+        <p>Before writing anything, the RPC checks:</p>
+        <ul>
+          <li><strong>Room exists</strong> — <code>SELECT id FROM rooms WHERE room_number = '302' AND resort_id = [id]</code></li>
+          <li><strong>Room is not occupied</strong> — <code>WHERE is_occupied = false</code>. If occupied: return error <code>ROOM_ALREADY_OCCUPIED</code></li>
+          <li><strong>Phone number format</strong> — basic regex validation, must be 10 digits</li>
+          <li><strong>Caller is staff</strong> — RLS ensures only authenticated staff can call check_in_guest</li>
+        </ul>
+        <span class="tr">READ: rooms (validation only — no writes yet)</span>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="sn">2</div>
+      <div class="sb">
+        <h4>INSERT into guests table</h4>
+        <p>The guest record is created with <code>status='checked_in'</code>. The <code>room_id</code> is set here and never changes — it is the permanent historical link.</p>
+        <div class="cb">
+          <div class="ch"><span class="cl">SQL</span><span class="cv">Inside check_in_guest RPC — within BEGIN/COMMIT transaction</span></div>
+          <pre><span class="kw">INSERT INTO</span> guests(
+  resort_id, room_id, guest_name, guest_phone,
+  number_of_adults, check_in_date, expected_checkout,
+  notes, status, checked_in_by
+) <span class="kw">VALUES</span>(
+  p_resort_id,
+  v_room_id,          <span class="cm">-- resolved from room_number</span>
+  p_guest_name,
+  p_guest_phone,
+  p_adults,
+  <span class="fn">CURRENT_DATE</span>,
+  p_expected_checkout,
+  p_notes,
+  <span class="st">'checked_in'</span>,
+  <span class="fn">auth.uid</span>()         <span class="cm">-- which receptionist performed check-in</span>
+) <span class="kw">RETURNING</span> id <span class="kw">INTO</span> v_guest_id;</pre>
+        </div>
+        <span class="tr">DB WRITE: guests (INSERT)</span>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="sn">3</div>
+      <div class="sb">
+        <h4>UPDATE rooms — set occupied + link to new guest</h4>
+        <div class="cb">
+          <div class="ch"><span class="cl">SQL</span></div>
+          <pre><span class="kw">UPDATE</span> rooms
+<span class="kw">SET</span>
+  is_occupied      = <span class="nm">true</span>,
+  current_guest_id = v_guest_id   <span class="cm">-- THE LIVE POINTER</span>
+<span class="kw">WHERE</span> id = v_room_id;</pre>
+        </div>
+        <p>Now any order for Room 302 will find <code>current_guest_id = v_guest_id</code> and auto-link to this guest. This is the moment the room-guest binding is live.</p>
+        <span class="tr">DB WRITE: rooms (UPDATE)</span>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="sn">4</div>
+      <div class="sb">
+        <h4>WhatsApp trigger fires automatically</h4>
+        <p>The INSERT on guests table fires the <code>on_guest_checkin_whatsapp</code> PostgreSQL trigger (defined in Sprint 6 plan). This calls the Edge Function via <code>pg_net.http_post</code> — non-blocking, the check-in transaction completes before the WhatsApp response arrives.</p>
+        <span class="tr">DB TRIGGER → Edge Function → AiSensy API → WhatsApp (async, non-blocking)</span>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="sn">5</div>
+      <div class="sb">
+        <h4>After commit — database state for Room 302</h4>
+        <div class="cb">
+          <div class="ch"><span class="cl">SQL State</span><span class="cv">After Rajesh Kumar checks in to Room 302</span></div>
+          <pre><span class="cm">-- rooms table</span>
+room_number: '302', is_occupied: TRUE, current_guest_id: 'gst-uuid-001'
+
+<span class="cm">-- guests table</span>
+id: 'gst-uuid-001', room_id: 'rm-302-uuid', guest_name: 'Rajesh Kumar',
+guest_phone: '9876543210', check_in_date: '2026-08-13',
+expected_checkout: '2026-08-16', status: 'checked_in'
+
+<span class="cm">-- Any order placed now for room_number='302':</span>
+<span class="cm">-- create_order looks up rooms WHERE room_number='302'</span>
+<span class="cm">-- finds current_guest_id = 'gst-uuid-001'</span>
+<span class="cm">-- sets orders.guest_id = 'gst-uuid-001'  ← auto-linked</span></pre>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- CHECK-OUT ALGORITHM -->
+<section class="sec s-room" id="checkout-algo">
+  <div class="se">02 · Room-Guest Binding</div>
+  <h2 class="st">Check-Out Algorithm + Folio Snapshot</h2>
+
+  <div class="steps" style="--ac:var(--room-l);--ap:var(--room-p)">
+    <div class="step">
+      <div class="sn">1</div>
+      <div class="sb">
+        <h4>Reception pulls the full folio before confirming checkout</h4>
+        <p>The folio is shown to the receptionist for review before any checkout mutation happens. This is a read-only step — no writes.</p>
+        <div class="cb">
+          <div class="ch"><span class="cl">SQL</span><span class="cv">Folio query at checkout — all charges since check-in</span></div>
+          <pre><span class="kw">SELECT</span>
+  charge_type, reference_number, description,
+  amount, status, charge_at
+<span class="kw">FROM</span> guest_folio
+<span class="kw">WHERE</span>
+  guest_id = <span class="st">'gst-uuid-001'</span>
+  <span class="kw">AND</span> charge_at >= <span class="st">'2026-08-13T00:00:00Z'</span>  <span class="cm">-- check_in_date</span>
+<span class="kw">ORDER BY</span> charge_at;
+
+<span class="cm">-- Returns every food order and activity booking</span>
+<span class="cm">-- food | PAN-00123 | Food Order — Panache      | ₹1,640 | served    | Aug 13 1:15 PM</span>
+<span class="cm">-- act  | EXP-00041 | Bird Cage — Aug 14 7:00AM  | ₹1,000 | completed | Aug 14 8:45 AM</span>
+<span class="cm">-- food | PAN-00156 | Food Order — Panache      | ₹540   | served    | Aug 14 8:00 AM</span>
+<span class="cm">-- act  | EXP-00053 | Bonfire — Aug 14 7:00 PM  | ₹1,200 | completed | Aug 14 6:55 PM</span>
+
+<span class="cm">-- Grand total computed in frontend: ₹4,380</span></pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="sn">2</div>
+      <div class="sb">
+        <h4>Receptionist confirms checkout → check_out_guest RPC fires</h4>
+        <div class="cb">
+          <div class="ch"><span class="cl">SQL</span><span class="cv">check_out_guest RPC — all writes in one transaction</span></div>
+          <pre><span class="kw">CREATE OR REPLACE FUNCTION</span> <span class="fn">check_out_guest</span>(
+  p_guest_id  <span class="nm">UUID</span>,
+  p_folio_total <span class="nm">INTEGER</span>  <span class="cm">-- passed from frontend for audit</span>
+)
+<span class="kw">RETURNS JSONB LANGUAGE</span> plpgsql <span class="kw">AS</span> $$
+<span class="kw">DECLARE</span>
+  v_room_id <span class="nm">UUID</span>;
+<span class="kw">BEGIN</span>
+  <span class="cm">-- Get room_id from guest record</span>
+  <span class="kw">SELECT</span> room_id <span class="kw">INTO</span> v_room_id
+  <span class="kw">FROM</span> guests <span class="kw">WHERE</span> id = p_guest_id;
+
+  <span class="cm">-- ① Snapshot the folio total at checkout time</span>
+  <span class="kw">INSERT INTO</span> guest_folio_snapshots(
+    guest_id, total_amount, snapshot_at, checked_out_by
+  ) <span class="kw">VALUES</span>(
+    p_guest_id, p_folio_total, <span class="fn">now</span>(), <span class="fn">auth.uid</span>()
+  );
+
+  <span class="cm">-- ② Mark guest as checked out</span>
+  <span class="kw">UPDATE</span> guests
+  <span class="kw">SET</span>
+    status          = <span class="st">'checked_out'</span>,
+    actual_checkout = <span class="fn">now</span>()
+  <span class="kw">WHERE</span> id = p_guest_id;
+
+  <span class="cm">-- ③ FREE THE ROOM — the critical step</span>
+  <span class="kw">UPDATE</span> rooms
+  <span class="kw">SET</span>
+    is_occupied      = <span class="nm">false</span>,
+    current_guest_id = <span class="nm">NULL</span>   <span class="cm">-- pointer cleared — room is available again</span>
+  <span class="kw">WHERE</span> id = v_room_id;
+
+  <span class="cm">-- ④ WhatsApp checkout message fires via trigger on guests UPDATE</span>
+  <span class="cm">-- (trigger checks OLD.status='checked_in' AND NEW.status='checked_out')</span>
+
+  <span class="kw">RETURN</span> <span class="fn">jsonb_build_object</span>(
+    <span class="st">'success'</span>,     <span class="nm">true</span>,
+    <span class="st">'checked_out_at'</span>, <span class="fn">now</span>(),
+    <span class="st">'room_freed'</span>,  v_room_id
+  );
+<span class="kw">END</span>;
+$$;</pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="sn">3</div>
+      <div class="sb">
+        <h4>After checkout — historical queries still work perfectly</h4>
+        <p>Even though <code>rooms.current_guest_id</code> is now NULL, Rajesh's orders and bookings are still fully queryable via <code>orders.guest_id = 'gst-uuid-001'</code>. The historical link is preserved forever in the orders and activity_bookings tables. The folio snapshot also provides a permanent record of the total billed at checkout.</p>
+        <div class="cb">
+          <div class="ch"><span class="cl">SQL State After Checkout</span></div>
+          <pre><span class="cm">-- rooms: Room 302 is now free</span>
+room_number: '302', is_occupied: FALSE, current_guest_id: NULL
+
+<span class="cm">-- guests: historical record preserved</span>
+status: 'checked_out', actual_checkout: '2026-08-16T11:35:00Z'
+
+<span class="cm">-- orders: still linked to guest, queryable forever</span>
+guest_id: 'gst-uuid-001' <span class="cm">← unchanged, permanent link</span>
+
+<span class="cm">-- guest_folio_snapshots: immutable record of checkout billing</span>
+guest_id: 'gst-uuid-001', total_amount: 4380, snapshot_at: '2026-08-16T11:35:00Z'
+
+<span class="cm">-- New guest can now check in to Room 302 immediately</span></pre>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <h3 class="sg" id="edge-cases">Edge Cases — How the System Handles Them</h3>
+
+  <table class="dt">
+    <thead><tr><th>Scenario</th><th>How System Handles It</th></tr></thead>
+    <tbody>
+      <tr>
+        <td><strong>Guest checks out early</strong></td>
+        <td>Receptionist runs checkout early. Room freed immediately. Any pending activity bookings for future dates are automatically cancelled (a trigger sets status='cancelled' on activity_bookings WHERE guest_id=X AND booking_date > actual_checkout AND status IN ('pending','confirmed')). Guest receives checkout WhatsApp.</td>
+      </tr>
+      <tr>
+        <td><strong>Guest extends stay</strong></td>
+        <td>Receptionist updates <code>expected_checkout</code> on the guests record. No other changes needed — the room stays occupied, the live pointer stays active. All future orders continue linking to the same guest_id.</td>
+      </tr>
+      <tr>
+        <td><strong>Room change mid-stay</strong></td>
+        <td>Receptionist calls <code>transfer_guest_room(guest_id, new_room_id)</code> RPC: (1) old room freed (is_occupied=false, current_guest_id=NULL), (2) new room occupied (is_occupied=true, current_guest_id=guest_id), (3) guests.room_id updated to new room. Past orders still reference old room_id — historically accurate. Future orders reference new room.</td>
+      </tr>
+      <tr>
+        <td><strong>Guest orders food before QR scan links room</strong></td>
+        <td>If a guest calls the reception and orders verbally before scanning QR, the receptionist creates the order manually in the Reception app. They select the room from a dropdown — the <code>create_order</code> RPC auto-links to the guest via <code>current_guest_id</code> lookup.</td>
+      </tr>
+      <tr>
+        <td><strong>Walk-in diner (not a hotel guest)</strong></td>
+        <td>Walk-in diners at the Panache restaurant are not in the <code>guests</code> table. Their order has <code>service_type='dine_in'</code>, <code>table_id</code> populated, and <code>guest_id=NULL</code>. These orders appear in Kitchen Panel normally. They don't appear on any room folio — they're standalone orders settled directly by the diner.</td>
+      </tr>
+      <tr>
+        <td><strong>Power cut / system offline mid-stay</strong></td>
+        <td>PostgreSQL ACID properties ensure no partial state. If the check-in INSERT succeeds but the rooms UPDATE fails, the transaction rolls back — room stays unoccupied, no orphan guest record. When system comes back online, receptionist re-runs check-in normally.</td>
+      </tr>
+    </tbody>
+  </table>
+</section>
+
+
+<!-- FOOD ORDER LINKING -->
+<section class="sec s-food" id="order-link">
+  <div class="se">03 · Food Order Guest Linking</div>
+  <h2 class="st">How Every Food Order Finds Its Guest</h2>
+  <p class="ss">When a guest submits a food order, they type their room number. The <code>create_order</code> RPC uses that room number to instantly resolve the active guest. This means the guest never has to identify themselves — the room does it for them.</p>
+
+  <div class="cb">
+    <div class="ch"><span class="cl">SQL</span><span class="cv">The room→guest resolution inside create_order RPC</span></div>
+    <pre><span class="cm">-- STEP 1: Resolve room_id and current guest from room number</span>
+<span class="kw">SELECT</span>
+  r.id                 <span class="kw">AS</span> room_id,
+  r.current_guest_id   <span class="kw">AS</span> guest_id   <span class="cm">-- The live pointer</span>
+<span class="kw">INTO</span> v_room_id, v_guest_id
+<span class="kw">FROM</span> rooms r
+<span class="kw">WHERE</span>
+  r.resort_id   = p_resort_id
+  <span class="kw">AND</span> r.room_number = p_room_number;
+
+<span class="cm">-- Three possible outcomes:</span>
+
+<span class="cm">-- A) Room found, is_occupied=true, current_guest_id is set</span>
+<span class="cm">--    → v_guest_id = 'gst-uuid-001'  (Rajesh Kumar)</span>
+<span class="cm">--    → ORDER LINKED TO RAJESH: orders.guest_id = 'gst-uuid-001'</span>
+
+<span class="cm">-- B) Room found, is_occupied=false, current_guest_id = NULL</span>
+<span class="cm">--    → v_guest_id = NULL</span>
+<span class="cm">--    → Order created with guest_id=NULL (walk-in or unregistered guest)</span>
+<span class="cm">--    → Reception can manually link later via fix_order_guest(order_id, guest_id)</span>
+
+<span class="cm">-- C) Room number not found in rooms table</span>
+<span class="cm">--    → No row in result</span>
+<span class="cm">--    → Order created with room_id=NULL, guest_id=NULL</span>
+<span class="cm">--    → Guest typed a wrong room number — still processes, kitchen still sees it</span>
+
+<span class="cm">-- STEP 2: Insert the order with resolved IDs</span>
+<span class="kw">INSERT INTO</span> orders(
+  order_number, resort_id,
+  guest_id,    <span class="cm">-- May be NULL — that's OK</span>
+  room_id,     <span class="cm">-- May be NULL — that's OK</span>
+  service_type, guest_name, guest_phone, items, subtotal, special_note
+) <span class="kw">VALUES</span>(
+  v_order_number, p_resort_id,
+  v_guest_id, v_room_id,
+  p_service_type, p_guest_name, p_guest_phone,
+  p_items, p_subtotal, p_special_note
+);</pre>
+  </div>
+
+  <div class="cal ok">
+    <div class="ci">✅</div>
+    <div class="cb2">
+      <h4>Why the order always goes through even with NULL guest_id</h4>
+      <p>The kitchen doesn't need a guest_id to prepare food. They need: what items, how many, which room/table. The guest_id is purely for billing attribution. An order with <code>guest_id=NULL</code> still appears on the Kitchen Panel immediately via Realtime. The reception can manually link it later using <code>UPDATE orders SET guest_id='...' WHERE id='...'</code> if needed. This ensures no order is ever blocked due to a database lookup issue.</p>
+    </div>
+  </div>
+
+  <h3 class="sg">Manual Order Linking — Reception Fix Tool</h3>
+
+  <div class="cb">
+    <div class="ch"><span class="cl">SQL</span><span class="cv">fix_order_guest — when an order's guest_id needs manual correction</span></div>
+    <pre><span class="kw">CREATE OR REPLACE FUNCTION</span> <span class="fn">fix_order_guest</span>(
+  p_order_id <span class="nm">UUID</span>,
+  p_guest_id <span class="nm">UUID</span>
+)
+<span class="kw">RETURNS VOID LANGUAGE</span> plpgsql <span class="kw">AS</span> $$
+<span class="kw">BEGIN</span>
+  <span class="cm">-- Only owner/receptionist can call this (enforced by RLS)</span>
+  <span class="kw">UPDATE</span> orders
+  <span class="kw">SET</span> guest_id = p_guest_id
+  <span class="kw">WHERE</span> id = p_order_id;
+
+  <span class="kw">INSERT INTO</span> auth_audit_log(event_type, actor_id, metadata)
+  <span class="kw">VALUES</span>(<span class="st">'order_guest_manually_linked'</span>, <span class="fn">auth.uid</span>(),
+    <span class="fn">jsonb_build_object</span>(<span class="st">'order_id'</span>, p_order_id, <span class="st">'guest_id'</span>, p_guest_id));
+<span class="kw">END</span>;
+$$;</pre>
+  </div>
+</section>
+
+
+<!-- ACTIVITY BOOKING LINKING -->
+<section class="sec s-act" id="booking-link">
+  <div class="se">04 · Activity Booking Linking</div>
+  <h2 class="st">Activity Booking → Guest Identity Algorithm</h2>
+  <p class="ss">Activity bookings follow the same room-lookup pattern as food orders, with one additional layer: stay-date validation. The system checks that the booking date falls within the guest's actual stay.</p>
+
+  <div class="cb">
+    <div class="ch"><span class="cl">SQL</span><span class="cv">Guest resolution + stay validation inside book_activity_slot RPC</span></div>
+    <pre><span class="cm">-- Inside book_activity_slot, after capacity check passes:</span>
+
+<span class="cm">-- STEP 7A: Resolve room and guest from room_number</span>
+<span class="kw">IF</span> p_room_number <span class="op">IS NOT NULL</span> <span class="kw">THEN</span>
+  <span class="kw">SELECT</span>
+    r.id,
+    r.current_guest_id,
+    g.check_in_date,
+    g.expected_checkout
+  <span class="kw">INTO</span> v_room_id, v_guest_id, v_checkin, v_checkout
+  <span class="kw">FROM</span> rooms r
+  <span class="kw">LEFT JOIN</span> guests g <span class="kw">ON</span> r.current_guest_id = g.id
+  <span class="kw">WHERE</span> r.room_number = p_room_number;
+
+  <span class="cm">-- STEP 7B: Stay date validation</span>
+  <span class="cm">-- Booking date must be within the guest's stay window</span>
+  <span class="kw">IF</span> v_guest_id <span class="op">IS NOT NULL</span> <span class="kw">THEN</span>
+    <span class="kw">IF</span> p_booking_date < v_checkin <span class="op">OR</span> p_booking_date > v_checkout <span class="kw">THEN</span>
+      <span class="kw">RETURN</span> <span class="fn">jsonb_build_object</span>(
+        <span class="st">'success'</span>, <span class="nm">false</span>,
+        <span class="st">'error'</span>,   <span class="st">'BOOKING_OUTSIDE_STAY'</span>,
+        <span class="st">'message'</span>, <span class="st">'Booking date is outside your stay dates.'</span>
+      );
+    <span class="kw">END IF</span>;
+  <span class="kw">END IF</span>;
+<span class="kw">END IF</span>;
+
+<span class="cm">-- STEP 7C: For requires_balcony activities, verify room has balcony</span>
+<span class="kw">IF</span> v_activity_requires_balcony <span class="kw">AND</span> v_room_id <span class="op">IS NOT NULL</span> <span class="kw">THEN</span>
+  <span class="kw">IF NOT</span> (<span class="kw">SELECT</span> has_balcony <span class="kw">FROM</span> rooms <span class="kw">WHERE</span> id = v_room_id) <span class="kw">THEN</span>
+    <span class="kw">RETURN</span> <span class="fn">jsonb_build_object</span>(
+      <span class="st">'success'</span>, <span class="nm">false</span>,
+      <span class="st">'error'</span>,   <span class="st">'NO_BALCONY'</span>,
+      <span class="st">'message'</span>, <span class="st">'This activity requires a room with a balcony.'</span>
+    );
+  <span class="kw">END IF</span>;
+<span class="kw">END IF</span>;</pre>
+  </div>
+
+  <div class="cal warn">
+    <div class="ci">⚠️</div>
+    <div class="cb2">
+      <h4>Booking Outside Stay Window — Guest Portal Behavior</h4>
+      <p>When a guest tries to book an activity for a date they won't be at the resort, the slot picker already filters the available dates to only show: <strong>today through their expected checkout date</strong> (sourced from their session if they're a registered guest via room lookup). This prevents the error at the UI level before the RPC is called. The RPC check is a backend safety net for edge cases like someone typing a future date manually.</p>
+    </div>
+  </div>
+
+  <h3 class="sg" id="slot-algo">Concurrency Algorithm — Full Trace</h3>
+
+  <div class="cb">
+    <div class="ch"><span class="cl">Sequence Diagram</span><span class="cv">Two guests booking the last 2 spots in the same slot simultaneously</span></div>
+    <pre><span class="cm">Time →  0ms         5ms         10ms        15ms        20ms</span>
+
+Guest A: ──────────── CALL RPC ──────── GET LOCK ─── CHECK (4 booked, 2 remain) ─── INSERT (2 guests) ─── COMMIT ─────────────→
+                                          ↑               ↑
+                                  pg_advisory_xact_lock('bird-cage-7am-aug14')
+                                          │
+Guest B: ──── CALL RPC ──────────────────┼── WAIT ────────────────────────────────── GET LOCK ─── CHECK (6 booked, 0 remain) ─→
+                                          │                                                              │
+                                     Both try to lock the                                          Returns SLOT_FULL
+                                     same key. B waits.                                            error to Guest B.
+
+<span class="cm">Result: Guest A books successfully. Guest B sees "Sorry, this slot just filled up."</span>
+<span class="cm">        Guest B's UI reloads slot availability — shows "Full" on that slot.</span>
+<span class="cm">        No double booking. No race condition. Zero concurrency bugs.</span></pre>
+  </div>
+</section>
+
+
+<!-- SECURITY MODEL -->
+<section class="sec s-sec" id="defense-depth">
+  <div class="se">05 · Security Model</div>
+  <h2 class="st">Defense in Depth — All Security Layers</h2>
+  <p class="ss">Security in this system is not a single gate — it's five independent layers. Even if one layer is bypassed, the others prevent damage. This is the standard approach for production systems handling personal and financial data.</p>
+
+  <div class="g2">
+    <div class="card" style="border-top:3px solid var(--sec-l)">
+      <div class="ct">Layer 1 — Network & Transport</div>
+      <div class="cd">
+        All three apps served over HTTPS (TLS 1.2+) enforced by Vercel. Supabase API only accessible over HTTPS. No HTTP fallback. HSTS headers configured. Certificate auto-renewal via Let's Encrypt. <br><br>
+        <strong>What this prevents:</strong> Man-in-the-middle attacks, data interception in transit, credential sniffing.
+      </div>
+    </div>
+    <div class="card" style="border-top:3px solid var(--sec-l)">
+      <div class="ct">Layer 2 — API Key Separation</div>
+      <div class="cd">
+        <strong>Anon key</strong> — public, in browser JavaScript. Limited by RLS to read-only menu data, insert-only orders. Cannot read guest records. <br><br>
+        <strong>Service role key</strong> — bypasses RLS. Lives only in Supabase Edge Functions and the database config. Never in browser code, never in frontend env vars. <br><br>
+        <strong>What this prevents:</strong> Even if someone extracts the anon key from the JS bundle, they can only do what RLS allows — browse the menu and place orders.
+      </div>
+    </div>
+    <div class="card" style="border-top:3px solid var(--sec-l)">
+      <div class="ct">Layer 3 — Row Level Security (PostgreSQL)</div>
+      <div class="cd">
+        Every table has RLS enabled with an explicit deny-all default. Policies grant minimum required access per role. Anon sessions cannot read guests, staff, analytics, or folios. Authenticated sessions are scoped to their resort_id. <br><br>
+        <strong>What this prevents:</strong> Even direct Supabase REST API calls with the anon key cannot access protected data — the database itself enforces the access rules.
+      </div>
+    </div>
+    <div class="card" style="border-top:3px solid var(--sec-l)">
+      <div class="ct">Layer 4 — Function-Level Guards (SECURITY DEFINER)</div>
+      <div class="cd">
+        RPCs that need elevated access (create_staff_account, verify_staff_pin, check_in_guest) use <code>SECURITY DEFINER</code> with explicit role checks at the top. They verify the caller's role before doing anything. This means calling the function directly via the API with a kitchen staff JWT cannot execute owner-only actions. <br><br>
+        <strong>What this prevents:</strong> Privilege escalation — a kitchen staff account cannot call the owner-only functions even if they know the function name.
+      </div>
+    </div>
+    <div class="card" style="border-top:3px solid var(--sec-l)">
+      <div class="ct">Layer 5 — Rate Limiting & Lockouts</div>
+      <div class="cd">
+        Supabase Auth has built-in rate limiting on auth endpoints. PIN login has 3-attempt lockout (30 seconds) + cumulative 10-attempt lockout (owner unlock required). API calls are rate-limited by Supabase at the infrastructure level. <br><br>
+        <strong>What this prevents:</strong> Brute force attacks on PINs, credential stuffing attacks, API abuse.
+      </div>
+    </div>
+    <div class="card" style="border-top:3px solid var(--sec-l)">
+      <div class="ct">Layer 6 — Complete Audit Trail</div>
+      <div class="cd">
+        Every sensitive action is logged: staff creation, PIN changes, login attempts, check-ins, check-outs, order guest re-linking, manual price overrides, menu changes. The audit log is append-only — no RLS policy permits deletion. <br><br>
+        <strong>What this provides:</strong> Full forensic capability for disputes, reconciliation, and security incident investigation.
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- AUDIT TABLES -->
+<section class="sec s-sec" id="audit-tables">
+  <div class="se">05 · Security Model</div>
+  <h2 class="st">Complete Audit Table Schema</h2>
+
+  <div class="cb">
+    <div class="ch"><span class="cl">SQL</span><span class="cv">012_audit_tables.sql — append-only, no DELETE policy</span></div>
+    <pre><span class="cm">-- ── AUTH AUDIT LOG: every login, logout, account event</span>
+<span class="kw">CREATE TABLE</span> auth_audit_log (
+  id          <span class="nm">UUID PRIMARY KEY DEFAULT</span> <span class="fn">gen_random_uuid</span>(),
+  event_type  <span class="nm">TEXT NOT NULL</span>,
+  <span class="cm">-- event types: staff_pin_login_success | staff_pin_login_failed |</span>
+  <span class="cm">--  owner_login | staff_logout | staff_account_created |</span>
+  <span class="cm">--  staff_account_deactivated | pin_reset | order_guest_manually_linked</span>
+  actor_id    <span class="nm">UUID</span>,    <span class="cm">-- who performed the action (auth.uid())</span>
+  target_id   <span class="nm">UUID</span>,    <span class="cm">-- who was affected (staff user_id)</span>
+  metadata    <span class="nm">JSONB</span>,   <span class="cm">-- event-specific data</span>
+  ip_address  <span class="nm">TEXT</span>,    <span class="cm">-- populated by Edge Function context when available</span>
+  created_at  <span class="nm">TIMESTAMPTZ DEFAULT</span> <span class="fn">now</span>()
+);
+
+<span class="cm">-- ── ORDER STATUS LOG: every kitchen status change</span>
+<span class="kw">CREATE TABLE</span> order_status_log (
+  id          <span class="nm">UUID PRIMARY KEY DEFAULT</span> <span class="fn">gen_random_uuid</span>(),
+  order_id    <span class="nm">UUID NOT NULL REFERENCES</span> orders(id),
+  old_status  <span class="nm">TEXT</span>,
+  new_status  <span class="nm">TEXT NOT NULL</span>,
+  changed_by  <span class="nm">UUID REFERENCES</span> staff(id),
+  changed_at  <span class="nm">TIMESTAMPTZ DEFAULT</span> <span class="fn">now</span>()
+);
+
+<span class="cm">-- ── ACTIVITY BOOKING LOG: every booking status change</span>
+<span class="kw">CREATE TABLE</span> activity_booking_log (
+  id          <span class="nm">UUID PRIMARY KEY DEFAULT</span> <span class="fn">gen_random_uuid</span>(),
+  booking_id  <span class="nm">UUID NOT NULL REFERENCES</span> activity_bookings(id),
+  old_status  <span class="nm">TEXT</span>,
+  new_status  <span class="nm">TEXT NOT NULL</span>,
+  changed_by  <span class="nm">UUID REFERENCES</span> staff(id),
+  note        <span class="nm">TEXT</span>,    <span class="cm">-- cancellation reason, confirmation notes</span>
+  changed_at  <span class="nm">TIMESTAMPTZ DEFAULT</span> <span class="fn">now</span>()
+);
+
+<span class="cm">-- ── GUEST FOLIO SNAPSHOTS: immutable record at checkout</span>
+<span class="kw">CREATE TABLE</span> guest_folio_snapshots (
+  id               <span class="nm">UUID PRIMARY KEY DEFAULT</span> <span class="fn">gen_random_uuid</span>(),
+  guest_id         <span class="nm">UUID NOT NULL REFERENCES</span> guests(id),
+  total_amount     <span class="nm">INTEGER NOT NULL</span>,
+  food_total       <span class="nm">INTEGER DEFAULT 0</span>,
+  activities_total <span class="nm">INTEGER DEFAULT 0</span>,
+  line_count       <span class="nm">INTEGER DEFAULT 0</span>,
+  folio_json       <span class="nm">JSONB</span>,  <span class="cm">-- full folio data at time of checkout</span>
+  snapshot_at      <span class="nm">TIMESTAMPTZ DEFAULT</span> <span class="fn">now</span>(),
+  checked_out_by   <span class="nm">UUID REFERENCES</span> staff(id)
+);
+
+<span class="cm">-- ── WHATSAPP LOG: every message sent</span>
+<span class="cm">-- (already covered in migrations)</span>
+
+<span class="cm">-- RLS on all audit tables: INSERT allowed (trigger only), no DELETE ever</span>
+<span class="kw">ALTER TABLE</span> auth_audit_log          <span class="kw">ENABLE ROW LEVEL SECURITY</span>;
+<span class="kw">ALTER TABLE</span> order_status_log        <span class="kw">ENABLE ROW LEVEL SECURITY</span>;
+<span class="kw">ALTER TABLE</span> activity_booking_log    <span class="kw">ENABLE ROW LEVEL SECURITY</span>;
+<span class="kw">ALTER TABLE</span> guest_folio_snapshots   <span class="kw">ENABLE ROW LEVEL SECURITY</span>;
+
+<span class="cm">-- Owner can read all audit logs. No role can delete.</span>
+<span class="kw">CREATE POLICY</span> owner_read_auth_audit <span class="kw">ON</span> auth_audit_log
+  <span class="kw">FOR SELECT TO</span> authenticated
+  <span class="kw">USING</span>((<span class="kw">SELECT</span> role <span class="kw">FROM</span> staff <span class="kw">WHERE</span> supabase_user_id = <span class="fn">auth.uid</span>()) = <span class="st">'owner'</span>);
+
+<span class="cm">-- NO DELETE policy on any audit table = append-only forever</span></pre>
+  </div>
+</section>
+
+
+<!-- FULL GUEST JOURNEY -->
+<section class="sec s-brass" id="full-journey">
+  <div class="se">06 · Complete Guest Journey</div>
+  <h2 class="st">QR Scan → Checkout: Every Database State Change</h2>
+  <p class="ss">A guest named Rajesh Kumar checks in to Room 302 for 3 nights. This maps every database write and read from the moment he checks in to the moment he checks out — the complete data lifecycle of a single guest stay.</p>
+
+  <div class="steps" style="--ac:var(--brass-l);--ap:rgba(173,138,63,.1)">
+    <div class="step">
+      <div class="sn">①</div>
+      <div class="sb">
+        <h4>Receptionist checks in Rajesh Kumar to Room 302</h4>
+        <div class="cb"><div class="ch"><span class="cl">DB State Change</span></div>
+          <pre>guests INSERT:  { id:'gst-001', room_id:'rm-302', name:'Rajesh Kumar', 
+                   phone:'9876543210', status:'checked_in', check_in_date:'Aug 13' }
+rooms  UPDATE:  { room_number:'302', is_occupied:true, current_guest_id:'gst-001' }
+auth_audit_log INSERT: { event:'checkin', actor:receptionist_uid, metadata:{...} }
+ASYNC: Edge Function → AiSensy → WhatsApp welcome message to +91 9876543210</pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="sn">②</div>
+      <div class="sb">
+        <h4>Rajesh scans room QR: order.shivalayaresorts.com?room=302</h4>
+        <div class="cb"><div class="ch"><span class="cl">Frontend State</span></div>
+          <pre>sessionStorage.set('qr_room', '302')
+sessionStorage.set('qr_type', 'room_service')
+<span class="cm">→ Landing page renders. No DB read yet.</span></pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="sn">③</div>
+      <div class="sb">
+        <h4>Rajesh opens menu, adds Butter Chicken + 2 Naan, places order</h4>
+        <div class="cb"><div class="ch"><span class="cl">DB State Change</span></div>
+          <pre>create_order RPC:
+  READ rooms WHERE room_number='302' → current_guest_id='gst-001'
+  INSERT orders: { order_number:'PAN-00123', guest_id:'gst-001', 
+                   room_id:'rm-302', items:[{id:25,name:'Butter Chicken',qty:1,price:700},
+                   {id:106,name:'Butter Garlic Naan',qty:2,price:90}],
+                   subtotal:880, status:'new' }
+REALTIME: orders channel → Kitchen Panel notified instantly ⚡</pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="sn">④</div>
+      <div class="sb">
+        <h4>Kitchen accepts, prepares, marks ready, marks served</h4>
+        <div class="cb"><div class="ch"><span class="cl">DB State Changes (4 updates)</span></div>
+          <pre>UPDATE orders SET status='confirmed' WHERE id='PAN-00123-uuid'
+  → TRIGGER fires: INSERT order_status_log { old:'new', new:'confirmed' }
+  → REALTIME: Rajesh's tracking page updates live ⚡
+
+UPDATE orders SET status='preparing' ...  → log + realtime
+UPDATE orders SET status='ready'     ...  → log + realtime (Rajesh's phone vibrates)
+UPDATE orders SET status='served'    ...  → log
+  → guest_folio VIEW now includes this ₹880 charge automatically</pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="sn">⑤</div>
+      <div class="sb">
+        <h4>Next day: Rajesh books Bird Cage Experience for 2 guests at 7AM</h4>
+        <div class="cb"><div class="ch"><span class="cl">DB State Change</span></div>
+          <pre>book_activity_slot RPC:
+  pg_advisory_xact_lock('bird-cage-slot-uuid-aug14')  ← concurrency lock
+  READ activity_time_slots + bookings → remaining_capacity: 4
+  READ rooms WHERE room_number='302' → current_guest_id='gst-001'
+  VALIDATE: booking_date (Aug 14) is within stay (Aug 13–16) ✓
+  VALIDATE: activity does NOT require_balcony → skip balcony check
+  INSERT activity_bookings: { booking_number:'EXP-00041', activity_id:'bird-cage-uuid',
+                               slot_id:'early-morning-uuid', booking_date:'2026-08-14',
+                               guest_id:'gst-001', room_id:'rm-302',
+                               number_of_guests:2, unit_price:500, total_amount:1000,
+                               status:'pending' }
+  LOCK RELEASED
+REALTIME: activity_bookings channel → Reception notified ⚡</pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="sn">⑥</div>
+      <div class="sb">
+        <h4>Reception confirms Bird Cage, assigns guide Ramesh</h4>
+        <div class="cb"><div class="ch"><span class="cl">DB State Change</span></div>
+          <pre>UPDATE activity_bookings 
+SET status='confirmed', 
+    assigned_staff_name='Ramesh', 
+    staff_instructions='Meet at garden gate at 6:50 AM. Bird feed ready.',
+    confirmed_by=receptionist_uid
+WHERE id='exp-00041-uuid'
+
+INSERT activity_booking_log { old:'pending', new:'confirmed', note:'Guide assigned: Ramesh' }
+REALTIME: activity_bookings channel → Rajesh's portal shows "Confirmed ✓" ⚡</pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="sn">⑦</div>
+      <div class="sb">
+        <h4>After Bird Cage: marked Completed</h4>
+        <div class="cb"><div class="ch"><span class="cl">DB State Change</span></div>
+          <pre>UPDATE activity_bookings SET status='completed' WHERE id='exp-00041-uuid'
+→ guest_folio VIEW now includes this ₹1,000 charge automatically</pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="sn">⑧</div>
+      <div class="sb">
+        <h4>Aug 16: Rajesh checks out — Reception views full folio</h4>
+        <div class="cb"><div class="ch"><span class="cl">Folio Query Result</span></div>
+          <pre>SELECT * FROM guest_folio WHERE guest_id = 'gst-001' ORDER BY charge_at;
+
+charge_type | reference  | description                        | amount
+------------+------------+------------------------------------+-------
+food        | PAN-00123  | Food Order — Panache               | ₹880
+act         | EXP-00041  | Bird Cage — Aug 14, 07:00 AM       | ₹1,000
+food        | PAN-00156  | Food Order — Panache               | ₹540
+act         | EXP-00053  | Bonfire Setup — Aug 14, 06:00 PM   | ₹1,200
+food        | PAN-00189  | Food Order — Panache               | ₹420
+                                                         TOTAL: ₹4,040</pre>
+        </div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="sn">⑨</div>
+      <div class="sb">
+        <h4>Checkout confirmed → all state transitions complete</h4>
+        <div class="cb"><div class="ch"><span class="cl">Final DB State Change</span></div>
+          <pre>check_out_guest RPC:
+  INSERT guest_folio_snapshots { guest_id:'gst-001', total_amount:4040,
+                                  folio_json:[...full folio data...] }
+  UPDATE guests SET status='checked_out', actual_checkout='2026-08-16T11:35:00Z'
+  UPDATE rooms SET is_occupied=false, current_guest_id=NULL
+
+TRIGGER fires → checkout WhatsApp message → +91 9876543210
+
+FINAL SYSTEM STATE:
+  rooms.302: is_occupied=FALSE, current_guest_id=NULL  ← Free for next guest
+  guests.gst-001: status='checked_out'                  ← Historical record preserved
+  orders.guest_id='gst-001': still queryable forever    ← Attribution permanent
+  activity_bookings.guest_id='gst-001': still queryable ← Attribution permanent
+  guest_folio_snapshots: ₹4,040 permanently recorded    ← Immutable checkout record</pre>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ALGORITHM SUMMARY -->
+<section class="sec s-brass" id="algo-summary">
+  <div class="se">06 · Reference</div>
+  <h2 class="st">Algorithm & Function Reference</h2>
+
+  <table class="dt">
+    <thead><tr><th>Algorithm / Function</th><th>Where Used</th><th>What It Does</th><th>Critical Property</th></tr></thead>
+    <tbody>
+      <tr>
+        <td><span class="mn">bcrypt (work factor 12)</span></td>
+        <td>PIN hashing on create, verification on login</td>
+        <td>Converts 4-digit PIN to 60-char irreversible hash. Self-salted — unique hash every time even for same PIN.</td>
+        <td>~300ms per verify — brute force of 10,000 PINs takes 50 min per hash</td>
+      </tr>
+      <tr>
+        <td><span class="mn">JWT RS256</span></td>
+        <td>Supabase Auth — all staff sessions</td>
+        <td>Asymmetrically signed token carrying role and user_id. Supabase verifies signature on every API call.</td>
+        <td>1-hour access token + 7-day refresh. Auto-refreshed by SDK.</td>
+      </tr>
+      <tr>
+        <td><span class="mn">pg_advisory_xact_lock</span></td>
+        <td>book_activity_slot RPC</td>
+        <td>Acquires an integer-keyed lock scoped to the current transaction. All concurrent bookings for same slot+date queue up.</td>
+        <td>Lock auto-released on transaction commit/rollback. Cannot deadlock with itself.</td>
+      </tr>
+      <tr>
+        <td><span class="mn">current_guest_id pointer</span></td>
+        <td>create_order + book_activity_slot RPCs</td>
+        <td>Live FK on rooms table pointing to the currently checked-in guest. Enables zero-effort guest attribution for all orders.</td>
+        <td>Set on check-in, cleared on check-out. NULL = room unoccupied.</td>
+      </tr>
+      <tr>
+        <td><span class="mn">UNION ALL VIEW (guest_folio)</span></td>
+        <td>Reception folio panel + checkout</td>
+        <td>Combines food orders and activity bookings into one chronological ledger. Computed at query time — always current.</td>
+        <td>No stored state — reflects real-time. New order = instantly on folio.</td>
+      </tr>
+      <tr>
+        <td><span class="mn">Date range intersection</span></td>
+        <td>Slot booking validation in book_activity_slot</td>
+        <td>Ensures booking_date falls within guest's check_in_date → expected_checkout range.</td>
+        <td>Prevents booking activities for days outside the stay.</td>
+      </tr>
+      <tr>
+        <td><span class="mn">SUM(number_of_guests) availability</span></td>
+        <td>get_available_slots RPC</td>
+        <td>Counts people (not bookings) against slot capacity. Prevents overbooking when one booking covers multiple guests.</td>
+        <td>Excludes cancelled + no_show status from count.</td>
+      </tr>
+      <tr>
+        <td><span class="mn">SECURITY DEFINER</span></td>
+        <td>All privileged RPCs</td>
+        <td>RPC runs with creator's privileges regardless of caller's session. Allows controlled privilege escalation with explicit role checks inside.</td>
+        <td>Always paired with an explicit <code>IF NOT owner THEN RAISE EXCEPTION</code> guard.</td>
+      </tr>
+      <tr>
+        <td><span class="mn">pg_net.http_post (non-blocking)</span></td>
+        <td>WhatsApp trigger, staff creation</td>
+        <td>Makes HTTP calls from within PostgreSQL triggers without blocking the transaction. Fire-and-forget for external APIs.</td>
+        <td>Transaction commits immediately. External call happens async. Errors are logged, not propagated to caller.</td>
+      </tr>
+      <tr>
+        <td><span class="mn">Supabase Realtime WebSocket</span></td>
+        <td>Kitchen Panel (orders), Reception (bookings), Guest Portal (order status)</td>
+        <td>PostgreSQL NOTIFY → Supabase broadcast → WebSocket → browser. &lt;200ms latency for all status updates.</td>
+        <td>Filtered subscriptions (filter: id=eq.[uuid]) ensure each client only receives relevant events.</td>
+      </tr>
+    </tbody>
+  </table>
+</section>
+
+<div style="padding:24px 52px;border-top:1px solid var(--border);background:var(--bg2)">
+  <p style="font-family:var(--mono);font-size:11px;color:var(--text3)">ASVEX Technologies · Shivalaya Guest Experience Platform · Authentication & Identity Reference v1.0 · August 2026 · INTERNAL — Development Team</p>
+</div>
+
+</main>
+</body>
+</html>
