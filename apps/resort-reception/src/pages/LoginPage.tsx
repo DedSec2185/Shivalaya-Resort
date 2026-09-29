@@ -113,28 +113,32 @@ export default function LoginPage() {
 
         {/* Brand identity */}
         <div className="login-brand-content">
-          <div className="login-brand-logo">
+          <div className="login-brand-logo" style={{ width: '60px', height: '60px', borderRadius: '50%', background: '#132511', border: '2px solid var(--brass, #bca374)', padding: '4px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
             <img 
-              src="/panache_logo.jpg" 
-              alt="Logo" 
-              onError={e => { e.currentTarget.style.display = 'none' }} 
+              src="/shivalaya_badge_perfect.png" 
+              alt="Shivalaya Resort Logo" 
+              style={{ width: '100%', height: '100%', objectFit: 'contain' }}
+              onError={e => { (e.currentTarget as HTMLImageElement).src = '/shivalaya_logo_transparent.png' }} 
             />
           </div>
           <h1 className="login-brand-name">
             Shivalaya<br />
-            <span>Panache</span>
+            <span>Resort</span>
           </h1>
           <p className="login-brand-tagline">
-            Reception & Resort Operations Desk
+            Front Desk & Owner Operations Console
           </p>
         </div>
 
         {/* Middle decorative luxury seal */}
         <div className="login-brand-middle">
-          <div className="login-brand-circle">
+          <div className="login-brand-circle" style={{ width: '136px', height: '136px', border: '1.5px solid rgba(217,189,117,0.3)', background: 'radial-gradient(circle, rgba(217,189,117,0.08) 0%, transparent 70%)' }}>
             <div style={{ textAlign: 'center' }}>
-              <div style={{ fontSize: '36px', marginBottom: '4px' }}>🏔️</div>
-              <div style={{ fontSize: '9px', letterSpacing: '2px', textTransform: 'uppercase', fontFamily: 'IBM Plex Mono, monospace', color: 'var(--brass-light)' }}>
+              <div style={{ fontFamily: 'Fraunces, serif', fontSize: '26px', fontWeight: 700, color: 'var(--brass-light)', letterSpacing: '0.04em' }}>1,450m</div>
+              <div style={{ fontSize: '9px', letterSpacing: '2px', textTransform: 'uppercase', fontFamily: 'IBM Plex Mono, monospace', color: 'rgba(255,255,255,0.7)', marginTop: '2px' }}>
+                Sanctuary Alt.
+              </div>
+              <div style={{ fontSize: '8.5px', letterSpacing: '1px', textTransform: 'uppercase', color: 'var(--brass)', marginTop: '4px' }}>
                 Bhimtal · Uttarakhand
               </div>
             </div>

@@ -276,37 +276,9 @@ export default function DashboardPage() {
 
       {/* ── SIDEBAR ── */}
       <aside className={`kds-sidebar ${sidebarOpen ? 'open' : ''}`}>
-        <div className="sidebar-brand" style={{ display: 'flex', alignItems: 'center', gap: '12px', padding: '18px 16px', borderBottom: '1px solid rgba(217,189,117,0.18)' }}>
-          <div 
-            style={{
-              width: '44px',
-              height: '44px',
-              borderRadius: '50%',
-              background: '#132511',
-              border: '2px solid var(--brass, #BCA374)',
-              boxShadow: '0 4px 14px rgba(0,0,0,0.4)',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              padding: '2px',
-              flexShrink: 0
-            }}
-          >
-            <img 
-              src="/panache_badge_perfect.png" 
-              alt="Panache Logo" 
-              style={{ width: '100%', height: '100%', objectFit: 'contain' }}
-              onError={(e) => { (e.currentTarget as HTMLImageElement).src = '/panache_logo_transparent.png' }}
-            />
-          </div>
-          <div>
-            <div className="sidebar-wordmark" style={{ fontFamily: 'Fraunces, serif', fontSize: '19px', fontWeight: 700, letterSpacing: '0.03em', color: '#FFF', lineHeight: 1.1 }}>
-              {t('brand_title')}<span className="accent" style={{ color: 'var(--brass-light, #D9BD75)' }}>.</span>
-            </div>
-            <div className="sidebar-tagline" style={{ color: 'var(--brass-light, #D9BD75)', fontSize: '9px', fontWeight: 800, letterSpacing: '0.14em', textTransform: 'uppercase', marginTop: '3px' }}>
-              EXECUTIVE KDS & CULINARY OPS
-            </div>
-          </div>
+        <div className="sidebar-brand">
+          <div className="sidebar-wordmark">{t('brand_title')}<span className="accent">.</span></div>
+          <div className="sidebar-tagline">{t('brand_tagline')}</div>
         </div>
 
         <nav className="sidebar-nav">
@@ -332,30 +304,6 @@ export default function DashboardPage() {
               ))}
             </div>
           ))}
-          {/* External Portals Switcher */}
-          <div style={{ marginTop: '16px', paddingTop: '16px', borderTop: '1px solid rgba(255,255,255,0.08)' }}>
-            <div className="nav-section-label" style={{ fontSize: '10px', letterSpacing: '0.12em', color: 'var(--sage)', marginBottom: '8px' }}>SWITCH PORTAL</div>
-            <a
-              href={import.meta.env.VITE_RECEPTION_PORTAL_URL || 'http://localhost:5183'}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="nav-item"
-              style={{ textDecoration: 'none', color: 'inherit', display: 'flex', alignItems: 'center', gap: '10px', padding: '8px 12px', borderRadius: '8px', fontSize: '13px' }}
-            >
-              <span>🛎️</span>
-              <span className="nav-item-text">Front Desk Reception</span>
-            </a>
-            <a
-              href={import.meta.env.VITE_GUEST_PORTAL_URL || 'http://localhost:5190'}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="nav-item"
-              style={{ textDecoration: 'none', color: 'inherit', display: 'flex', alignItems: 'center', gap: '10px', padding: '8px 12px', borderRadius: '8px', fontSize: '13px' }}
-            >
-              <span>🍽️</span>
-              <span className="nav-item-text">Guest Dining Menu</span>
-            </a>
-          </div>
         </nav>
 
         <div className="sidebar-footer">

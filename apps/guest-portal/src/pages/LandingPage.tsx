@@ -91,7 +91,7 @@ export default function LandingPage() {
           backdropFilter: 'blur(20px)',
           WebkitBackdropFilter: 'blur(20px)',
           borderBottom: '1px solid rgba(173, 138, 63, 0.22)',
-          padding: '12px 0'
+          padding: '16px 0'
         }}
       >
         <div className="desktop-container" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
@@ -99,16 +99,16 @@ export default function LandingPage() {
           {/* Brand Logo & Title with Local Crisp Badge */}
           <div 
             onClick={() => navigate('/')}
-            style={{ display: 'flex', alignItems: 'center', gap: '12px', cursor: 'pointer' }}
+            style={{ display: 'flex', alignItems: 'center', gap: '14px', cursor: 'pointer' }}
           >
             <div 
               style={{
-                width: '42px',
-                height: '42px',
+                width: '48px',
+                height: '48px',
                 borderRadius: '50%',
                 background: '#132511',
                 border: '1.5px solid var(--brass, #BCA374)',
-                boxShadow: '0 3px 10px rgba(0,0,0,0.15)',
+                boxShadow: '0 3px 12px rgba(0,0,0,0.14)',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
@@ -124,10 +124,10 @@ export default function LandingPage() {
               />
             </div>
             <div>
-              <div style={{ fontFamily: 'Fraunces, serif', fontSize: '20px', fontWeight: 700, color: 'var(--forest-deep)', letterSpacing: '0.04em', lineHeight: 1 }}>
+              <div style={{ fontFamily: 'Fraunces, serif', fontSize: '22px', fontWeight: 700, color: 'var(--forest-deep)', letterSpacing: '0.03em', lineHeight: 1 }}>
                 SHIVALAYA
               </div>
-              <div style={{ fontSize: '9px', letterSpacing: '0.22em', color: 'var(--brass)', fontWeight: 700, textTransform: 'uppercase', marginTop: '3px' }}>
+              <div style={{ fontSize: '9.5px', letterSpacing: '0.22em', color: 'var(--brass)', fontWeight: 700, textTransform: 'uppercase', marginTop: '3px' }}>
                 Resorts · Uttarakhand
               </div>
             </div>

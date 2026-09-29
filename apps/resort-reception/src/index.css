@@ -416,16 +416,17 @@ html, body {
   min-height: 100vh;
   display: flex;
   width: 100%;
-  background: var(--parchment);
+  background: radial-gradient(ellipse at 65% 50%, #FAF8F2 0%, #EFECE4 100%);
   overflow-x: hidden;
 }
 
 .login-brand-panel {
   flex: 1;
-  max-width: 480px;
+  max-width: 540px;
+  min-width: 400px;
   background: linear-gradient(180deg, var(--forest-deep) 0%, #162912 60%, #0d1a0b 100%);
   color: #ffffff;
-  padding: 48px 40px;
+  padding: 48px 44px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;

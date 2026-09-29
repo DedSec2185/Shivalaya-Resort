@@ -207,9 +207,9 @@ export default function MenuPage() {
         {/* Main scrollable content */}
         <div className="app-scroll" ref={appScrollRef}>
           {/* Sticky Top Nav */}
-          <div className="topnav" style={{ padding: '12px 0' }}>
+          <div className="topnav" style={{ padding: '16px 0' }}>
             <div className="desktop-container" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-              <div className="brand-mini" onClick={() => navigate('/')} style={{ cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <div className="brand-mini" onClick={() => navigate('/')} style={{ cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '14px' }}>
                 <button
                   type="button"
                   className="icon-btn"
@@ -222,18 +222,40 @@ export default function MenuPage() {
                       navigate('/')
                     }
                   }}
-                  style={{ width: '32px', height: '32px', borderRadius: '50%', background: 'rgba(44,74,34,0.08)' }}
+                  style={{ width: '36px', height: '36px', borderRadius: '50%', background: 'rgba(44,74,34,0.08)', border: '1px solid rgba(44,74,34,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
                 >
                   <ChevronLeft size={18} color="var(--forest-deep)" />
                 </button>
-                <img 
-                  src="/panache_badge_perfect.png" 
-                  alt="Panache Logo" 
-                  className="monogram-img" 
-                  style={{ background: '#1A2E13', padding: '2px', objectFit: 'contain' }}
-                  onError={(e) => { (e.currentTarget as HTMLImageElement).src = '/panache_logo_transparent.png' }}
-                />
-                <div className="brand-mini-text">Panache</div>
+                <div 
+                  style={{
+                    width: '48px',
+                    height: '48px',
+                    borderRadius: '50%',
+                    background: '#132511',
+                    border: '1.5px solid var(--brass, #BCA374)',
+                    boxShadow: '0 3px 12px rgba(0,0,0,0.14)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    padding: '2px',
+                    flexShrink: 0
+                  }}
+                >
+                  <img 
+                    src="/panache_badge_perfect.png" 
+                    alt="Panache Crest" 
+                    style={{ width: '100%', height: '100%', objectFit: 'contain' }}
+                    onError={(e) => { (e.currentTarget as HTMLImageElement).src = '/panache_logo_transparent.png' }}
+                  />
+                </div>
+                <div>
+                  <div style={{ fontFamily: 'Fraunces, serif', fontSize: '21px', fontWeight: 700, color: 'var(--forest-deep)', letterSpacing: '0.03em', lineHeight: 1.1 }}>
+                    Panache
+                  </div>
+                  <div style={{ fontSize: '9.5px', color: 'var(--brass)', fontWeight: 700, letterSpacing: '0.22em', textTransform: 'uppercase', marginTop: '3px' }}>
+                    Shivalaya Gastronomy
+                  </div>
+                </div>
               </div>
 
               {/* Desktop Nav Links */}

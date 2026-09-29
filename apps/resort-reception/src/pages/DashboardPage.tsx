@@ -19,10 +19,7 @@ import {
   ChevronUp,
   FileText,
   Menu as MenuIcon,
-  Clock,
-  Mountain,
-  Sparkles,
-  ArrowUpRight
+  Clock
 } from 'lucide-react'
 
 // Define types matching DB
@@ -464,33 +461,6 @@ export default function DashboardPage() {
               <FileText size={18} />
               <span>Inventory & CRM</span>
             </button>
-
-            {/* Quick Portal Switcher */}
-            <div style={{ marginTop: '20px', paddingTop: '16px', borderTop: '1px solid rgba(255,255,255,0.08)' }}>
-              <div style={{ fontSize: '10px', textTransform: 'uppercase', letterSpacing: '0.12em', color: 'var(--brass, #D9BD75)', fontWeight: 700, padding: '0 12px 8px' }}>
-                SWITCH PORTAL
-              </div>
-              <a
-                href={import.meta.env.VITE_KITCHEN_PORTAL_URL || 'http://localhost:5181'}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="sidebar-nav-item"
-                style={{ textDecoration: 'none', color: 'rgba(255,255,255,0.85)', display: 'flex', alignItems: 'center', gap: '10px' }}
-              >
-                <span>👨‍🍳</span>
-                <span>Kitchen Display (KDS)</span>
-              </a>
-              <a
-                href={import.meta.env.VITE_GUEST_PORTAL_URL || 'http://localhost:5190'}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="sidebar-nav-item"
-                style={{ textDecoration: 'none', color: 'rgba(255,255,255,0.85)', display: 'flex', alignItems: 'center', gap: '10px' }}
-              >
-                <span>🍽️</span>
-                <span>Guest Dining Menu</span>
-              </a>
-            </div>
           </nav>
         </div>
 
@@ -520,215 +490,77 @@ export default function DashboardPage() {
       {/* Main content body */}
       <main className="rcp-main">
         
-        {/* ── ROYAL HIMALAYAN RECEPTION CONSOLE HEADER ── */}
-        <header 
-          className="print:hidden"
-          style={{
-            marginBottom: '28px',
-            borderRadius: '24px',
-            background: 'linear-gradient(135deg, #132511 0%, #1A2E13 50%, #2A4A22 100%)',
-            border: '1.5px solid rgba(217, 189, 117, 0.3)',
-            padding: '24px 28px',
-            boxShadow: '0 16px 40px rgba(19, 37, 17, 0.22), inset 0 1px 0 rgba(255,255,255,0.1)',
-            position: 'relative',
-            overflow: 'hidden'
-          }}
-        >
-          {/* Decorative ambient aura */}
-          <div 
-            style={{ 
-              position: 'absolute', 
-              top: '-60px', 
-              right: '-40px', 
-              width: '260px', 
-              height: '260px', 
-              background: 'radial-gradient(circle, rgba(217, 189, 117, 0.22) 0%, transparent 70%)', 
-              filter: 'blur(40px)', 
-              pointerEvents: 'none' 
-            }} 
-          />
+        {/* Header Title depending on tab (hidden on print) */}
+        <div className="rcp-page-header print:hidden">
+          <div>
+            <h1 className="rcp-page-title">
+              {activeTab === 'guests' && 'Guests & Stays Ledger'}
+              {activeTab === 'orders' && 'Dining Orders History'}
+              {activeTab === 'activities' && 'Booked Activities Ledger'}
+              {activeTab === 'menu' && 'Menu Control & Availability'}
+              {activeTab === 'activity_mgmt' && 'Manage Activities & Slots'}
+              {activeTab === 'analytics' && 'Operational Analytics'}
+              {activeTab === 'inventory' && 'Inventory & Stock Ledger'}
+            </h1>
+            <p className="rcp-page-subtitle">
+              {activeTab === 'guests' && 'Perform room check-ins, guest checkouts, manage running folios, and print guest receipts.'}
+              {activeTab === 'orders' && 'Lookup past dining orders, manage food prep states, and view kitchen tickets.'}
+              {activeTab === 'activities' && 'Confirm pending adventure requests, assign mountain guides, and review schedules.'}
+              {activeTab === 'menu' && 'Toggle kitchen item stocks and configure category available hours.'}
+              {activeTab === 'activity_mgmt' && 'Add activity types, configure slot capacities, and toggle seasonal availability.'}
+              {activeTab === 'analytics' && 'Monitor daily revenues, average room ticket size, and dining leaderboards.'}
+              {activeTab === 'inventory' && 'Track raw food stocks, log farm deliveries, and monitor low-stock alerts.'}
+            </p>
+          </div>
 
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '20px', position: 'relative', zIndex: 2 }}>
-            
-            {/* Left: Telemetry & Title */}
-            <div style={{ flex: '1 1 360px' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap', marginBottom: '8px' }}>
-                <span style={{ 
-                  fontSize: '10.5px', 
-                  fontWeight: 800, 
-                  color: 'var(--brass-light, #D9BD75)', 
-                  textTransform: 'uppercase', 
-                  letterSpacing: '0.14em', 
-                  display: 'inline-flex', 
-                  alignItems: 'center', 
-                  gap: '6px' 
-                }}>
-                  <Sparkles size={12} color="var(--brass-light, #D9BD75)" />
-                  SHIVALAYA RESORTS · OWNER & CONCIERGE TERMINAL
-                </span>
-
-                <span style={{ 
-                  fontSize: '10px', 
-                  color: 'rgba(255,255,255,0.85)', 
-                  background: 'rgba(255,255,255,0.08)', 
-                  padding: '2px 8px', 
-                  borderRadius: '100px',
-                  border: '1px solid rgba(255,255,255,0.15)',
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  gap: '4px'
-                }}>
-                  <Mountain size={11} color="var(--brass-light, #D9BD75)" />
-                  Alt. 1,450m · Gethia
-                </span>
-
-                <span style={{ 
-                  fontSize: '10px', 
-                  color: '#2ecc71', 
-                  background: 'rgba(46, 204, 113, 0.12)', 
-                  padding: '2px 8px', 
-                  borderRadius: '100px',
-                  border: '1px solid rgba(46, 204, 113, 0.25)',
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  gap: '5px',
-                  fontWeight: 600
-                }}>
-                  <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#2ecc71', boxShadow: '0 0 6px #2ecc71' }} />
-                  Live Sync Active
-                </span>
-              </div>
-
-              <h1 style={{ 
-                margin: 0, 
-                fontFamily: 'Fraunces, serif', 
-                fontSize: 'clamp(24px, 4vw, 32px)', 
-                color: '#FFFFFF', 
-                fontWeight: 700, 
-                lineHeight: 1.15,
-                textShadow: '0 2px 8px rgba(0,0,0,0.3)'
-              }}>
-                {activeTab === 'guests' && 'Guests & Stays Ledger'}
-                {activeTab === 'orders' && 'Panache Dining Orders History'}
-                {activeTab === 'activities' && 'Mountain Activities Ledger'}
-                {activeTab === 'menu' && 'Panache Digital Menu Control'}
-                {activeTab === 'activity_mgmt' && 'Experiences & Slots Control'}
-                {activeTab === 'analytics' && 'Executive Operational Analytics'}
-                {activeTab === 'inventory' && 'Inventory & Stock Ledger'}
-              </h1>
-
-              <p style={{ margin: '6px 0 0', fontSize: '13.5px', color: 'rgba(243, 238, 219, 0.85)', maxWidth: '640px', lineHeight: 1.5 }}>
-                {activeTab === 'guests' && 'Perform room check-ins, guest checkouts, manage running folios, and print guest receipts.'}
-                {activeTab === 'orders' && 'Lookup past dining orders, manage food prep states, and view kitchen tickets.'}
-                {activeTab === 'activities' && 'Confirm pending adventure requests, assign mountain guides, and review schedules.'}
-                {activeTab === 'menu' && 'Toggle 86 items in real-time and configure kitchen service time gates.'}
-                {activeTab === 'activity_mgmt' && 'Add activity types, configure slot capacities, and toggle seasonal availability.'}
-                {activeTab === 'analytics' && 'Monitor daily revenues, average room ticket size, and dining leaderboards.'}
-                {activeTab === 'inventory' && 'Track raw food stocks, log farm deliveries, and monitor low-stock alerts.'}
-              </p>
-            </div>
-
-            {/* Right: Live Himalayan Clock & Quick Portal Switchers */}
-            <div style={{ display: 'flex', alignItems: 'center', gap: '14px', flexWrap: 'wrap' }}>
-              
-              {/* Live Clock Card */}
-              <div 
-                style={{ 
-                  background: 'rgba(0,0,0,0.35)', 
-                  border: '1px solid rgba(217, 189, 117, 0.25)', 
-                  borderRadius: '16px', 
-                  padding: '10px 18px',
-                  backdropFilter: 'blur(10px)',
-                  textAlign: 'right'
-                }}
-              >
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: '8px' }}>
-                  <Clock size={15} color="var(--brass-light, #D9BD75)" />
-                  <span style={{ fontFamily: 'IBM Plex Mono, monospace', fontSize: '18px', fontWeight: 700, color: '#FFFFFF', letterSpacing: '0.04em' }}>
-                    {formattedTime}
-                  </span>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '16px', flexWrap: 'wrap' }}>
+            {/* Live Clock Card */}
+            <div style={{ 
+              background: '#FFFFFF', 
+              border: '1px solid var(--border)', 
+              borderRadius: '12px', 
+              padding: '8px 16px',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '10px',
+              boxShadow: '0 2px 8px rgba(0,0,0,0.03)'
+            }}>
+              <Clock size={16} color="var(--forest-mid)" />
+              <div style={{ textAlign: 'right' }}>
+                <div style={{ fontFamily: 'IBM Plex Mono, monospace', fontSize: '15px', fontWeight: 700, color: 'var(--ink)' }}>
+                  {formattedTime}
                 </div>
-                <div style={{ fontSize: '11px', color: 'var(--brass-light, #D9BD75)', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.08em', marginTop: '2px' }}>
+                <div style={{ fontSize: '10px', color: 'var(--ink-muted)', textTransform: 'uppercase', letterSpacing: '0.06em' }}>
                   {formattedDate}
                 </div>
               </div>
-
-              {/* Portal Quick Links */}
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-                <a
-                  href={import.meta.env.VITE_KITCHEN_PORTAL_URL || 'http://localhost:5181'}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  style={{
-                    background: 'rgba(255,255,255,0.08)',
-                    border: '1px solid rgba(217,189,117,0.3)',
-                    borderRadius: '100px',
-                    padding: '6px 14px',
-                    color: '#FFF',
-                    fontSize: '12px',
-                    fontWeight: 600,
-                    textDecoration: 'none',
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '6px',
-                    transition: 'all 0.2s ease'
-                  }}
-                >
-                  <span>👨‍🍳 KDS Kitchen</span>
-                  <ArrowUpRight size={13} color="var(--brass-light)" />
-                </a>
-
-                <a
-                  href={import.meta.env.VITE_GUEST_PORTAL_URL || 'http://localhost:5190'}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  style={{
-                    background: 'rgba(255,255,255,0.08)',
-                    border: '1px solid rgba(217,189,117,0.3)',
-                    borderRadius: '100px',
-                    padding: '6px 14px',
-                    color: '#FFF',
-                    fontSize: '12px',
-                    fontWeight: 600,
-                    textDecoration: 'none',
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '6px',
-                    transition: 'all 0.2s ease'
-                  }}
-                >
-                  <span>🍽️ Guest Menu</span>
-                  <ArrowUpRight size={13} color="var(--brass-light)" />
-                </a>
-              </div>
-
-              {/* Staff Avatar Ring */}
-              <div 
-                title={`${staff.name} (${staff.role})`}
-                style={{ 
-                  width: '44px', 
-                  height: '44px', 
-                  borderRadius: '50%', 
-                  background: 'radial-gradient(circle at 35% 30%, #D9BD75, #BCA374 60%, #8A6B2C)', 
-                  border: '2px solid rgba(255,255,255,0.4)', 
-                  boxShadow: '0 4px 12px rgba(0,0,0,0.3)',
-                  color: '#132511',
-                  fontFamily: 'Fraunces, serif',
-                  fontWeight: 700,
-                  fontSize: '15px',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  flexShrink: 0
-                }}
-              >
-                {initials}
-              </div>
-
             </div>
 
+
+
+            {/* Staff Avatar Ring */}
+            <div 
+              title={`${staff.name} (${staff.role})`}
+              style={{ 
+                width: '42px', 
+                height: '42px', 
+                borderRadius: '50%', 
+                background: 'var(--forest-deep)', 
+                border: '1.5px solid var(--brass)', 
+                color: 'var(--brass-light)',
+                fontFamily: 'Fraunces, serif',
+                fontWeight: 700,
+                fontSize: '15px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                flexShrink: 0
+              }}
+            >
+              {initials}
+            </div>
           </div>
-        </header>
+        </div>
 
         {/* Tab contents */}
         {activeTab === 'guests' && (
@@ -1230,7 +1062,7 @@ function GuestsTab({ resortId, refreshKey, triggerRefresh }: GuestsTabProps) {
           {/* Print-visible Full receipt (Visible only when window.print() is called) */}
           <div id="folio-print-container" className="print-visible font-mono p-10 text-black hidden bg-white">
             <div style={{ textAlign: 'center', marginBottom: '20px' }}>
-              <h1 style={{ fontSize: '24px', fontWeight: 'bold', margin: '0' }}>SHIVALAYA PANACHE RESORT</h1>
+              <h1 style={{ fontSize: '24px', fontWeight: 'bold', margin: '0' }}>SHIVALAYA RESORT</h1>
               <p style={{ fontSize: '12px', color: '#666', marginTop: '4px' }}>Uttarakhand, India · Stay Invoice Folio</p>
             </div>
             

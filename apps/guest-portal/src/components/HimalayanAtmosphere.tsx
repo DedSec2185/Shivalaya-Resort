@@ -42,16 +42,16 @@ export default function HimalayanAtmosphere() {
       {/* ── 2. MOUNTAIN SANCTUARY TELEMETRY TICKER (MOBILE & DESKTOP TUNED) ── */}
       <div
         style={{
-          background: 'linear-gradient(90deg, #1A2E13 0%, #2C4A22 50%, #1A2E13 100%)',
+          background: 'linear-gradient(90deg, #132511 0%, #1A2E13 50%, #132511 100%)',
           color: '#EBE0C4',
-          fontSize: '11px',
-          letterSpacing: '0.03em',
-          padding: '6px 12px',
-          borderBottom: '1px solid rgba(173, 138, 63, 0.3)',
+          fontSize: '12px',
+          letterSpacing: '0.04em',
+          padding: '8px clamp(20px, 3.5vw, 48px)',
+          borderBottom: '1px solid rgba(217, 189, 117, 0.28)',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
-          gap: '8px',
+          gap: '12px',
           overflow: 'hidden',
           pointerEvents: 'auto'
         }}

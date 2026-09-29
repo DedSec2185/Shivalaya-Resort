@@ -73,7 +73,7 @@ export default function ExperiencesPage() {
         }}
       >
         <div className="desktop-container" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-          <div className="brand-mini" onClick={() => navigate('/')} style={{ cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <div className="brand-mini" onClick={() => navigate('/')} style={{ cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '14px' }}>
             <button
               type="button"
               className="icon-btn"
@@ -86,20 +86,37 @@ export default function ExperiencesPage() {
                   navigate('/')
                 }
               }}
-              style={{ width: '32px', height: '32px', borderRadius: '50%', background: 'rgba(44,74,34,0.08)' }}
+              style={{ width: '36px', height: '36px', borderRadius: '50%', background: 'rgba(44,74,34,0.08)', border: '1px solid rgba(44,74,34,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
             >
               <ChevronLeft size={18} color="var(--forest-deep)" />
             </button>
-            <img 
-              src="https://shivalayaresort.com/wp-content/uploads/2024/11/Shivalaya-Resort-Logo-t.png" 
-              alt="Shivalaya Logo" 
-              style={{ width: '38px', height: '38px', objectFit: 'contain', filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.1))' }} 
-            />
+            <div 
+              style={{
+                width: '48px',
+                height: '48px',
+                borderRadius: '50%',
+                background: '#132511',
+                border: '1.5px solid var(--brass, #BCA374)',
+                boxShadow: '0 3px 12px rgba(0,0,0,0.14)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                padding: '2px',
+                flexShrink: 0
+              }}
+            >
+              <img 
+                src="/shivalaya_badge_perfect.png" 
+                alt="Shivalaya Resorts Crest" 
+                style={{ width: '100%', height: '100%', objectFit: 'contain' }} 
+                onError={(e) => { (e.currentTarget as HTMLImageElement).src = '/shivalaya_logo_transparent.png' }}
+              />
+            </div>
             <div>
-              <div style={{ fontSize: '19px', lineHeight: 1.1, color: 'var(--forest-deep)', fontFamily: 'Fraunces, serif', fontWeight: 700 }}>
+              <div style={{ fontSize: '21px', lineHeight: 1.1, color: 'var(--forest-deep)', fontFamily: 'Fraunces, serif', fontWeight: 700, letterSpacing: '0.03em' }}>
                 SHIVALAYA
               </div>
-              <div style={{ fontSize: '9px', color: 'var(--brass)', fontWeight: 700, letterSpacing: '0.2em', textTransform: 'uppercase' }}>
+              <div style={{ fontSize: '9.5px', color: 'var(--brass)', fontWeight: 700, letterSpacing: '0.22em', textTransform: 'uppercase', marginTop: '3px' }}>
                 Resort Experiences
               </div>
             </div>
