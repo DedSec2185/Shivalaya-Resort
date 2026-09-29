@@ -754,8 +754,8 @@ CREATE OR REPLACE FUNCTION public.check_in_guest(
   p_resort_id        UUID    DEFAULT NULL,
   p_room_id          UUID    DEFAULT NULL,
   p_room_number      TEXT    DEFAULT NULL,
-  p_guest_name       TEXT    NOT NULL,
-  p_guest_phone      TEXT    NOT NULL,
+  p_guest_name       TEXT    DEFAULT NULL,
+  p_guest_phone      TEXT    DEFAULT NULL,
   p_guest_email      TEXT    DEFAULT NULL,
   p_number_of_adults INTEGER DEFAULT 1,
   p_expected_checkout DATE   DEFAULT NULL,
@@ -773,6 +773,14 @@ DECLARE
   v_room_number   TEXT;
   v_session_token TEXT;
 BEGIN
+  IF p_guest_name IS NULL OR TRIM(p_guest_name) = '' OR p_guest_phone IS NULL OR TRIM(p_guest_phone) = '' THEN
+    RETURN jsonb_build_object(
+      'success', false,
+      'error',   'INVALID_ARGUMENTS',
+      'message', 'Guest name and phone number are required.'
+    );
+  END IF;
+
   v_resort_id := COALESCE(p_resort_id, (SELECT id FROM resorts LIMIT 1));
 
   IF p_room_id IS NOT NULL THEN
