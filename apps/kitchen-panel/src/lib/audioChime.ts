@@ -69,3 +69,23 @@ export function playKitchenOrderChime(): void {
     console.warn('Unable to play kitchen audio chime:', err)
   }
 }
+
+export function playItemCheckTick(): void {
+  if (isKitchenSoundMuted()) return
+  try {
+    const ctx = getAudioContext()
+    if (!ctx) return
+    const now = ctx.currentTime
+    const osc = ctx.createOscillator()
+    const gain = ctx.createGain()
+    osc.type = 'triangle'
+    osc.frequency.setValueAtTime(1760, now) // High pleasant tap (A6)
+    gain.gain.setValueAtTime(0.08, now)
+    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.08)
+    osc.connect(gain)
+    gain.connect(ctx.destination)
+    osc.start(now)
+    osc.stop(now + 0.09)
+  } catch {}
+}
+

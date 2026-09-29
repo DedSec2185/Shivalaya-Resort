@@ -1368,3 +1368,442 @@ body {
     font-weight: 800;
   }
 }
+
+/* ══════════════════════════════════════════════════════════════════
+   COMMERCIAL-GRADE KDS ELEVATION — HUD, FILTERS & DISH CHECKLIST
+   ══════════════════════════════════════════════════════════════════ */
+
+/* ── Kitchen Executive HUD Bar ───────────────────────────────── */
+.kds-hud-bar {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 14px;
+  margin-bottom: 22px;
+}
+
+.kds-hud-stat {
+  background: var(--card);
+  border: 1.5px solid var(--line);
+  border-radius: 16px;
+  padding: 14px 18px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  box-shadow: 0 4px 14px rgba(35,31,22,0.04);
+  transition: all 0.2s ease;
+}
+
+.kds-hud-stat:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 22px rgba(35,31,22,0.08);
+}
+
+.kds-hud-icon-wrap {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.kds-hud-val {
+  font-size: 24px;
+  font-weight: 800;
+  font-family: 'IBM Plex Mono', monospace;
+  line-height: 1.1;
+  color: var(--forest-deep);
+}
+
+.kds-hud-label {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  color: var(--sage);
+  margin-top: 2px;
+}
+
+.kds-hud-stat.urgent-active {
+  border-color: rgba(154, 69, 48, 0.4);
+  background: linear-gradient(135deg, #FFF9F7, #FFF);
+  box-shadow: 0 4px 16px rgba(154, 69, 48, 0.15);
+}
+
+/* ── Interactive Sound Control in HUD ────────────────────────── */
+.kds-sound-toggle-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--parchment-deep);
+  border: 1.5px solid var(--line);
+  color: var(--ink);
+  font-size: 12px;
+  font-weight: 700;
+  padding: 6px 12px;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.kds-sound-toggle-btn:hover {
+  background: #FFFFFF;
+  border-color: var(--brass);
+  color: var(--forest-deep);
+}
+
+/* ── Master Filter & Rapid Search Toolbar ────────────────────── */
+.kds-toolbar {
+  background: var(--card);
+  border: 1.5px solid var(--line);
+  border-radius: 18px;
+  padding: 16px 20px;
+  margin-bottom: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  box-shadow: var(--shadow);
+}
+
+.kds-toolbar-top {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.kds-search-box {
+  position: relative;
+  flex: 1;
+  min-width: 260px;
+}
+
+.kds-search-input {
+  width: 100%;
+  padding: 12px 16px 12px 44px;
+  background: #FFFFFF;
+  border: 1.5px solid var(--line);
+  border-radius: 12px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--ink);
+  outline: none;
+  transition: all 0.2s ease;
+}
+
+.kds-search-input:focus {
+  border-color: var(--brass);
+  box-shadow: 0 0 0 3px rgba(173, 138, 63, 0.2);
+}
+
+.kds-search-clear {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: transparent;
+  border: none;
+  color: var(--sage);
+  cursor: pointer;
+  font-size: 14px;
+  padding: 4px 6px;
+  border-radius: 6px;
+}
+
+.kds-search-clear:hover {
+  background: var(--parchment-deep);
+  color: var(--ink);
+}
+
+.kds-toolbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.kds-filter-pills {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.kds-filter-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  border-radius: 10px;
+  font-size: 12.5px;
+  font-weight: 700;
+  border: 1.5px solid var(--line);
+  background: #FFFFFF;
+  color: var(--ink-soft);
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.34,1.56,0.64,1);
+}
+
+.kds-filter-pill:hover {
+  border-color: var(--brass);
+  transform: translateY(-1px);
+}
+
+.kds-filter-pill.active {
+  background: var(--forest-deep);
+  color: var(--brass-light);
+  border-color: var(--forest-deep);
+  box-shadow: 0 3px 10px rgba(26,46,19,0.2);
+}
+
+.kds-filter-pill.active-urgent {
+  background: var(--rust) !important;
+  color: #FFFFFF !important;
+  border-color: var(--rust) !important;
+  animation: pulseGlow 2s infinite;
+}
+
+.kds-pill-badge {
+  font-size: 11px;
+  font-family: 'IBM Plex Mono', monospace;
+  padding: 1px 7px;
+  border-radius: 8px;
+  background: rgba(35,31,22,0.08);
+}
+
+.kds-filter-pill.active .kds-pill-badge {
+  background: rgba(217,189,117,0.25);
+  color: var(--brass-light);
+}
+
+/* ── Upgraded Kanban Columns ─────────────────────────────────── */
+.kanban-col-head {
+  padding: 18px 22px;
+  background: var(--parchment-deep);
+  border-bottom: 1.5px solid var(--line);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-top-left-radius: 18px;
+  border-top-right-radius: 18px;
+}
+
+.kanban-col.col-new {
+  border-top: 5px solid var(--rust);
+}
+
+.kanban-col.col-prep {
+  border-top: 5px solid var(--brass);
+}
+
+.kanban-col.col-ready {
+  border-top: 5px solid var(--forest);
+}
+
+/* ── Interactive Dish Checklist inside Order Cards ───────────── */
+.kds-checklist-box {
+  background: #FAFAF7;
+  border: 1.5px solid var(--line);
+  border-radius: 14px;
+  padding: 12px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.kds-checklist-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 11px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--sage);
+  padding-bottom: 4px;
+  border-bottom: 1px dashed var(--line);
+}
+
+.kds-progress-track {
+  width: 100%;
+  height: 5px;
+  background: rgba(35,31,22,0.08);
+  border-radius: 4px;
+  overflow: hidden;
+  margin-top: 2px;
+}
+
+.kds-progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--brass), var(--forest));
+  border-radius: 4px;
+  transition: width 0.3s cubic-bezier(0.34,1.56,0.64,1);
+}
+
+.kds-dish-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 10px;
+  border-radius: 10px;
+  cursor: pointer;
+  user-select: none;
+  transition: all 0.18s ease;
+  background: #FFFFFF;
+  border: 1px solid rgba(35,31,22,0.06);
+}
+
+.kds-dish-row:hover {
+  background: rgba(173,138,63,0.06);
+  border-color: rgba(173,138,63,0.3);
+  transform: translateX(2px);
+}
+
+.kds-dish-row.completed {
+  background: rgba(44, 74, 34, 0.08);
+  border-color: rgba(44, 74, 34, 0.2);
+}
+
+.kds-dish-info {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex: 1;
+}
+
+.kds-checkbox {
+  width: 20px;
+  height: 20px;
+  border-radius: 6px;
+  border: 2px solid var(--sage);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #FFFFFF;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+}
+
+.kds-dish-row.completed .kds-checkbox {
+  background: var(--forest);
+  border-color: var(--forest);
+  color: #FFFFFF;
+}
+
+.kds-dish-name {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--ink);
+  transition: all 0.2s ease;
+}
+
+.kds-dish-row.completed .kds-dish-name {
+  text-decoration: line-through;
+  color: var(--sage);
+  font-weight: 500;
+}
+
+.kds-dish-qty {
+  font-family: 'IBM Plex Mono', monospace;
+  font-weight: 800;
+  color: var(--brass);
+  font-size: 15px;
+  flex-shrink: 0;
+}
+
+.kds-all-plated-banner {
+  background: linear-gradient(135deg, rgba(44,74,34,0.12), rgba(44,74,34,0.22));
+  border: 1.5px solid var(--forest);
+  color: var(--forest-deep);
+  border-radius: 10px;
+  padding: 8px 12px;
+  font-size: 12px;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  animation: pulseGlow 2.5s infinite;
+}
+
+/* ── Urgent Delayed Ticket Highlight ─────────────────────────── */
+.order-card-v2.ticket-overdue {
+  border-color: var(--rust) !important;
+  box-shadow: 0 6px 24px rgba(154, 69, 48, 0.22) !important;
+  animation: cardPulseAlert 3s infinite;
+}
+
+@keyframes cardPulseAlert {
+  0%, 100% { border-left-color: var(--rust); box-shadow: 0 4px 18px rgba(154, 69, 48, 0.15); }
+  50%      { border-left-color: #D32F2F; box-shadow: 0 8px 28px rgba(211, 47, 47, 0.35); }
+}
+
+.kds-overdue-tag {
+  background: var(--rust);
+  color: #FFFFFF;
+  padding: 3px 8px;
+  border-radius: 8px;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.5px;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+/* ── High-Contrast Chef Note Box ─────────────────────────────── */
+.kds-chef-note {
+  background: #FFF8E7;
+  border: 1.5px solid var(--brass);
+  border-radius: 12px;
+  padding: 10px 14px;
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  color: #63430C;
+}
+
+.kds-chef-note-title {
+  font-size: 10.5px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: #8C5E10;
+  margin-bottom: 2px;
+}
+
+.kds-chef-note-text {
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 1.35;
+  color: #3D2900;
+}
+
+/* ── Bump Actions Layout ─────────────────────────────────────── */
+.kds-card-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.btn-action-revert {
+  background: transparent;
+  color: var(--sage);
+  border: 1.5px solid var(--line);
+  padding: 10px 12px;
+  border-radius: 10px;
+  font-weight: 700;
+  font-size: 12px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  transition: all 0.2s ease;
+}
+
+.btn-action-revert:hover {
+  background: var(--parchment-deep);
+  color: var(--ink);
+  border-color: var(--sage);
+}
+

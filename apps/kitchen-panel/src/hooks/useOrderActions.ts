@@ -29,9 +29,13 @@ export function useOrderActions(onStatusChange?: (orderId: string, status: strin
   }
 
   return {
-    accept:     (id: string) => updateStatus(id, 'confirmed'),
-    toKitchen:  (id: string) => updateStatus(id, 'preparing'),
-    markReady:  (id: string) => updateStatus(id, 'ready'),
-    markServed: (id: string) => updateStatus(id, 'served'),
+    accept:        (id: string) => updateStatus(id, 'confirmed'),
+    toKitchen:     (id: string) => updateStatus(id, 'preparing'),
+    startPrep:     (id: string) => updateStatus(id, 'preparing'),
+    markReady:     (id: string) => updateStatus(id, 'ready'),
+    markServed:    (id: string) => updateStatus(id, 'served'),
+    revertToNew:   (id: string) => updateStatus(id, 'new'),
+    revertToPrep:  (id: string) => updateStatus(id, 'preparing'),
+    revertToReady: (id: string) => updateStatus(id, 'ready'),
   }
 }

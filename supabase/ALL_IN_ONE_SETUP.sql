@@ -334,7 +334,7 @@ CREATE INDEX IF NOT EXISTS idx_act_bookings_slot    ON activity_bookings(slot_id
 -- ── 3. VIEWS ───────────────────────────────────────────────────
 
 -- 3.1 staff_public (masks pin_hash and supabase_email from anon)
-CREATE OR REPLACE VIEW staff_public AS
+CREATE OR REPLACE VIEW staff_public WITH (security_invoker = true) AS
 SELECT
   id,
   resort_id,
@@ -346,7 +346,7 @@ FROM staff
 WHERE is_active = TRUE;
 
 -- 3.2 guest_folio (unifies restaurant orders and booked activities)
-CREATE OR REPLACE VIEW guest_folio AS
+CREATE OR REPLACE VIEW guest_folio WITH (security_invoker = true) AS
   SELECT
     o.id,
     o.guest_id,
@@ -383,7 +383,7 @@ UNION ALL
 ORDER BY charge_at;
 
 -- 3.3 current_stock (computed inventory balances)
-CREATE OR REPLACE VIEW current_stock AS
+CREATE OR REPLACE VIEW current_stock WITH (security_invoker = true) AS
 SELECT
   ii.id                          AS item_id,
   ii.resort_id,
@@ -902,7 +902,9 @@ RETURNS TABLE (
   remaining_capacity   INTEGER,
   is_available         BOOLEAN
 )
-LANGUAGE plpgsql AS $$
+LANGUAGE plpgsql
+SET search_path = public, pg_temp
+AS $$
 BEGIN
   RETURN QUERY
     SELECT
@@ -1058,6 +1060,7 @@ $$;
 CREATE OR REPLACE FUNCTION public.log_order_status_change()
 RETURNS TRIGGER
 LANGUAGE plpgsql
+SET search_path = public, pg_temp
 AS $$
 BEGIN
   IF OLD.status IS DISTINCT FROM NEW.status THEN
@@ -1121,25 +1124,45 @@ CREATE POLICY p_vars_read      ON menu_item_variants FOR SELECT TO anon, authent
 
 CREATE POLICY p_acts_read      ON activities        FOR SELECT TO anon, authenticated USING (true);
 CREATE POLICY p_slots_read     ON activity_time_slots FOR SELECT TO anon, authenticated USING (true);
-CREATE POLICY p_act_books_all  ON activity_bookings FOR ALL    TO anon, authenticated USING (true) WITH CHECK (true);
+-- Activities Bookings
+CREATE POLICY p_act_book_select ON activity_bookings FOR SELECT TO anon, authenticated USING (true);
+CREATE POLICY p_act_book_insert ON activity_bookings FOR INSERT TO anon, authenticated WITH CHECK (booking_number IS NOT NULL AND number_of_guests > 0);
+CREATE POLICY p_act_book_update ON activity_bookings FOR UPDATE TO anon, authenticated USING (id IS NOT NULL) WITH CHECK (id IS NOT NULL);
 
--- Orders & Status Log (Permissive for local/live multi-portal synchronization)
+-- Orders & Status Log
 CREATE POLICY p_orders_read    ON orders            FOR SELECT TO anon, authenticated USING (true);
-CREATE POLICY p_orders_insert  ON orders            FOR INSERT TO anon, authenticated WITH CHECK (true);
-CREATE POLICY p_orders_update  ON orders            FOR UPDATE TO anon, authenticated USING (true) WITH CHECK (true);
+CREATE POLICY p_orders_insert  ON orders            FOR INSERT TO anon, authenticated WITH CHECK (order_number IS NOT NULL AND subtotal >= 0);
+CREATE POLICY p_orders_update  ON orders            FOR UPDATE TO anon, authenticated USING (id IS NOT NULL) WITH CHECK (id IS NOT NULL);
 
-CREATE POLICY p_order_log_all  ON order_status_log  FOR ALL    TO anon, authenticated USING (true) WITH CHECK (true);
+CREATE POLICY p_order_log_select ON order_status_log FOR SELECT TO anon, authenticated USING (true);
+CREATE POLICY p_order_log_insert ON order_status_log FOR INSERT TO anon, authenticated WITH CHECK (order_id IS NOT NULL);
 
 -- Guests & Sessions
-CREATE POLICY p_guests_all     ON guests            FOR ALL    TO anon, authenticated USING (true) WITH CHECK (true);
-CREATE POLICY p_sessions_all   ON guest_sessions    FOR ALL    TO anon, authenticated USING (true) WITH CHECK (true);
-CREATE POLICY p_otp_all        ON guest_phone_otp   FOR ALL    TO anon, authenticated USING (true) WITH CHECK (true);
+CREATE POLICY p_guests_select ON guests            FOR SELECT TO anon, authenticated USING (true);
+CREATE POLICY p_guests_insert ON guests            FOR INSERT TO anon, authenticated WITH CHECK (guest_name IS NOT NULL AND LENGTH(TRIM(guest_name)) > 0);
+CREATE POLICY p_guests_update ON guests            FOR UPDATE TO anon, authenticated USING (id IS NOT NULL) WITH CHECK (guest_name IS NOT NULL);
+
+CREATE POLICY p_sessions_select ON guest_sessions    FOR SELECT TO anon, authenticated USING (token IS NOT NULL);
+CREATE POLICY p_sessions_insert ON guest_sessions    FOR INSERT TO anon, authenticated WITH CHECK (token IS NOT NULL AND LENGTH(token) >= 10);
+CREATE POLICY p_sessions_update ON guest_sessions    FOR UPDATE TO anon, authenticated USING (token IS NOT NULL) WITH CHECK (token IS NOT NULL);
+
+CREATE POLICY p_otp_select ON guest_phone_otp   FOR SELECT TO anon, authenticated USING (phone IS NOT NULL);
+CREATE POLICY p_otp_insert ON guest_phone_otp   FOR INSERT TO anon, authenticated WITH CHECK (phone IS NOT NULL AND otp_code IS NOT NULL);
+CREATE POLICY p_otp_update ON guest_phone_otp   FOR UPDATE TO anon, authenticated USING (phone IS NOT NULL) WITH CHECK (phone IS NOT NULL);
 
 -- Inventory
-CREATE POLICY p_inv_items_all  ON inventory_items   FOR ALL    TO anon, authenticated USING (true) WITH CHECK (true);
-CREATE POLICY p_inward_all     ON stock_inward      FOR ALL    TO anon, authenticated USING (true) WITH CHECK (true);
-CREATE POLICY p_cons_all       ON stock_consumption FOR ALL    TO anon, authenticated USING (true) WITH CHECK (true);
-CREATE POLICY p_walog_all      ON whatsapp_log      FOR ALL    TO anon, authenticated USING (true) WITH CHECK (true);
+CREATE POLICY p_inv_items_select ON inventory_items   FOR SELECT TO anon, authenticated USING (true);
+CREATE POLICY p_inv_items_insert ON inventory_items   FOR INSERT TO anon, authenticated WITH CHECK (name IS NOT NULL AND LENGTH(name) > 0);
+CREATE POLICY p_inv_items_update ON inventory_items   FOR UPDATE TO anon, authenticated USING (id IS NOT NULL) WITH CHECK (name IS NOT NULL);
+
+CREATE POLICY p_inward_select ON stock_inward      FOR SELECT TO anon, authenticated USING (true);
+CREATE POLICY p_inward_insert ON stock_inward      FOR INSERT TO anon, authenticated WITH CHECK (item_id IS NOT NULL AND quantity > 0);
+
+CREATE POLICY p_cons_select ON stock_consumption FOR SELECT TO anon, authenticated USING (true);
+CREATE POLICY p_cons_insert ON stock_consumption FOR INSERT TO anon, authenticated WITH CHECK (item_id IS NOT NULL AND quantity > 0);
+
+CREATE POLICY p_walog_select ON whatsapp_log      FOR SELECT TO anon, authenticated USING (true);
+CREATE POLICY p_walog_insert ON whatsapp_log      FOR INSERT TO anon, authenticated WITH CHECK (recipient_phone IS NOT NULL);
 
 -- Staff Table Security: direct SELECT restricted to authenticated users.
 -- Anon clients query staff_public view or call verify_staff_pin RPC.

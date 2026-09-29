@@ -15,7 +15,15 @@ import {
   ChefHat,
   RotateCcw,
   TrendingDown,
-  ShieldCheck
+  ShieldCheck,
+  Flame,
+  Bell,
+  Volume2,
+  VolumeX,
+  Square,
+  Sparkles,
+  ArrowUpDown,
+  X
 } from 'lucide-react'
 import { useOrders } from '../hooks/useOrders'
 import type { Order } from '../hooks/useOrders'
@@ -28,7 +36,7 @@ import { useLanguage } from '../i18n/LanguageContext'
 import LanguageToggle from '../components/LanguageToggle'
 import MobileKitchenHeader from '../components/MobileKitchenHeader'
 import KitchenBottomNav from '../components/KitchenBottomNav'
-import { playKitchenOrderChime } from '../lib/audioChime'
+import { playKitchenOrderChime, playItemCheckTick, isKitchenSoundMuted, setKitchenSoundMuted } from '../lib/audioChime'
 
 type Tab = 'orders' | 'completed' | 'cancelled' | 'stock' | 'profile'
 
@@ -65,6 +73,36 @@ export default function DashboardPage() {
   // Live Clock state
   const [now, setNow] = useState(new Date())
 
+  // Audio chime & sound state
+  const [soundMuted, setSoundMuted] = useState(isKitchenSoundMuted())
+
+  function handleToggleSound() {
+    const next = !soundMuted
+    setSoundMuted(next)
+    setKitchenSoundMuted(next)
+    if (!next) {
+      playKitchenOrderChime()
+    }
+  }
+
+  // Active Orders Search, Channel & Urgency Filter State
+  const [orderSearch, setOrderSearch] = useState('')
+  const [channelFilter, setChannelFilter] = useState<'all' | 'room' | 'table' | 'takeaway'>('all')
+  const [delayedOnly, setDelayedOnly] = useState(false)
+  const [sortOrder, setSortOrder] = useState<'fifo' | 'newest'>('fifo')
+
+  // Interactive Dish Checklist State (orderId__itemIndex -> boolean)
+  const [checkedDishes, setCheckedDishes] = useState<Record<string, boolean>>({})
+
+  function handleToggleDish(orderId: string, itemIdx: number) {
+    const key = `${orderId}__${itemIdx}`
+    setCheckedDishes(prev => {
+      const nextVal = !prev[key]
+      if (nextVal) playItemCheckTick()
+      return { ...prev, [key]: nextVal }
+    })
+  }
+
   // Audio chime on incoming new orders
   const prevOrdersCountRef = useRef(newOrders.length)
   useEffect(() => {
@@ -73,6 +111,55 @@ export default function DashboardPage() {
     }
     prevOrdersCountRef.current = newOrders.length
   }, [newOrders.length])
+
+  // Kitchen Telemetry & HUD metrics
+  const nowMs = now.getTime()
+  function getOrderAgeMinutes(createdAt: string): number {
+    return Math.max(0, Math.floor((nowMs - new Date(createdAt).getTime()) / 60000))
+  }
+
+  const allActiveOrders = [...newOrders, ...inProgress, ...readyOrders]
+  const delayedOrdersCount = allActiveOrders.filter(o => getOrderAgeMinutes(o.created_at) >= 20).length
+  const avgWaitMinutes = allActiveOrders.length > 0
+    ? Math.round(allActiveOrders.reduce((sum, o) => sum + getOrderAgeMinutes(o.created_at), 0) / allActiveOrders.length)
+    : 0
+
+  function matchesActiveFilter(o: Order): boolean {
+    if (orderSearch.trim()) {
+      const q = orderSearch.toLowerCase().trim()
+      const matchNum = o.order_number.toLowerCase().includes(q)
+      const matchGuest = o.guest_name && o.guest_name.toLowerCase().includes(q)
+      const matchRoom = o.room_number && o.room_number.toLowerCase().includes(q)
+      const matchTable = o.table_number && o.table_number.toLowerCase().includes(q)
+      const matchItem = o.items && o.items.some(it => it.name.toLowerCase().includes(q))
+      if (!matchNum && !matchGuest && !matchRoom && !matchTable && !matchItem) return false
+    }
+
+    if (channelFilter === 'room') {
+      if (o.service_type !== 'room_service' && (!o.room_number || o.table_number)) return false
+    } else if (channelFilter === 'table') {
+      if (o.service_type !== 'dine_in' && !o.table_number) return false
+    } else if (channelFilter === 'takeaway') {
+      if (o.service_type !== 'takeaway') return false
+    }
+
+    if (delayedOnly) {
+      if (getOrderAgeMinutes(o.created_at) < 20) return false
+    }
+
+    return true
+  }
+
+  function sortActiveOrders(a: Order, b: Order): number {
+    const timeA = new Date(a.created_at).getTime()
+    const timeB = new Date(b.created_at).getTime()
+    return sortOrder === 'fifo' ? (timeA - timeB) : (timeB - timeA)
+  }
+
+  const filteredNew = newOrders.filter(matchesActiveFilter).sort(sortActiveOrders)
+  const filteredPrep = inProgress.filter(matchesActiveFilter).sort(sortActiveOrders)
+  const filteredReady = readyOrders.filter(matchesActiveFilter).sort(sortActiveOrders)
+  const totalFilteredCount = filteredNew.length + filteredPrep.length + filteredReady.length
 
   // Stock state
   const [stockItems, setStockItems]       = useState<StockItem[]>([])
@@ -356,10 +443,230 @@ export default function DashboardPage() {
         {/* ── TAB 1: ACTIVE KDS BOARD ─────────────────────── */}
         {activeTab === 'orders' && (
           <div>
-            <div className="section-header">
+            {/* Top Section Header with Live Stream Indicator */}
+            <div className="section-header" style={{ marginBottom: 20 }}>
               <div>
-                <div className="section-title">{t('live_board_title')}</div>
-                <div className="section-desc">{t('live_board_desc')} ({totalToday} {t('total_orders_today')})</div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'wrap' }}>
+                  <div className="section-title">{t('live_board_title')}</div>
+                  <div style={{ display: 'inline-flex', alignItems: 'center', gap: 6, background: 'rgba(44, 74, 34, 0.12)', border: '1px solid rgba(44, 74, 34, 0.3)', padding: '4px 10px', borderRadius: 20, fontSize: 12, fontWeight: 700, color: 'var(--forest-deep)' }}>
+                    <span style={{ width: 8, height: 8, borderRadius: '50%', background: 'var(--forest)', animation: 'pulseGlow 2s infinite' }} />
+                    Live Kitchen Stream
+                  </div>
+                </div>
+                <div className="section-desc">
+                  Real-time incoming KOT orders across room service &amp; dining tables · Tap dishes to strike off as plated
+                </div>
+              </div>
+
+              {/* Sound alert test & mute control */}
+              <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
+                <button
+                  type="button"
+                  onClick={handleToggleSound}
+                  className="kds-sound-toggle-btn"
+                  title={soundMuted ? 'Kitchen sound chime is muted. Click to enable sound alerts.' : 'Kitchen sound chime is active. Click to mute.'}
+                >
+                  {soundMuted ? <VolumeX size={16} style={{ color: 'var(--rust)' }} /> : <Volume2 size={16} style={{ color: 'var(--forest)' }} />}
+                  <span>{soundMuted ? 'Audio: Muted' : 'Audio: Active'}</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => playKitchenOrderChime()}
+                  className="btn-action-secondary"
+                  style={{ padding: '6px 12px', fontSize: 12 }}
+                  title="Test kitchen chime bell"
+                >
+                  <Bell size={14} />
+                  <span>Test Chime</span>
+                </button>
+              </div>
+            </div>
+
+            {/* ── 1. KITCHEN COMMAND HUD (Head-Up Display) ── */}
+            <div className="kds-hud-bar">
+              <div className="kds-hud-stat">
+                <div className="kds-hud-icon-wrap" style={{ background: 'rgba(173,138,63,0.18)', color: 'var(--brass)' }}>
+                  <Flame size={22} />
+                </div>
+                <div>
+                  <div className="kds-hud-val">{allActiveOrders.length}</div>
+                  <div className="kds-hud-label">Active Tickets</div>
+                </div>
+              </div>
+
+              <div className="kds-hud-stat">
+                <div className="kds-hud-icon-wrap" style={{ background: 'var(--new-bg)', color: 'var(--rust)' }}>
+                  <Clock size={22} />
+                </div>
+                <div>
+                  <div className="kds-hud-val" style={{ color: 'var(--rust)' }}>{newOrders.length}</div>
+                  <div className="kds-hud-label">New / Queued</div>
+                </div>
+              </div>
+
+              <div className="kds-hud-stat">
+                <div className="kds-hud-icon-wrap" style={{ background: 'var(--preparing-bg)', color: '#8A6008' }}>
+                  <ChefHat size={22} />
+                </div>
+                <div>
+                  <div className="kds-hud-val" style={{ color: '#8A6008' }}>{inProgress.length}</div>
+                  <div className="kds-hud-label">On Stoves / Cooking</div>
+                </div>
+              </div>
+
+              <div className="kds-hud-stat">
+                <div className="kds-hud-icon-wrap" style={{ background: 'var(--ready-bg)', color: 'var(--forest-deep)' }}>
+                  <CheckCircle2 size={22} />
+                </div>
+                <div>
+                  <div className="kds-hud-val" style={{ color: 'var(--forest-deep)' }}>{readyOrders.length}</div>
+                  <div className="kds-hud-label">Plated for Runner</div>
+                </div>
+              </div>
+
+              <div className={`kds-hud-stat ${delayedOrdersCount > 0 ? 'urgent-active' : ''}`}>
+                <div className="kds-hud-icon-wrap" style={{ background: delayedOrdersCount > 0 ? 'var(--rust)' : 'rgba(35,31,22,0.06)', color: delayedOrdersCount > 0 ? '#FFFFFF' : 'var(--sage)' }}>
+                  <AlertTriangle size={22} />
+                </div>
+                <div>
+                  <div className="kds-hud-val" style={{ color: delayedOrdersCount > 0 ? 'var(--rust)' : 'var(--sage)' }}>
+                    {delayedOrdersCount}
+                  </div>
+                  <div className="kds-hud-label" style={{ color: delayedOrdersCount > 0 ? 'var(--rust)' : 'var(--sage)' }}>
+                    Delayed (&gt;20m)
+                  </div>
+                </div>
+              </div>
+
+              <div className="kds-hud-stat">
+                <div className="kds-hud-icon-wrap" style={{ background: 'rgba(58, 90, 64, 0.12)', color: 'var(--forest)' }}>
+                  <TrendingDown size={22} />
+                </div>
+                <div>
+                  <div className="kds-hud-val" style={{ color: 'var(--forest)' }}>{avgWaitMinutes}m</div>
+                  <div className="kds-hud-label">Avg Wait Time</div>
+                </div>
+              </div>
+            </div>
+
+            {/* ── 2. MASTER RAPID SEARCH & FILTER TOOLBAR ── */}
+            <div className="kds-toolbar">
+              <div className="kds-toolbar-top">
+                <div className="kds-search-box">
+                  <Search size={18} style={{ position: 'absolute', left: 16, top: '50%', transform: 'translateY(-50%)', color: 'var(--sage)' }} />
+                  <input
+                    type="text"
+                    className="kds-search-input"
+                    placeholder="Search by Order # (PAN-00101), Room #, Table, Guest, or Dish name…"
+                    value={orderSearch}
+                    onChange={(e) => setOrderSearch(e.target.value)}
+                  />
+                  {orderSearch && (
+                    <button
+                      type="button"
+                      className="kds-search-clear"
+                      onClick={() => setOrderSearch('')}
+                      title="Clear search"
+                    >
+                      <X size={16} />
+                    </button>
+                  )}
+                </div>
+
+                {/* Sort Mode Toggle (FIFO vs Newest) */}
+                <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                  <span style={{ fontSize: 12, fontWeight: 700, color: 'var(--sage)', textTransform: 'uppercase', letterSpacing: 0.6 }}>
+                    Sort:
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() => setSortOrder(prev => prev === 'fifo' ? 'newest' : 'fifo')}
+                    className="kds-filter-pill"
+                    style={{ fontSize: 12 }}
+                    title="Toggle First-In-First-Out or Newest First"
+                  >
+                    <ArrowUpDown size={14} />
+                    <span>{sortOrder === 'fifo' ? 'FIFO (Oldest First)' : 'Newest First'}</span>
+                  </button>
+                </div>
+              </div>
+
+              {/* Service Channel Filter Pills & Urgency Quick Filter */}
+              <div className="kds-toolbar-actions">
+                <div className="kds-filter-pills">
+                  <span style={{ fontSize: 12, fontWeight: 700, color: 'var(--sage)', textTransform: 'uppercase', letterSpacing: 0.6, marginRight: 4 }}>
+                    Channels:
+                  </span>
+                  <button
+                    type="button"
+                    className={`kds-filter-pill ${channelFilter === 'all' && !delayedOnly ? 'active' : ''}`}
+                    onClick={() => { setChannelFilter('all'); setDelayedOnly(false); }}
+                  >
+                    <span>All Channels</span>
+                    <span className="kds-pill-badge">{allActiveOrders.length}</span>
+                  </button>
+                  <button
+                    type="button"
+                    className={`kds-filter-pill ${channelFilter === 'room' ? 'active' : ''}`}
+                    onClick={() => setChannelFilter('room')}
+                  >
+                    <span>🛎️ Room Service</span>
+                    <span className="kds-pill-badge">
+                      {allActiveOrders.filter(o => o.service_type === 'room_service' || (o.room_number && !o.table_number)).length}
+                    </span>
+                  </button>
+                  <button
+                    type="button"
+                    className={`kds-filter-pill ${channelFilter === 'table' ? 'active' : ''}`}
+                    onClick={() => setChannelFilter('table')}
+                  >
+                    <span>🍽️ Dining Tables</span>
+                    <span className="kds-pill-badge">
+                      {allActiveOrders.filter(o => o.service_type === 'dine_in' || !!o.table_number).length}
+                    </span>
+                  </button>
+                  <button
+                    type="button"
+                    className={`kds-filter-pill ${channelFilter === 'takeaway' ? 'active' : ''}`}
+                    onClick={() => setChannelFilter('takeaway')}
+                  >
+                    <span>🛍️ Takeaway</span>
+                    <span className="kds-pill-badge">
+                      {allActiveOrders.filter(o => o.service_type === 'takeaway').length}
+                    </span>
+                  </button>
+                </div>
+
+                <div style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center', gap: 8 }}>
+                  <button
+                    type="button"
+                    className={`kds-filter-pill ${delayedOnly ? 'active-urgent' : ''}`}
+                    onClick={() => setDelayedOnly(prev => !prev)}
+                    title="Filter only orders delayed longer than 20 minutes"
+                  >
+                    <AlertTriangle size={14} style={{ color: delayedOnly ? '#FFF' : 'var(--rust)' }} />
+                    <span>Delayed Only (&gt;20m)</span>
+                    <span className="kds-pill-badge" style={{ background: delayedOnly ? 'rgba(255,255,255,0.3)' : undefined, color: delayedOnly ? '#FFF' : undefined }}>
+                      {delayedOrdersCount}
+                    </span>
+                  </button>
+
+                  {(orderSearch || channelFilter !== 'all' || delayedOnly) && (
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                      <span style={{ fontSize: 12, fontWeight: 700, color: 'var(--forest-deep)', background: 'rgba(44, 74, 34, 0.1)', padding: '4px 8px', borderRadius: 6 }}>
+                        {totalFilteredCount} matching
+                      </span>
+                      <button
+                        type="button"
+                        onClick={() => { setOrderSearch(''); setChannelFilter('all'); setDelayedOnly(false); }}
+                        className="btn-action-secondary"
+                        style={{ padding: '6px 10px', fontSize: 11.5 }}
+                      >
+                        Reset Filters
+                      </button>
+                    </div>
+                  )}
+                </div>
               </div>
             </div>
 
@@ -382,7 +689,7 @@ export default function DashboardPage() {
                     onClick={() => setSelectedStage('all')}
                   >
                     <span>{t('filter_all')}</span>
-                    <span className="stage-pill-count">{newOrders.length + inProgress.length + readyOrders.length}</span>
+                    <span className="stage-pill-count">{filteredNew.length + filteredPrep.length + filteredReady.length}</span>
                   </button>
                   <button
                     type="button"
@@ -391,7 +698,7 @@ export default function DashboardPage() {
                   >
                     <Clock size={14} style={{ color: 'var(--rust)' }} />
                     <span>{t('filter_new')}</span>
-                    <span className="stage-pill-count">{newOrders.length}</span>
+                    <span className="stage-pill-count">{filteredNew.length}</span>
                   </button>
                   <button
                     type="button"
@@ -400,7 +707,7 @@ export default function DashboardPage() {
                   >
                     <ChefHat size={14} style={{ color: 'var(--brass)' }} />
                     <span>{t('filter_preparing')}</span>
-                    <span className="stage-pill-count">{inProgress.length}</span>
+                    <span className="stage-pill-count">{filteredPrep.length}</span>
                   </button>
                   <button
                     type="button"
@@ -409,54 +716,80 @@ export default function DashboardPage() {
                   >
                     <CheckCircle2 size={14} style={{ color: 'var(--forest)' }} />
                     <span>{t('filter_ready')}</span>
-                    <span className="stage-pill-count">{readyOrders.length}</span>
+                    <span className="stage-pill-count">{filteredReady.length}</span>
                   </button>
                 </div>
 
                 <div className="kanban-grid">
                   {/* Column 1: New Orders */}
                   {(selectedStage === 'all' || selectedStage === 'new') && (
-                    <div className="kanban-col">
+                    <div className="kanban-col col-new">
                       <div className="kanban-col-head" style={{ borderLeft: '4px solid var(--rust)' }}>
                         <div className="kanban-col-title">
                           <Clock size={18} style={{ color: 'var(--rust)' }} />
                           {t('col_new_title')}
                         </div>
                         <span className="kanban-col-count" style={{ background: 'var(--new-bg)', color: 'var(--rust)' }}>
-                          {newOrders.length}
+                          {filteredNew.length}
                         </span>
                       </div>
                       <div className="kanban-col-body">
-                        {newOrders.length === 0 ? (
-                          <div style={{ textAlign: 'center', padding: '36px 16px', color: 'var(--sage)', fontSize: 14, fontWeight: 500 }}>
-                            {t('no_new_orders')}
+                        {filteredNew.length === 0 ? (
+                          <div style={{ textAlign: 'center', padding: '40px 16px', color: 'var(--sage)', fontSize: 14 }}>
+                            <div style={{ fontSize: 28, marginBottom: 8 }}>🛎️</div>
+                            <div style={{ fontWeight: 700, color: 'var(--ink-soft)' }}>{t('no_new_orders')}</div>
+                            <div style={{ fontSize: 12, marginTop: 4 }}>Awaiting incoming tickets from resident rooms &amp; dining tables</div>
                           </div>
                         ) : (
-                          newOrders.map(o => <OrderCard key={o.id} order={o} actions={actions} onPrint={() => setSelectedOrderForKOT(o)} t={t} />)
+                          filteredNew.map(o => (
+                            <OrderCard
+                              key={o.id}
+                              order={o}
+                              actions={actions}
+                              onPrint={() => setSelectedOrderForKOT(o)}
+                              t={t}
+                              checkedDishes={checkedDishes}
+                              onToggleDish={handleToggleDish}
+                              nowMs={nowMs}
+                            />
+                          ))
                         )}
                       </div>
                     </div>
                   )}
 
-                  {/* Column 2: In Progress */}
+                  {/* Column 2: In Progress / Cooking */}
                   {(selectedStage === 'all' || selectedStage === 'preparing') && (
-                    <div className="kanban-col">
+                    <div className="kanban-col col-prep">
                       <div className="kanban-col-head" style={{ borderLeft: '4px solid var(--brass)' }}>
                         <div className="kanban-col-title">
                           <ChefHat size={18} style={{ color: 'var(--brass)' }} />
                           {t('col_prep_title')}
                         </div>
                         <span className="kanban-col-count" style={{ background: 'var(--preparing-bg)', color: '#6B4E12' }}>
-                          {inProgress.length}
+                          {filteredPrep.length}
                         </span>
                       </div>
                       <div className="kanban-col-body">
-                        {inProgress.length === 0 ? (
-                          <div style={{ textAlign: 'center', padding: '36px 16px', color: 'var(--sage)', fontSize: 14, fontWeight: 500 }}>
-                            {t('no_prep_orders')}
+                        {filteredPrep.length === 0 ? (
+                          <div style={{ textAlign: 'center', padding: '40px 16px', color: 'var(--sage)', fontSize: 14 }}>
+                            <div style={{ fontSize: 28, marginBottom: 8 }}>👨‍🍳</div>
+                            <div style={{ fontWeight: 700, color: 'var(--ink-soft)' }}>{t('no_prep_orders')}</div>
+                            <div style={{ fontSize: 12, marginTop: 4 }}>Stoves clear. Tap "Start Cooking" on new orders to bump here.</div>
                           </div>
                         ) : (
-                          inProgress.map(o => <OrderCard key={o.id} order={o} actions={actions} onPrint={() => setSelectedOrderForKOT(o)} t={t} />)
+                          filteredPrep.map(o => (
+                            <OrderCard
+                              key={o.id}
+                              order={o}
+                              actions={actions}
+                              onPrint={() => setSelectedOrderForKOT(o)}
+                              t={t}
+                              checkedDishes={checkedDishes}
+                              onToggleDish={handleToggleDish}
+                              nowMs={nowMs}
+                            />
+                          ))
                         )}
                       </div>
                     </div>
@@ -464,23 +797,36 @@ export default function DashboardPage() {
 
                   {/* Column 3: Ready / Pick Up */}
                   {(selectedStage === 'all' || selectedStage === 'ready') && (
-                    <div className="kanban-col">
+                    <div className="kanban-col col-ready">
                       <div className="kanban-col-head" style={{ borderLeft: '4px solid var(--forest)' }}>
                         <div className="kanban-col-title">
                           <CheckCircle2 size={18} style={{ color: 'var(--forest)' }} />
                           {t('col_ready_title')}
                         </div>
                         <span className="kanban-col-count" style={{ background: 'var(--ready-bg)', color: 'var(--forest-deep)' }}>
-                          {readyOrders.length}
+                          {filteredReady.length}
                         </span>
                       </div>
                       <div className="kanban-col-body">
-                        {readyOrders.length === 0 ? (
-                          <div style={{ textAlign: 'center', padding: '36px 16px', color: 'var(--sage)', fontSize: 14, fontWeight: 500 }}>
-                            {t('no_ready_orders')}
+                        {filteredReady.length === 0 ? (
+                          <div style={{ textAlign: 'center', padding: '40px 16px', color: 'var(--sage)', fontSize: 14 }}>
+                            <div style={{ fontSize: 28, marginBottom: 8 }}>🔔</div>
+                            <div style={{ fontWeight: 700, color: 'var(--ink-soft)' }}>{t('no_ready_orders')}</div>
+                            <div style={{ fontSize: 12, marginTop: 4 }}>No orders awaiting runner dispatch right now.</div>
                           </div>
                         ) : (
-                          readyOrders.map(o => <OrderCard key={o.id} order={o} actions={actions} onPrint={() => setSelectedOrderForKOT(o)} t={t} />)
+                          filteredReady.map(o => (
+                            <OrderCard
+                              key={o.id}
+                              order={o}
+                              actions={actions}
+                              onPrint={() => setSelectedOrderForKOT(o)}
+                              t={t}
+                              checkedDishes={checkedDishes}
+                              onToggleDish={handleToggleDish}
+                              nowMs={nowMs}
+                            />
+                          ))
                         )}
                       </div>
                     </div>
@@ -941,9 +1287,12 @@ interface OrderCardProps {
   actions: ReturnType<typeof useOrderActions>
   onPrint: () => void
   t: (key: any) => string
+  checkedDishes: Record<string, boolean>
+  onToggleDish: (orderId: string, itemIdx: number) => void
+  nowMs: number
 }
 
-function OrderCard({ order, actions, onPrint, t }: OrderCardProps) {
+function OrderCard({ order, actions, onPrint, t, checkedDishes, onToggleDish, nowMs }: OrderCardProps) {
   const [updating, setUpdating] = useState(false)
 
   async function handleAction(fn: (id: string) => Promise<{ success: boolean }>) {
@@ -952,42 +1301,67 @@ function OrderCard({ order, actions, onPrint, t }: OrderCardProps) {
     setUpdating(false)
   }
 
+  const ageMinutes = Math.max(0, Math.floor((nowMs - new Date(order.created_at).getTime()) / 60000))
+  const isDelayed = ageMinutes >= 20
+
+  const totalItemsCount = order.items ? order.items.length : 0
+  const completedCount = order.items
+    ? order.items.reduce((acc, _, idx) => acc + (checkedDishes[`${order.id}__${idx}`] ? 1 : 0), 0)
+    : 0
+  const isAllPlated = totalItemsCount > 0 && completedCount === totalItemsCount
+  const progressPercent = totalItemsCount > 0 ? Math.round((completedCount / totalItemsCount) * 100) : 0
+
   function renderServiceBadge(type: string, room?: string, table?: string) {
     if (type === 'room_service' || (room && !table)) {
       return (
-        <span className="type-pill type-room" style={{ display: 'inline-flex', alignItems: 'center', gap: 4 }}>
+        <span className="type-pill type-room" style={{ display: 'inline-flex', alignItems: 'center', gap: 5 }}>
           🛎️ {t('type_room_resident')} {room || 'Resident'} · {t('in_house_label')}
         </span>
       )
     }
     if (type === 'takeaway') {
       return (
-        <span className="type-pill type-pickup" style={{ display: 'inline-flex', alignItems: 'center', gap: 4, background: 'rgba(33,150,243,0.12)', color: '#1565C0', fontWeight: 800 }}>
+        <span className="type-pill type-pickup" style={{ display: 'inline-flex', alignItems: 'center', gap: 5, background: 'rgba(33,150,243,0.12)', color: '#1565C0', fontWeight: 800 }}>
           🛍️ {t('type_walkin_takeaway')}
         </span>
       )
     }
     return (
-      <span className="type-pill type-dinein" style={{ display: 'inline-flex', alignItems: 'center', gap: 4, background: 'rgba(173,138,63,0.2)', color: 'var(--brass)', borderColor: 'rgba(173,138,63,0.4)', fontWeight: 800 }}>
+      <span className="type-pill type-dinein" style={{ display: 'inline-flex', alignItems: 'center', gap: 5, background: 'rgba(173,138,63,0.2)', color: 'var(--brass)', borderColor: 'rgba(173,138,63,0.4)', fontWeight: 800 }}>
         🍽️ {t('type_walkin_table')} {table || '—'} · {t('walk_in_label')}
       </span>
     )
   }
 
   const borderClass = order.status === 'new' ? 'border-new' : order.status === 'preparing' ? 'border-preparing' : 'border-ready'
+  const overdueClass = isDelayed ? 'ticket-overdue' : ''
 
   return (
-    <div className={`order-card-v2 ${borderClass}`}>
+    <div className={`order-card-v2 ${borderClass} ${overdueClass}`}>
       {/* Header */}
-      <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between' }}>
-        <div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-            <span style={{ fontSize: '17px', fontWeight: 800, color: 'var(--brass)', fontFamily: 'IBM Plex Mono, monospace' }}>
+      <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 8 }}>
+        <div style={{ flex: 1 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
+            <span style={{ fontSize: '18px', fontWeight: 800, color: 'var(--brass)', fontFamily: 'IBM Plex Mono, monospace' }}>
               {order.order_number}
             </span>
             <span style={{ fontSize: '12px', color: 'var(--sage)', fontWeight: 600, fontFamily: 'IBM Plex Mono, monospace' }}>
               {new Date(order.created_at).toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' })}
             </span>
+            {isDelayed ? (
+              <span className="kds-overdue-tag">
+                <AlertTriangle size={12} />
+                {ageMinutes}m DELAYED
+              </span>
+            ) : ageMinutes >= 10 ? (
+              <span style={{ background: '#FFF3D6', color: '#8A6008', padding: '3px 8px', borderRadius: 8, fontSize: 11, fontWeight: 800 }}>
+                ⏱️ {ageMinutes}m in kitchen
+              </span>
+            ) : (
+              <span style={{ background: '#E8F5E9', color: '#2E7D32', padding: '3px 8px', borderRadius: 8, fontSize: 11, fontWeight: 800 }}>
+                ⏱️ {ageMinutes}m fresh
+              </span>
+            )}
           </div>
 
           <div style={{ marginTop: 8 }}>
@@ -1017,65 +1391,148 @@ function OrderCard({ order, actions, onPrint, t }: OrderCardProps) {
 
       <div style={{ borderTop: '1px dashed var(--line)' }} />
 
-      {/* Items list */}
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-        {order.items.map((it, idx) => (
-          <div key={idx} style={{ fontSize: '14.5px', color: 'var(--ink)', fontWeight: 600 }}>
-            <span style={{ fontWeight: 800, color: 'var(--brass)', fontFamily: 'IBM Plex Mono, monospace' }}>{it.qty}×</span> {it.name}
-            {it.variant_label && (
-              <div style={{ fontSize: '12px', color: 'var(--sage)', paddingLeft: '16px', fontStyle: 'italic' }}>
-                ↳ {it.variant_label}
+      {/* Interactive Dish Checklist */}
+      <div className="kds-checklist-box">
+        <div className="kds-checklist-header">
+          <span>Items to Prepare ({totalItemsCount})</span>
+          <span style={{ color: isAllPlated ? 'var(--forest)' : 'var(--brass)', fontWeight: 800 }}>
+            {completedCount}/{totalItemsCount} Plated ({progressPercent}%)
+          </span>
+        </div>
+
+        <div className="kds-progress-track">
+          <div className="kds-progress-fill" style={{ width: `${progressPercent}%` }} />
+        </div>
+
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 6, marginTop: 4 }}>
+          {order.items.map((it, idx) => {
+            const isChecked = !!checkedDishes[`${order.id}__${idx}`]
+            return (
+              <div
+                key={idx}
+                className={`kds-dish-row ${isChecked ? 'completed' : ''}`}
+                onClick={() => onToggleDish(order.id, idx)}
+                title="Tap to mark this dish as plated"
+              >
+                <div className="kds-dish-info">
+                  <div className="kds-checkbox">
+                    {isChecked ? <CheckCircle2 size={15} style={{ color: '#FFFFFF' }} /> : <Square size={13} style={{ color: 'var(--sage)' }} />}
+                  </div>
+                  <div>
+                    <span className="kds-dish-name">{it.name}</span>
+                    {it.variant_label && (
+                      <div style={{ fontSize: '11.5px', color: 'var(--sage)', fontStyle: 'italic', marginTop: 1 }}>
+                        ↳ {it.variant_label}
+                      </div>
+                    )}
+                  </div>
+                </div>
+                <span className="kds-dish-qty">{it.qty}×</span>
               </div>
-            )}
+            )
+          })}
+        </div>
+
+        {isAllPlated && (
+          <div className="kds-all-plated-banner">
+            <Sparkles size={16} />
+            <span>All {totalItemsCount} dishes plated! Ready to bump forward.</span>
           </div>
-        ))}
+        )}
       </div>
 
+      {/* Chef Special Preparation Note Callout */}
       {order.special_note && (
-        <div style={{ background: 'var(--new-bg)', border: '1px solid var(--rust)', padding: '10px 14px', borderRadius: 10, fontSize: '12.5px', color: 'var(--rust)', fontWeight: 700, display: 'flex', alignItems: 'center', gap: 8 }}>
-          <AlertTriangle size={15} />
-          <span>{t('alert_note')}: {order.special_note}</span>
+        <div className="kds-chef-note">
+          <AlertTriangle size={18} style={{ color: '#B47806', flexShrink: 0, marginTop: 2 }} />
+          <div>
+            <div className="kds-chef-note-title">Chef Preparation Note</div>
+            <div className="kds-chef-note-text">“{order.special_note}”</div>
+          </div>
         </div>
       )}
 
-      {/* Footer age & action button */}
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: 6, paddingTop: 12, borderTop: '1px solid var(--line)' }}>
+      {/* Footer Age & Tactile Bump Actions */}
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: 4, paddingTop: 12, borderTop: '1px solid var(--line)', flexWrap: 'wrap', gap: 10 }}>
         <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--sage)', display: 'flex', alignItems: 'center', gap: 5 }}>
-          {['confirmed', 'preparing'].includes(order.status) ? (
-            <>
-              <Clock size={14} />
-              <OrderAge createdAt={order.created_at} />
-            </>
-          ) : (
-            <span style={{ textTransform: 'capitalize' }}>
-              {order.status === 'new' ? t('status_new')
-                : order.status === 'preparing' ? t('status_preparing')
-                : order.status === 'ready' ? t('status_ready')
-                : order.status === 'served' ? t('status_served')
-                : order.status}
-            </span>
-          )}
+          <Clock size={14} />
+          <OrderAge createdAt={order.created_at} />
         </div>
 
-        <div>
-          {order.status === 'new' && (
-            <button type="button" className="btn-action-primary" disabled={updating} onClick={() => handleAction(actions.accept)}>
-              {t('btn_accept')}
-            </button>
-          )}
-          {order.status === 'confirmed' && (
-            <button type="button" className="btn-action-brass" disabled={updating} onClick={() => handleAction(actions.toKitchen)}>
-              {t('btn_start_prep')}
-            </button>
-          )}
+        <div className="kds-card-actions">
+          {/* Revert / Step Back button if in preparing or ready */}
           {order.status === 'preparing' && (
-            <button type="button" className="btn-action-primary" disabled={updating} onClick={() => handleAction(actions.markReady)}>
-              {t('btn_mark_ready')}
+            <button
+              type="button"
+              className="btn-action-revert"
+              disabled={updating}
+              onClick={() => handleAction(actions.revertToNew)}
+              title="Move back to New Orders"
+            >
+              <RotateCcw size={13} />
+              <span>Back</span>
             </button>
           )}
+
           {order.status === 'ready' && (
-            <button type="button" className="btn-action-secondary" disabled={updating} onClick={() => handleAction(actions.markServed)}>
-              {t('btn_serve')}
+            <button
+              type="button"
+              className="btn-action-revert"
+              disabled={updating}
+              onClick={() => handleAction(actions.revertToPrep)}
+              title="Move back to Cooking on Stoves"
+            >
+              <RotateCcw size={13} />
+              <span>Back</span>
+            </button>
+          )}
+
+          {/* Primary Forward Bump Action */}
+          {order.status === 'new' && (
+            <button
+              type="button"
+              className="btn-action-primary"
+              disabled={updating}
+              onClick={() => handleAction(actions.startPrep)}
+            >
+              <ChefHat size={16} />
+              <span>{t('btn_start_prep')}</span>
+            </button>
+          )}
+
+          {order.status === 'confirmed' && (
+            <button
+              type="button"
+              className="btn-action-brass"
+              disabled={updating}
+              onClick={() => handleAction(actions.startPrep)}
+            >
+              <ChefHat size={16} />
+              <span>{t('btn_start_prep')}</span>
+            </button>
+          )}
+
+          {order.status === 'preparing' && (
+            <button
+              type="button"
+              className="btn-action-primary"
+              disabled={updating}
+              onClick={() => handleAction(actions.markReady)}
+            >
+              <CheckCircle2 size={16} />
+              <span>{t('btn_mark_ready')}</span>
+            </button>
+          )}
+
+          {order.status === 'ready' && (
+            <button
+              type="button"
+              className="btn-action-primary"
+              disabled={updating}
+              onClick={() => handleAction(actions.markServed)}
+              style={{ background: 'linear-gradient(135deg, #1A4D1A, #0F330F)' }}
+            >
+              <span>🚀 Dispatch Order</span>
             </button>
           )}
         </div>
@@ -1083,4 +1540,5 @@ function OrderCard({ order, actions, onPrint, t }: OrderCardProps) {
     </div>
   )
 }
+
 
