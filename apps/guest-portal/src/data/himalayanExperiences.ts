@@ -85,10 +85,11 @@ export const HIMALAYAN_EXPEDITIONS: HimalayanExpedition[] = [
     price_per_setup: 1500,
     price_per_session: 1500,
     duration_minutes: 120,
-    image_url: 'https://images.unsplash.com/photo-1470246973918-29a93221c455?w=1200&auto=format&fit=crop&q=80',
+    image_url: 'https://images.unsplash.com/photo-1517824806704-9040b037703b?w=1200&auto=format&fit=crop&q=80',
     gallery_images: [
-      'https://images.unsplash.com/photo-1470246973918-29a93221c455?w=1200&auto=format&fit=crop&q=80',
-      'https://images.unsplash.com/photo-1525253086316-d0c936c81488?w=1200&auto=format&fit=crop&q=80'
+      'https://images.unsplash.com/photo-1517824806704-9040b037703b?w=1200&auto=format&fit=crop&q=80',
+      'https://images.unsplash.com/photo-1478131143081-80f7f84ca84d?w=1200&auto=format&fit=crop&q=80',
+      'https://images.unsplash.com/photo-1506744038136-46273834b3fb?w=1200&auto=format&fit=crop&q=80'
     ],
     badge: 'Guest Favorite',
     highlights: [

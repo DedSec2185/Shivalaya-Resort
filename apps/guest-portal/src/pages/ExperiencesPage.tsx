@@ -1,10 +1,10 @@
-import React, { useState, useMemo } from 'react'
+import { useState, useMemo } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import { 
-  ChevronLeft, Clock, Users, Compass, CheckCircle2, Loader2, 
-  Sparkles, Image as ImageIcon, User, Key, Mountain, Wind, 
-  ChevronDown, ChevronUp, MapPin, Check, Backpack, AlertCircle, ArrowRight
+  ChevronLeft, Clock, Users, Compass, CheckCircle2, 
+  Sparkles, User, Key, 
+  ChevronDown, ChevronUp, Check, ArrowRight
 } from 'lucide-react'
 import { useActivities, Activity } from '../hooks/useActivities'
 import { useGuestAuth } from '../contexts/GuestAuthContext'
@@ -13,7 +13,7 @@ import { HIMALAYAN_EXPEDITIONS, HimalayanExpedition } from '../data/himalayanExp
 
 export default function ExperiencesPage() {
   const navigate = useNavigate()
-  const { activities, loading } = useActivities()
+  const { activities } = useActivities()
   const { isResortGuest, guest } = useGuestAuth()
   
   const [selectedCategory, setSelectedCategory] = useState<string>('all')
@@ -272,7 +272,12 @@ export default function ExperiencesPage() {
                       <img 
                         src={exp.image_url} 
                         alt={exp.name} 
-                        style={{ width: '100%', height: '100%', objectFit: 'cover' }} 
+                        style={{ 
+                          width: '100%', 
+                          height: '100%', 
+                          objectFit: 'cover',
+                          objectPosition: exp.id === 'exp-bonfire-bbq' ? '50% 55%' : '50% 45%'
+                        }} 
                       />
 
                       {/* Top Badge */}

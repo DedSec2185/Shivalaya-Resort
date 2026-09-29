@@ -226,7 +226,13 @@ export default function MenuPage() {
                 >
                   <ChevronLeft size={18} color="var(--forest-deep)" />
                 </button>
-                <img src="/panache_logo.jpg" alt="Panache Logo" className="monogram-img" />
+                <img 
+                  src="/panache_badge_perfect.png" 
+                  alt="Panache Logo" 
+                  className="monogram-img" 
+                  style={{ background: '#1A2E13', padding: '2px', objectFit: 'contain' }}
+                  onError={(e) => { (e.currentTarget as HTMLImageElement).src = '/panache_logo_transparent.png' }}
+                />
                 <div className="brand-mini-text">Panache</div>
               </div>
 

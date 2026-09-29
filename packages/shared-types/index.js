@@ -58,7 +58,7 @@
  * @property {boolean} active
  */
 
-export { getRuntimeEnv } from './runtimeConfig.js';
+export { getRuntimeEnv, getPortalUrls, PORTAL_DEFAULTS } from './runtimeConfig.js';
 
 export const SERVICE_TYPES = /** @type {const} */ ([
   'room_service',

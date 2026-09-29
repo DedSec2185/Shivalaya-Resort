@@ -1,6 +1,5 @@
-import React, { useState, useEffect } from 'react'
-import { motion } from 'framer-motion'
-import { Mountain, Compass, Wind, Sparkles, SunMedium, Eye } from 'lucide-react'
+import { useState, useEffect } from 'react'
+import { Mountain, Compass, Wind, Eye } from 'lucide-react'
 
 export default function HimalayanAtmosphere() {
   const [currentTime, setCurrentTime] = useState('')

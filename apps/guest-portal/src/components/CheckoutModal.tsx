@@ -14,7 +14,7 @@ const SESSION_KEY = 'panache_guest_session'
 export default function CheckoutModal({ onClose, onSuccess }: CheckoutModalProps) {
   const cart = useCart()
   const placeOrder = usePlaceOrder()
-  const { guest, isLoggedIn, isResortGuest } = useGuestAuth()
+  const { guest, isResortGuest } = useGuestAuth()
 
   // Resolve session info
   const lockedSession = guest || (() => {

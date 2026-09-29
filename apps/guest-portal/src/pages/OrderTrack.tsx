@@ -65,9 +65,36 @@ export default function OrderTrack() {
       .then(({ data, error }) => {
         if (!error && data) {
           setOrder(data as Order)
+        } else {
+          // Check fallback in sessionStorage for instant preview or offline orders
+          try {
+            const cached = sessionStorage.getItem('panache_last_order')
+            if (cached) {
+              const parsed = JSON.parse(cached)
+              if (parsed.id === id || id.startsWith('demo-order-')) {
+                setOrder(parsed as Order)
+              }
+            }
+          } catch { /* ignore */ }
         }
         setLoading(false)
       })
+
+    // Listen for local cross-tab sync events
+    let bc: BroadcastChannel | null = null
+    try {
+      bc = new BroadcastChannel('panache_live_sync')
+      bc.onmessage = (e) => {
+        if (e.data?.type === 'ORDER_STATUS_CHANGED' && e.data?.orderId === id) {
+          setOrder((prev) => prev ? { ...prev, status: e.data.status } : prev)
+          setPulse(true)
+          setTimeout(() => setPulse(false), 800)
+          if (e.data.status === 'ready' && navigator.vibrate) {
+            navigator.vibrate([200, 100, 200])
+          }
+        }
+      }
+    } catch { /* ignore */ }
 
     // Real-time subscription: only this specific order
     const channel = supabase
@@ -103,30 +130,96 @@ export default function OrderTrack() {
 
     return () => {
       supabase.removeChannel(channel)
+      try { bc?.close() } catch { /* ignore */ }
     }
   }, [id])
 
   if (loading) {
     return (
-      <div className="app-root flex items-center justify-center" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'var(--bg)' }}>
-        <span style={{ color: 'var(--sage)', fontFamily: 'Inter, sans-serif' }}>Loading order status...</span>
+      <div className="app-root" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: '100vh', background: 'var(--bg, #F5EEDC)' }}>
+        <div style={{ textAlign: 'center' }}>
+          <div style={{ width: '48px', height: '48px', borderRadius: '50%', border: '3px solid rgba(173,138,63,0.3)', borderTopColor: 'var(--brass, #AD8A3F)', animation: 'spin 1s linear infinite', margin: '0 auto 16px' }} />
+          <style>{`@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }`}</style>
+          <div style={{ fontFamily: 'Fraunces, serif', fontSize: '18px', fontWeight: 700, color: 'var(--forest-deep, #1A3B1E)' }}>
+            Connecting to Live Kitchen
+          </div>
+          <p style={{ color: 'var(--sage, #6B7C5E)', fontSize: '13px', marginTop: '4px' }}>
+            Fetching order status from Panache...
+          </p>
+        </div>
       </div>
     )
   }
 
   if (!order) {
     return (
-      <div className="app-root" style={{ background: 'var(--bg)', padding: '20px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
-        <div className="empty-state">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" width="48">
-            <circle cx="12" cy="12" r="10" />
-            <path d="M12 8v4M12 16h.01" />
-          </svg>
-          <p style={{ marginTop: '16px', color: 'var(--sage)', fontFamily: 'Inter, sans-serif' }}>Order not found</p>
+      <div className="app-root" style={{ background: 'var(--bg, #F5EEDC)', padding: '24px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: '100vh' }}>
+        <div 
+          style={{
+            maxWidth: '420px',
+            width: '100%',
+            background: '#FFFFFF',
+            borderRadius: '24px',
+            border: '1.5px solid rgba(173, 138, 63, 0.25)',
+            boxShadow: '0 16px 40px rgba(26, 46, 19, 0.08)',
+            padding: '36px 24px',
+            textAlign: 'center'
+          }}
+        >
+          <div 
+            style={{
+              width: '60px',
+              height: '60px',
+              borderRadius: '50%',
+              background: 'rgba(44, 74, 34, 0.08)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              margin: '0 auto 16px',
+              color: 'var(--forest-deep, #1A3B1E)'
+            }}
+          >
+            <Printer size={28} />
+          </div>
+          <h2 style={{ fontFamily: 'Fraunces, serif', fontSize: '22px', fontWeight: 700, color: 'var(--forest-deep, #1A3B1E)', margin: '0 0 8px' }}>
+            Order Ticket Not Found
+          </h2>
+          <p style={{ color: 'var(--sage, #6B7C5E)', fontSize: '13.5px', lineHeight: 1.55, margin: '0 0 24px' }}>
+            We could not find active order ticket #{orderNumber}. It may have already been archived, settled, or created in a different guest session.
+          </p>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+            <button 
+              onClick={() => navigate('/menu')}
+              style={{
+                padding: '12px 20px',
+                background: 'linear-gradient(135deg, #1A3B1E 0%, #2C4A22 100%)',
+                color: '#FFF',
+                border: 'none',
+                borderRadius: '12px',
+                fontWeight: 700,
+                fontSize: '13.5px',
+                cursor: 'pointer'
+              }}
+            >
+              Browse Panache Menu
+            </button>
+            <button 
+              onClick={() => navigate('/orders')}
+              style={{
+                padding: '11px 20px',
+                background: 'rgba(44, 74, 34, 0.08)',
+                color: 'var(--forest-deep, #1A3B1E)',
+                border: '1px solid rgba(44, 74, 34, 0.2)',
+                borderRadius: '12px',
+                fontWeight: 600,
+                fontSize: '13.5px',
+                cursor: 'pointer'
+              }}
+            >
+              View My Order History
+            </button>
+          </div>
         </div>
-        <button className="btn-main" style={{ marginTop: '20px' }} onClick={() => navigate('/menu')}>
-          Back to Menu
-        </button>
       </div>
     )
   }
@@ -205,7 +298,13 @@ export default function OrderTrack() {
                   <ChevronLeft size={20} color="var(--forest-deep)" />
                 </button>
                 <div className="brand-mini" onClick={() => navigate('/')} style={{ cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                  <img src="/panache_logo.jpg" alt="Panache Logo" className="monogram-img" />
+                  <img 
+                    src="/panache_badge_perfect.png" 
+                    alt="Panache Logo" 
+                    className="monogram-img" 
+                    style={{ background: '#1A2E13', padding: '2px', objectFit: 'contain' }}
+                    onError={(e) => { (e.currentTarget as HTMLImageElement).src = '/panache_logo_transparent.png' }}
+                  />
                   <div className="brand-mini-text">Panache</div>
                 </div>
               </div>

@@ -24,11 +24,12 @@ export function useAvailableSlots(activityId: string | null, date: string | null
     setLoading(true)
     setError(null)
 
-    supabase
-      .rpc('get_available_slots', {
+    Promise.resolve(
+      supabase.rpc('get_available_slots', {
         p_activity_id: activityId,
         p_date: date,
       })
+    )
       .then(({ data, error: rpcError }) => {
         if (!active) return
         setLoading(false)

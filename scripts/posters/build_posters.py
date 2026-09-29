@@ -3,7 +3,18 @@ import os
 import sys
 import webbrowser
 
-WORKSPACE = Path(__file__).resolve().parent.parent
+if hasattr(sys.stdout, 'reconfigure'):
+    sys.stdout.reconfigure(encoding='utf-8', errors='replace')
+
+def get_workspace_root():
+    p = Path(__file__).resolve().parent
+    while p != p.parent:
+        if (p / 'package.json').exists():
+            return p
+        p = p.parent
+    return Path.cwd()
+
+WORKSPACE = get_workspace_root()
 os.chdir(WORKSPACE)
 
 # 1. Create Padded Logo so circular border never gets clipped
@@ -20,7 +31,7 @@ try:
         new_img = Image.new("RGB", (w + pad_x * 2, h + pad_y * 2), (255, 255, 255))
         new_img.paste(img, (pad_x, pad_y))
         new_img.save(padded_path, quality=95)
-        print("✓ Created unclipped padded logo: assets/branding/shivalaya_logo_padded.jpg")
+        print("[OK] Created unclipped padded logo: assets/branding/shivalaya_logo_padded.jpg")
 except Exception as e:
     print(f"Note on logo: {e}")
 
@@ -334,7 +345,7 @@ RED_HTML = """<!DOCTYPE html>
     <!-- Brand Hero -->
     <div class="brand-hero">
       <div class="brand-logo-wrap">
-        <img src="../assets/branding/shivalaya_logo_padded.jpg" onerror="this.src='../assets/branding/shivalaya_logo.jpg'" alt="Shivalaya Resort Logo">
+        <img src="../../assets/branding/shivalaya_logo_padded.jpg" onerror="this.src='../../assets/branding/shivalaya_logo.jpg'" alt="Shivalaya Resort Logo">
       </div>
       <div class="resort-title">SHIVALAYA RESORT</div>
       <div class="resort-sub">Luxury Mountain Retreat & Stays</div>
@@ -388,7 +399,7 @@ RED_HTML = """<!DOCTYPE html>
       </div>
       <div class="call-row">
         <span class="call-label">FOR TABLE & BOOKINGS:</span>
-        <span class="call-numbers">📞 76680 09400 / 94121 56361</span>
+        <span class="call-numbers">📞 +91 76680 09400</span>
       </div>
     </div>
   </div>
@@ -654,20 +665,20 @@ STUDIO_HTML = """<!DOCTYPE html>
 """
 
 # Save Files
-posters_dir = WORKSPACE / "posters"
+posters_dir = WORKSPACE / "marketing" / "posters"
 posters_dir.mkdir(parents=True, exist_ok=True)
 
 with open(posters_dir / "poster_edition_red.html", "w", encoding="utf-8") as f:
     f.write(RED_HTML)
-print("✓ Saved posters/poster_edition_red.html")
+print("[OK] Saved posters/poster_edition_red.html")
 
 with open(posters_dir / "poster_edition_white.html", "w", encoding="utf-8") as f:
     f.write(WHITE_HTML)
-print("✓ Saved posters/poster_edition_white.html")
+print("[OK] Saved posters/poster_edition_white.html")
 
 with open(posters_dir / "poster_studio.html", "w", encoding="utf-8") as f:
     f.write(STUDIO_HTML)
-print("✓ Saved posters/poster_studio.html")
+print("[OK] Saved posters/poster_studio.html")
 
 # Auto-open in user's default browser
 studio_abs = str(posters_dir / "poster_studio.html")

@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Plus, Minus, ChefHat, Sparkles, Flame } from 'lucide-react'
+import { Plus, Minus, ChefHat, Flame } from 'lucide-react'
 import { getDishDescription } from '../data/dishDescriptions'
 
 interface MenuItemCardProps {

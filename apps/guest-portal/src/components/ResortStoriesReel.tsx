@@ -1,6 +1,6 @@
-import React, { useState } from 'react'
+import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Sparkles, X, Compass, Clock, ArrowRight } from 'lucide-react'
+import { Sparkles, X, Clock, ArrowRight } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 
 interface StoryItem {
@@ -18,52 +18,52 @@ const RESORT_STORIES: StoryItem[] = [
   {
     id: 'bonfire',
     title: 'Starlight Bonfire',
-    tag: 'Evening Vibe',
-    image: 'https://images.unsplash.com/photo-1514933651103-005eec06c04b?w=700&q=80',
+    tag: 'Evening Lawn Vibe',
+    image: '/resort/shivalaya-starlight-bonfire.jpg',
     time: '7:30 PM Tonight',
-    description: 'Gather around crackling cedar logs under a blanket of Himalayan stars. Enjoy roasted marshmallows, live acoustic tunes, and hot spiced mountain cider.',
+    description: 'Gather around crackling cedar and pine logs under a blanket of Himalayan stars. Enjoy roasted marshmallows, live acoustic tunes, and hot spiced mountain cider.',
     actionRoute: '/experiences',
     actionLabel: 'Reserve Bonfire Spot'
   },
   {
-    id: 'hightea',
-    title: 'Kumaoni High Tea',
-    tag: 'Terrace Special',
-    image: 'https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?w=700&q=80',
-    time: '4:30 PM - 6:30 PM',
-    description: 'Savor freshly plucked Kangra & Kumaon artisanal teas paired with regional hill sweets and handcrafted savories overlooking the pine ridge.',
+    id: 'cottage',
+    title: 'Panache Cottage',
+    tag: 'Stone Sanctuary',
+    image: '/resort/shivalaya-stone-cottage.jpg',
+    time: '7:00 AM - 11:00 PM',
+    description: 'Two-story slate stone cottage with red carved eaves and flower-lined stone steps housing our artisanal Panache woodfire restaurant.',
     actionRoute: '/menu',
-    actionLabel: 'View High Tea Menu'
+    actionLabel: 'Order Panache Dining'
   },
   {
-    id: 'trek',
-    title: 'Pine Ridge Trek',
-    tag: 'Morning Adventure',
-    image: 'https://images.unsplash.com/photo-1510798831971-661eb04b3739?w=700&q=80',
-    time: '7:00 AM Tomorrow',
-    description: 'A gentle guided walk through fragrant deodar and oak forests. Spot Himalayan barbets, monals, and take in the morning sun over Bhimtal valley.',
-    actionRoute: '/experiences',
-    actionLabel: 'Book Guided Trek'
+    id: 'villa',
+    title: 'Skyline Terrace',
+    tag: 'Curved Balcony',
+    image: '/resort/shivalaya-luxury-villa-terrace.jpg',
+    time: 'Panoramic Vista',
+    description: 'Wake to panoramic views of rolling Kumaon mist from the expansive cantilevered circular sky deck of our luxury family villa.',
+    actionRoute: '/rooms',
+    actionLabel: 'View Sanctuary Suites'
   },
   {
-    id: 'pool',
-    title: 'Heated Valley Pool',
-    tag: 'Serene Waters',
-    image: 'https://shivalayaresort.com/wp-content/uploads/2026/02/IMG_1869.jpg',
-    time: 'Open All Day',
-    description: 'Immerse yourself in our temperature-controlled infinity pool reflecting the sky, surrounded by whispering pines and stone terraces.',
-    actionRoute: '/experiences',
-    actionLabel: 'Explore Poolside Cabanas'
+    id: 'mural',
+    title: 'Shiva Courtyard',
+    tag: 'Spiritual Haven',
+    image: '/resort/shivalaya-shiva-mural-villa.jpg',
+    time: 'All Day Peaceful',
+    description: 'A meditative monumental stone mural of Lord Shiva adorning the resort sun courtyard beneath glass-railed mountain balconies.',
+    actionRoute: '/rooms',
+    actionLabel: 'Explore Suites'
   },
   {
-    id: 'stargaze',
-    title: 'Sattal Stargazing',
-    tag: 'Dark Sky',
-    image: 'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=700&q=80',
-    time: '9:00 PM Tonight',
-    description: 'With virtually zero light pollution, peer through our high-powered telescope to view the rings of Saturn and the Milky Way core.',
+    id: 'entrance',
+    title: 'Himalayan Arch',
+    tag: 'Grand Arrival',
+    image: '/resort/shivalaya-entrance-gate.jpg',
+    time: 'Alt. 1,450m',
+    description: 'The iconic gateway welcoming you into the secluded pine wood tranquility and slow-simmered hospitality of Shivalaya Resorts.',
     actionRoute: '/experiences',
-    actionLabel: 'Book Stargazing'
+    actionLabel: 'Explore Resort'
   }
 ]
 
@@ -108,7 +108,7 @@ export default function ResortStoriesReel() {
             scrollSnapType: 'x mandatory'
           }}
         >
-          {RESORT_STORIES.map((story, i) => (
+          {RESORT_STORIES.map((story) => (
             <motion.div
               key={story.id}
               whileTap={{ scale: 0.94 }}

@@ -2,14 +2,15 @@ import { useState } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import { 
-  ArrowRight, Phone, Key, Wifi, Copy, 
-  MessageSquare, User, Sparkles, ChevronRight,
-  UtensilsCrossed, Compass, ClipboardList, MapPin, Clock,
-  Mountain, Wind, Eye, Flame, ShieldCheck, HeartHandshake, CheckCircle2
+  ArrowRight, Key, Wifi, Copy, 
+  User, Sparkles, ChevronRight,
+  UtensilsCrossed, Compass, ClipboardList, Clock,
+  Mountain, Wind, Flame, HeartHandshake, CheckCircle2, BedDouble
 } from 'lucide-react'
-import { useQRSession } from '../hooks/useQRSession'
 import { useGuestAuth } from '../contexts/GuestAuthContext'
 import { HIMALAYAN_EXPEDITIONS } from '../data/himalayanExperiences'
+import TiltCard from '../components/TiltCard'
+import ResortSanctuaryGallery from '../components/ResortSanctuaryGallery'
 
 const RESORT_CONTACT = {
   address: 'Village Gethia, Mehragaon, Near Bhimtal, Nainital, Uttarakhand 263136',
@@ -20,29 +21,24 @@ const RESORT_CONTACT = {
 }
 
 const IMAGES = {
-  logo: 'https://shivalayaresort.com/wp-content/uploads/2024/11/Shivalaya-Resort-Logo-t.png',
-  nature: 'https://shivalayaresort.com/wp-content/uploads/2026/02/Shivalaya-Resort-Nature.jpg',
-  garden: 'https://shivalayaresort.com/wp-content/uploads/2026/03/IMG_20260221_175556-1-scaled.jpg',
-  dining: 'https://shivalayaresort.com/wp-content/uploads/2026/02/IMG_20260130_170524__01-scaled.jpg',
-  pool: 'https://shivalayaresort.com/wp-content/uploads/2026/02/IMG_1869.jpg',
-  valleyNight: 'https://images.unsplash.com/photo-1519681393784-d120267933ba?w=1200&auto=format&fit=crop&q=80',
-  mistyHills: 'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=1200&auto=format&fit=crop&q=80'
+  logo: '/shivalaya_badge_perfect.png',
+  panacheLogo: '/panache_badge_perfect.png',
+  heroGate: '/resort/shivalaya-entrance-gate.jpg'
 }
 
 export default function LandingPage() {
   const navigate = useNavigate()
   const location = useLocation()
-  const { session } = useQRSession()
-  const { isLoggedIn, guest, isResortGuest } = useGuestAuth()
+  const { isLoggedIn, guest } = useGuestAuth()
 
   const [showWifiModal, setShowWifiModal] = useState(false)
   const [copiedWifi, setCopiedWifi] = useState(false)
-  const [activeExpIndex, setActiveExpIndex] = useState(0)
 
   const navLinks = [
     { label: 'Home', path: '/' },
     { label: 'Panache Menu', path: '/menu' },
     { label: 'Resort Experiences', path: '/experiences' },
+    { label: 'Sanctuary Rooms', path: '/rooms' },
     { label: 'My Orders', path: '/orders' }
   ]
 
@@ -52,8 +48,38 @@ export default function LandingPage() {
     setTimeout(() => setCopiedWifi(false), 2000)
   }
 
+  // Animation Variants for Scroll Stagger
+  const sectionVariants = {
+    hidden: { opacity: 0, y: 32 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: { duration: 0.7, ease: [0.22, 1, 0.36, 1] }
+    }
+  }
+
+  const containerStagger = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.12,
+        delayChildren: 0.1
+      }
+    }
+  }
+
+  const cardVariant = {
+    hidden: { opacity: 0, y: 24 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: { duration: 0.5, ease: [0.22, 1, 0.36, 1] }
+    }
+  }
+
   return (
-    <div className="app-root" style={{ background: '#F5EEDC', minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
+    <div className="app-root" style={{ background: '#F5EEDC', minHeight: '100vh', display: 'flex', flexDirection: 'column', overflowX: 'hidden' }}>
       
       {/* ── 1. REGAL RESPONSIVE TOPNAV ── */}
       <nav 
@@ -65,32 +91,49 @@ export default function LandingPage() {
           backdropFilter: 'blur(20px)',
           WebkitBackdropFilter: 'blur(20px)',
           borderBottom: '1px solid rgba(173, 138, 63, 0.22)',
-          padding: '14px 0'
+          padding: '12px 0'
         }}
       >
         <div className="desktop-container" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
           
-          {/* Brand Logo & Title */}
+          {/* Brand Logo & Title with Local Crisp Badge */}
           <div 
             onClick={() => navigate('/')}
             style={{ display: 'flex', alignItems: 'center', gap: '12px', cursor: 'pointer' }}
           >
-            <img 
-              src={IMAGES.logo} 
-              alt="Shivalaya Logo" 
-              style={{ width: '40px', height: '40px', objectFit: 'contain', filter: 'drop-shadow(0 2px 6px rgba(0,0,0,0.08))' }} 
-            />
+            <div 
+              style={{
+                width: '42px',
+                height: '42px',
+                borderRadius: '50%',
+                background: '#132511',
+                border: '1.5px solid var(--brass, #BCA374)',
+                boxShadow: '0 3px 10px rgba(0,0,0,0.15)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                padding: '2px',
+                flexShrink: 0
+              }}
+            >
+              <img 
+                src={IMAGES.logo} 
+                alt="Shivalaya Resorts Crest" 
+                style={{ width: '100%', height: '100%', objectFit: 'contain' }} 
+                onError={(e) => { (e.currentTarget as HTMLImageElement).src = '/shivalaya_logo_transparent.png' }}
+              />
+            </div>
             <div>
-              <div style={{ fontFamily: 'Fraunces, serif', fontSize: '21px', fontWeight: 700, color: 'var(--forest-deep)', letterSpacing: '0.04em', lineHeight: 1 }}>
+              <div style={{ fontFamily: 'Fraunces, serif', fontSize: '20px', fontWeight: 700, color: 'var(--forest-deep)', letterSpacing: '0.04em', lineHeight: 1 }}>
                 SHIVALAYA
               </div>
-              <div style={{ fontSize: '9.5px', letterSpacing: '0.22em', color: 'var(--brass)', fontWeight: 700, textTransform: 'uppercase', marginTop: '3px' }}>
+              <div style={{ fontSize: '9px', letterSpacing: '0.22em', color: 'var(--brass)', fontWeight: 700, textTransform: 'uppercase', marginTop: '3px' }}>
                 Resorts · Uttarakhand
               </div>
             </div>
           </div>
 
-          {/* Desktop Navigation Links (Hidden on Mobile) */}
+          {/* Desktop Navigation Links */}
           <div className="desktop-nav-links" style={{ display: 'flex', alignItems: 'center', gap: '32px' }}>
             {navLinks.map((item) => {
               const active = location.pathname === item.path
@@ -108,7 +151,8 @@ export default function LandingPage() {
                     color: active ? 'var(--forest-deep)' : 'var(--sage)',
                     cursor: 'pointer',
                     position: 'relative',
-                    padding: '4px 0'
+                    padding: '4px 0',
+                    transition: 'color 0.2s ease'
                   }}
                 >
                   {item.label}
@@ -138,7 +182,7 @@ export default function LandingPage() {
                 type="button"
                 onClick={() => navigate('/profile')}
                 style={{
-                  padding: '8px 20px',
+                  padding: '8px 18px',
                   borderRadius: '100px',
                   background: 'rgba(44, 74, 34, 0.08)',
                   border: '1.5px solid var(--forest-deep)',
@@ -214,9 +258,9 @@ export default function LandingPage() {
         <div style={{ paddingTop: '24px' }}>
           <div className="desktop-container">
             <motion.div 
-              initial={{ opacity: 0, y: 16 }}
+              initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
+              transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
               className="landing-hero-banner card-3d-wrap"
               style={{
                 position: 'relative',
@@ -225,48 +269,53 @@ export default function LandingPage() {
                 display: 'flex',
                 flexDirection: 'column',
                 justifyContent: 'flex-end',
-                minHeight: 'clamp(360px, 48vh, 480px)',
-                padding: 'clamp(24px, 5vw, 36px) clamp(16px, 4vw, 32px)',
-                boxShadow: '0 24px 60px rgba(26, 46, 19, 0.16)'
+                minHeight: 'clamp(380px, 50vh, 500px)',
+                padding: 'clamp(24px, 5vw, 40px) clamp(18px, 4vw, 36px)',
+                boxShadow: '0 24px 60px rgba(26, 46, 19, 0.18)'
               }}
             >
               {/* Mountain Vista Background */}
               <img 
-                src={IMAGES.nature} 
+                src={IMAGES.heroGate} 
                 alt="Shivalaya Mountain Sanctuary"
                 style={{
                   position: 'absolute',
                   inset: 0,
                   width: '100%',
                   height: '100%',
-                  objectFit: 'cover'
+                  objectFit: 'cover',
+                  objectPosition: '50% 32%'
                 }}
               />
 
-              {/* Ambient Mist & Twilight Layer */}
+              {/* Ambient Mist & Twilight Gradient */}
               <div 
                 style={{
                   position: 'absolute',
                   inset: 0,
-                  background: 'linear-gradient(180deg, rgba(26, 46, 19, 0.2) 0%, rgba(26, 46, 19, 0.6) 45%, rgba(18, 32, 14, 0.95) 100%)'
+                  background: 'linear-gradient(180deg, rgba(19, 37, 17, 0.25) 0%, rgba(19, 37, 17, 0.65) 45%, rgba(13, 23, 12, 0.96) 100%)'
                 }} 
               />
 
               {/* Floating Mountain Telemetry Pill */}
-              <div 
+              <motion.div 
+                initial={{ opacity: 0, x: -16 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: 0.3, duration: 0.6 }}
                 style={{ 
                   position: 'relative', 
                   zIndex: 10, 
                   alignSelf: 'flex-start',
                   display: 'inline-flex',
                   alignItems: 'center',
-                  gap: '6px',
-                  background: 'rgba(26, 46, 19, 0.75)',
+                  gap: '8px',
+                  background: 'rgba(19, 37, 17, 0.8)',
                   backdropFilter: 'blur(12px)',
-                  border: '1px solid rgba(212, 175, 55, 0.4)',
+                  WebkitBackdropFilter: 'blur(12px)',
+                  border: '1px solid rgba(217, 189, 117, 0.4)',
                   borderRadius: '100px',
-                  padding: '5px 12px',
-                  marginBottom: '14px',
+                  padding: '6px 14px',
+                  marginBottom: '16px',
                   maxWidth: '100%'
                 }}
               >
@@ -274,40 +323,58 @@ export default function LandingPage() {
                 <span style={{ fontSize: '10.5px', fontWeight: 800, letterSpacing: '0.12em', textTransform: 'uppercase', color: 'var(--brass-light)', whiteSpace: 'nowrap' }}>
                   Alt. 1,450m
                 </span>
-                <span style={{ width: '4px', height: '4px', borderRadius: '50%', background: '#2ecc71', flexShrink: 0 }} />
-                <span style={{ fontSize: '10.5px', color: 'rgba(255,255,255,0.85)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                  Trishul View: Clear
+                <span style={{ width: '5px', height: '5px', borderRadius: '50%', background: '#2ecc71', flexShrink: 0, boxShadow: '0 0 8px #2ecc71' }} />
+                <span style={{ fontSize: '11px', color: 'rgba(255,255,255,0.9)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                  Kumaon Valley · Trishul View Clear
                 </span>
-              </div>
+              </motion.div>
 
               {/* Hero Main Copy */}
               <div className="landing-hero-content" style={{ position: 'relative', zIndex: 10, color: '#F3EEDB' }}>
-                <h1 className="landing-hero-title" style={{ 
-                  fontFamily: 'Fraunces, serif', 
-                  fontWeight: 600, 
-                  fontSize: 'clamp(28px, 7.5vw, 44px)',
-                  lineHeight: 1.15, 
-                  margin: '0 0 12px',
-                  color: '#FFF' 
-                }}>
+                <motion.h1 
+                  initial={{ opacity: 0, y: 14 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.4, duration: 0.7 }}
+                  className="landing-hero-title" 
+                  style={{ 
+                    fontFamily: 'Fraunces, serif', 
+                    fontWeight: 600, 
+                    fontSize: 'clamp(30px, 7.5vw, 48px)',
+                    lineHeight: 1.15, 
+                    margin: '0 0 14px',
+                    color: '#FFF',
+                    textShadow: '0 3px 12px rgba(0,0,0,0.4)'
+                  }}
+                >
                   Where the mountains<br />whisper peace.
-                </h1>
+                </motion.h1>
 
-                <p className="landing-hero-sub" style={{ 
-                  color: 'rgba(243, 238, 219, 0.92)', 
-                  fontSize: 'clamp(13px, 3.8vw, 15.5px)',
-                  maxWidth: '640px',
-                  lineHeight: 1.6, 
-                  margin: '0 0 20px'
-                }}>
-                  Perched high above the clouds in the tranquil pine woods of Uttarakhand, Shivalaya Resorts is a secluded mountain retreat with slow-simmered Panache gastronomy, Bird Cage dining, and lawn campfires.
-                </p>
+                <motion.p 
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ delay: 0.5, duration: 0.7 }}
+                  className="landing-hero-sub" 
+                  style={{ 
+                    color: 'rgba(243, 238, 219, 0.92)', 
+                    fontSize: 'clamp(13.5px, 3.8vw, 16px)',
+                    maxWidth: '640px',
+                    lineHeight: 1.6, 
+                    margin: '0 0 24px'
+                  }}
+                >
+                  Perched high above the clouds in the tranquil pine woods of Uttarakhand, Shivalaya Resorts is a secluded mountain sanctuary with slow-simmered Panache gastronomy, Bird Cage dining, and starlight lawn campfires.
+                </motion.p>
 
-                {/* Hero CTAs - Stacks nicely on mobile with full width & 48px touch target */}
-                <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexWrap: 'wrap' }}>
+                {/* Hero CTAs */}
+                <motion.div 
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.6, duration: 0.6 }}
+                  style={{ display: 'flex', alignItems: 'center', gap: '12px', flexWrap: 'wrap' }}
+                >
                   <motion.button
                     whileHover={{ scale: 1.02 }}
-                    whileTap={{ scale: 0.96 }}
+                    whileTap={{ scale: 0.97 }}
                     onClick={() => navigate('/menu')}
                     className="btn-gold-sweep"
                     style={{
@@ -335,7 +402,7 @@ export default function LandingPage() {
 
                   <motion.button
                     whileHover={{ scale: 1.02 }}
-                    whileTap={{ scale: 0.96 }}
+                    whileTap={{ scale: 0.97 }}
                     onClick={() => navigate('/experiences')}
                     style={{
                       background: 'rgba(255, 255, 255, 0.14)',
@@ -356,21 +423,51 @@ export default function LandingPage() {
                     }}
                   >
                     <Compass size={17} color="var(--brass-light)" />
-                    <span>Resort Experiences</span>
+                    <span>Experiences</span>
                   </motion.button>
-                </div>
+
+                  <motion.button
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.97 }}
+                    onClick={() => navigate('/rooms')}
+                    style={{
+                      background: 'rgba(255, 255, 255, 0.14)',
+                      backdropFilter: 'blur(10px)',
+                      color: '#FFF',
+                      border: '1.5px solid rgba(255, 255, 255, 0.35)',
+                      borderRadius: '14px',
+                      padding: '13px 20px',
+                      fontSize: '14.5px',
+                      fontWeight: 600,
+                      cursor: 'pointer',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      gap: '8px',
+                      flex: '1 1 150px',
+                      minHeight: '48px'
+                    }}
+                  >
+                    <BedDouble size={17} color="var(--brass-light)" />
+                    <span>Sanctuary Suites</span>
+                  </motion.button>
+                </motion.div>
               </div>
             </motion.div>
           </div>
         </div>
 
         {/* ── 3. RESIDENT SUITE PASS & CONCIERGE ACCESS ── */}
-        <div style={{ paddingTop: '28px' }}>
+        <motion.div 
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: "-40px" }}
+          variants={sectionVariants}
+          style={{ paddingTop: '20px' }}
+        >
           <div className="desktop-container">
             {isLoggedIn && guest?.roomNumber ? (
               <motion.div
-                initial={{ opacity: 0, y: 12 }}
-                animate={{ opacity: 1, y: 0 }}
                 style={{
                   background: '#FFFFFF',
                   borderRadius: '24px',
@@ -447,7 +544,9 @@ export default function LandingPage() {
                 </div>
               </motion.div>
             ) : (
-              <div
+              <motion.div
+                whileHover={{ y: -3, scale: 1.005 }}
+                transition={{ duration: 0.2 }}
                 onClick={() => navigate('/login')}
                 style={{
                   background: '#FFFFFF',
@@ -460,8 +559,7 @@ export default function LandingPage() {
                   justifyContent: 'space-between',
                   flexWrap: 'wrap',
                   gap: '14px',
-                  cursor: 'pointer',
-                  transition: 'transform 0.2s ease, box-shadow 0.2s ease'
+                  cursor: 'pointer'
                 }}
               >
                 <div style={{ display: 'flex', alignItems: 'center', gap: '14px', flex: '1 1 240px' }}>
@@ -479,7 +577,7 @@ export default function LandingPage() {
                       Staying with us at Shivalaya Resorts?
                     </div>
                     <div className="resident-card-sub" style={{ fontSize: '13px', color: 'var(--sage)', marginTop: '2px' }}>
-                      Sign in with your room or phone to charge to your folio
+                      Sign in with your room or phone to charge dining & experiences to your folio
                     </div>
                   </div>
                 </div>
@@ -487,13 +585,29 @@ export default function LandingPage() {
                   <span>Verify Suite</span>
                   <ChevronRight size={18} color="var(--brass)" />
                 </div>
-              </div>
+              </motion.div>
             )}
           </div>
-        </div>
+        </motion.div>
 
-        {/* ── 4. SIGNATURE RESORT EXPERIENCES: BIRD CAGE, BONFIRE, PS5 GAMING, CAMPING & TREKS ── */}
-        <div style={{ paddingTop: '48px' }}>
+        {/* ── 4. SANCTUARY PHOTO JOURNEY (5 Real Photos Showcase with Lightbox) ── */}
+        <motion.div
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: "-60px" }}
+          variants={sectionVariants}
+        >
+          <ResortSanctuaryGallery />
+        </motion.div>
+
+        {/* ── 5. SIGNATURE RESORT EXPERIENCES: BIRD CAGE, BONFIRE, PS5 GAMING, CAMPING & TREKS ── */}
+        <motion.div 
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: "-60px" }}
+          variants={sectionVariants}
+          style={{ paddingTop: '48px' }}
+        >
           <div className="desktop-container">
             <div style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', marginBottom: '24px', flexWrap: 'wrap', gap: '14px' }}>
               <div>
@@ -532,14 +646,19 @@ export default function LandingPage() {
             </div>
 
             {/* Expeditions Grid (Top 4 Signature Showcase) */}
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 280px), 1fr))', gap: '20px' }}>
-              {HIMALAYAN_EXPEDITIONS.slice(0, 4).map((exp, idx) => (
-                <div key={exp.id} className="card-3d-wrap">
+            <motion.div 
+              variants={containerStagger}
+              style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 280px), 1fr))', gap: '20px' }}
+            >
+              {HIMALAYAN_EXPEDITIONS.slice(0, 4).map((exp) => (
+                <TiltCard key={exp.id} maxTilt={5}>
                   <motion.div
-                    whileHover={{ y: -5, rotateX: 1.2, scale: 1.008 }}
+                    variants={cardVariant}
+                    whileHover={{ y: -6, scale: 1.01 }}
                     transition={{ duration: 0.25 }}
                     onClick={() => navigate('/experiences')}
                     className="card-3d-interactive"
+                    data-cursor-text="EXPEDITION"
                     style={{
                       background: '#FFFFFF',
                       borderRadius: '24px',
@@ -588,10 +707,10 @@ export default function LandingPage() {
                           borderRadius: '6px', 
                           color: '#FFF', 
                           fontSize: '10.5px', 
-                          fontWeight: 600,
-                          display: 'flex',
-                          alignItems: 'center',
-                          gap: '4px'
+                          fontWeight: 600, 
+                          display: 'flex', 
+                          alignItems: 'center', 
+                          gap: '4px' 
                         }}
                       >
                         <Compass size={11} color="var(--brass-light)" />
@@ -629,86 +748,148 @@ export default function LandingPage() {
                       </div>
                     </div>
                   </motion.div>
-                </div>
+                </TiltCard>
               ))}
-            </div>
+            </motion.div>
           </div>
-        </div>
+        </motion.div>
 
-        {/* ── 5. PANACHE RESTAURANT MOUNTAIN DINING RITUALS ── */}
-        <div style={{ paddingTop: '52px' }}>
+        {/* ── 6. PANACHE RESTAURANT MOUNTAIN DINING SHOWCASE (Featuring Official Crest) ── */}
+        <motion.div 
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: "-60px" }}
+          variants={sectionVariants}
+          style={{ paddingTop: '56px' }}
+        >
           <div className="desktop-container">
             <div 
               style={{
-                background: 'linear-gradient(135deg, #1A2E13 0%, #2C4A22 100%)',
+                background: 'linear-gradient(135deg, #132511 0%, #1A2E13 60%, #2A4A22 100%)',
                 borderRadius: '28px',
-                padding: 'clamp(26px, 5vw, 40px) clamp(18px, 4vw, 32px)',
+                padding: 'clamp(28px, 5vw, 44px) clamp(20px, 4vw, 36px)',
                 color: '#FFF',
                 position: 'relative',
                 overflow: 'hidden',
-                boxShadow: '0 20px 50px rgba(26, 46, 19, 0.2)'
+                boxShadow: '0 24px 60px rgba(19, 37, 17, 0.28)',
+                border: '1.5px solid rgba(217, 189, 117, 0.3)'
               }}
             >
-              {/* Background ambient glow */}
-              <div style={{ position: 'absolute', top: '-20%', right: '-10%', width: '400px', height: '400px', background: 'radial-gradient(circle, rgba(217, 189, 117, 0.15) 0%, transparent 70%)', filter: 'blur(40px)', pointerEvents: 'none' }} />
+              {/* Background ambient golden aura */}
+              <div style={{ position: 'absolute', top: '-30%', right: '-15%', width: '450px', height: '450px', background: 'radial-gradient(circle, rgba(217, 189, 117, 0.2) 0%, transparent 70%)', filter: 'blur(50px)', pointerEvents: 'none' }} />
 
-              <div style={{ maxWidth: '720px', position: 'relative', zIndex: 2 }}>
-                <div style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', background: 'rgba(212, 175, 55, 0.2)', border: '1px solid rgba(212, 175, 55, 0.4)', borderRadius: '100px', padding: '4px 12px', marginBottom: '14px' }}>
-                  <Flame size={13} color="var(--brass-light)" />
-                  <span style={{ fontSize: '10.5px', fontWeight: 800, letterSpacing: '0.14em', textTransform: 'uppercase', color: 'var(--brass-light)' }}>
-                    Woodfire & Mountain Spices
-                  </span>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '32px', position: 'relative', zIndex: 2 }}>
+                
+                {/* Left: Narrative & Ordering Options */}
+                <div style={{ flex: '1 1 360px', maxWidth: '640px' }}>
+                  <div style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', background: 'rgba(217, 189, 117, 0.15)', border: '1px solid rgba(217, 189, 117, 0.35)', borderRadius: '100px', padding: '4px 14px', marginBottom: '14px' }}>
+                    <Flame size={13} color="var(--brass-light)" />
+                    <span style={{ fontSize: '10.5px', fontWeight: 800, letterSpacing: '0.14em', textTransform: 'uppercase', color: 'var(--brass-light)' }}>
+                      Woodfire Sigri & Mountain Spices
+                    </span>
+                  </div>
+
+                  <h2 style={{ fontFamily: 'Fraunces, serif', fontSize: 'clamp(26px, 6vw, 38px)', fontWeight: 700, margin: '0 0 14px', lineHeight: 1.2, color: '#FFF' }}>
+                    Panache Restaurant:<br />High-Altitude Artisanal Gastronomy
+                  </h2>
+
+                  <p style={{ fontSize: 'clamp(13.5px, 3.8vw, 15.5px)', color: 'rgba(243, 238, 219, 0.88)', lineHeight: 1.65, margin: '0 0 26px' }}>
+                    Slow food, crafted with reverence for the Kumaon terroir. We cook with mountain river spring water, grind wild jakhiya and timur on ancient granite sil-battas, and slow-smoke meats and hand-churned paneer in traditional clay sigris.
+                  </p>
+
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '14px', flexWrap: 'wrap' }}>
+                    <motion.button
+                      whileHover={{ scale: 1.02 }}
+                      whileTap={{ scale: 0.97 }}
+                      onClick={() => navigate('/menu')}
+                      className="btn-gold-sweep"
+                      style={{
+                        background: 'linear-gradient(135deg, #D9BD75 0%, #AD8A3F 100%)',
+                        color: '#1A2E13',
+                        border: 'none',
+                        borderRadius: '14px',
+                        padding: '14px 24px',
+                        fontSize: '15px',
+                        fontWeight: 700,
+                        cursor: 'pointer',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        gap: '8px',
+                        boxShadow: '0 8px 24px rgba(173, 138, 63, 0.4)',
+                        flex: '1 1 200px',
+                        minHeight: '48px'
+                      }}
+                    >
+                      <UtensilsCrossed size={17} />
+                      <span>Explore Digital Menu</span>
+                      <ArrowRight size={16} />
+                    </motion.button>
+
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--brass-light)', fontSize: '13px', fontWeight: 600 }}>
+                      <Clock size={15} />
+                      <span>Kitchen Active: 7:30 AM – 10:30 PM</span>
+                    </div>
+                  </div>
                 </div>
 
-                <h2 style={{ fontFamily: 'Fraunces, serif', fontSize: 'clamp(24px, 6vw, 34px)', fontWeight: 700, margin: '0 0 14px', lineHeight: 1.2 }}>
-                  Panache Restaurant:<br />High-Altitude Artisanal Gastronomy
-                </h2>
-
-                <p style={{ fontSize: 'clamp(13.5px, 3.8vw, 15px)', color: 'rgba(255,255,255,0.85)', lineHeight: 1.65, margin: '0 0 24px' }}>
-                  Slow food, crafted with reverence for the Kumaon terroir. We cook with mountain river spring water, grind wild jakhiya and timur on ancient granite sil-battas, and slow-smoke meats and hand-churned paneer in traditional clay sigris.
-                </p>
-
-                <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flexWrap: 'wrap' }}>
-                  <motion.button
-                    whileHover={{ scale: 1.02 }}
-                    whileTap={{ scale: 0.96 }}
-                    onClick={() => navigate('/menu')}
-                    className="btn-gold-sweep"
+                {/* Right: Golden Panache Emblem Showcase */}
+                <motion.div 
+                  whileHover={{ scale: 1.04, rotate: 1.5 }}
+                  transition={{ type: 'spring', stiffness: 280, damping: 18 }}
+                  style={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    gap: '12px',
+                    margin: '0 auto',
+                    flexShrink: 0
+                  }}
+                >
+                  <div 
                     style={{
-                      background: 'linear-gradient(135deg, #D9BD75 0%, #AD8A3F 100%)',
-                      color: '#1A2E13',
-                      border: 'none',
-                      borderRadius: '14px',
-                      padding: '13px 22px',
-                      fontSize: '14.5px',
-                      fontWeight: 700,
-                      cursor: 'pointer',
+                      width: 'clamp(120px, 24vw, 150px)',
+                      height: 'clamp(120px, 24vw, 150px)',
+                      borderRadius: '50%',
+                      background: 'radial-gradient(circle at 35% 30%, #1A2E13, #0A1209)',
+                      border: '3px solid var(--brass, #BCA374)',
+                      boxShadow: '0 12px 32px rgba(0,0,0,0.5), 0 0 24px rgba(217,189,117,0.3)',
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center',
-                      gap: '8px',
-                      boxShadow: '0 8px 24px rgba(173, 138, 63, 0.4)',
-                      flex: '1 1 200px',
-                      minHeight: '48px'
+                      padding: '12px'
                     }}
                   >
-                    <UtensilsCrossed size={17} />
-                    <span>Explore Digital Menu</span>
-                    <ArrowRight size={16} />
-                  </motion.button>
-
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: 'var(--brass-light)', fontSize: '13px', fontWeight: 600 }}>
-                    <Clock size={15} />
-                    <span>Kitchen Active: 7 AM – 11 PM</span>
+                    <img 
+                      src={IMAGES.panacheLogo} 
+                      alt="Panache Restaurant Crest" 
+                      style={{ width: '100%', height: '100%', objectFit: 'contain' }}
+                      onError={(e) => { (e.currentTarget as HTMLImageElement).src = '/panache_logo_transparent.png' }}
+                    />
                   </div>
-                </div>
+                  <div style={{ textAlign: 'center' }}>
+                    <div style={{ fontFamily: 'Fraunces, serif', fontSize: '14px', letterSpacing: '0.16em', textTransform: 'uppercase', color: 'var(--brass-light)', fontWeight: 700 }}>
+                      PANACHE RESTAURANT
+                    </div>
+                    <div style={{ fontSize: '11px', color: 'rgba(255,255,255,0.7)', letterSpacing: '0.06em', marginTop: '2px' }}>
+                      Bhimtal · In-House Dining
+                    </div>
+                  </div>
+                </motion.div>
+
               </div>
             </div>
           </div>
-        </div>
+        </motion.div>
 
-        {/* ── 6. SANCTUARY LIVING: MOUNTAINS, MIST & TWINKLING VALLEY LIGHTS ── */}
-        <div style={{ paddingTop: '64px', paddingBottom: '60px' }}>
+        {/* ── 7. SANCTUARY LIVING: MOUNTAINS, MIST & TWINKLING VALLEY LIGHTS ── */}
+        <motion.div 
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: "-60px" }}
+          variants={sectionVariants}
+          style={{ paddingTop: '64px', paddingBottom: '60px' }}
+        >
           <div className="desktop-container">
             <div style={{ textAlign: 'center', marginBottom: '36px' }}>
               <div style={{ fontSize: '12px', fontWeight: 800, letterSpacing: '0.22em', textTransform: 'uppercase', color: 'var(--brass)' }}>
@@ -719,56 +900,67 @@ export default function LandingPage() {
               </h2>
             </div>
 
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '24px' }}>
+            <motion.div 
+              variants={containerStagger}
+              style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '24px' }}
+            >
               {/* Feature 1 */}
-              <div style={{ background: '#FFFFFF', borderRadius: '24px', padding: '30px', border: '1px solid rgba(173, 138, 63, 0.18)', boxShadow: '0 10px 30px rgba(0,0,0,0.03)' }}>
-                <div style={{ width: '48px', height: '48px', borderRadius: '16px', background: 'rgba(44, 74, 34, 0.08)', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '18px' }}>
-                  <Wind size={24} color="var(--forest-deep)" />
-                </div>
-                <h3 style={{ fontFamily: 'Fraunces, serif', fontSize: '20px', fontWeight: 700, color: 'var(--forest-deep)', margin: '0 0 8px' }}>
-                  Crisp Alpine Fog & Pine Needles
-                </h3>
-                <p style={{ fontSize: '14px', color: 'var(--ink-soft)', lineHeight: 1.6, margin: 0 }}>
-                  Wake to heavy morning mists curling through towering deodars. Breathe in air rich with natural pine ozone and birdsong at 1,450 meters elevation.
-                </p>
-              </div>
+              <TiltCard maxTilt={4}>
+                <motion.div variants={cardVariant} style={{ background: '#FFFFFF', borderRadius: '24px', padding: '30px', border: '1px solid rgba(173, 138, 63, 0.18)', boxShadow: '0 10px 30px rgba(0,0,0,0.03)', height: '100%' }}>
+                  <div style={{ width: '48px', height: '48px', borderRadius: '16px', background: 'rgba(44, 74, 34, 0.08)', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '18px' }}>
+                    <Wind size={24} color="var(--forest-deep)" />
+                  </div>
+                  <h3 style={{ fontFamily: 'Fraunces, serif', fontSize: '20px', fontWeight: 700, color: 'var(--forest-deep)', margin: '0 0 8px' }}>
+                    Crisp Alpine Fog & Pine Needles
+                  </h3>
+                  <p style={{ fontSize: '14px', color: 'var(--ink-soft)', lineHeight: 1.6, margin: 0 }}>
+                    Wake to heavy morning mists curling through towering deodars. Breathe in air rich with natural pine ozone and birdsong at 1,450 meters elevation.
+                  </p>
+                </motion.div>
+              </TiltCard>
 
               {/* Feature 2 */}
-              <div style={{ background: '#FFFFFF', borderRadius: '24px', padding: '30px', border: '1px solid rgba(173, 138, 63, 0.18)', boxShadow: '0 10px 30px rgba(0,0,0,0.03)' }}>
-                <div style={{ width: '48px', height: '48px', borderRadius: '16px', background: 'rgba(44, 74, 34, 0.08)', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '18px' }}>
-                  <Sparkles size={24} color="var(--brass)" />
-                </div>
-                <h3 style={{ fontFamily: 'Fraunces, serif', fontSize: '20px', fontWeight: 700, color: 'var(--forest-deep)', margin: '0 0 8px' }}>
-                  Twinkling Valley Lights at Dusk
-                </h3>
-                <p style={{ fontSize: '14px', color: 'var(--ink-soft)', lineHeight: 1.6, margin: 0 }}>
-                  As dusk blankets the Himalayan peaks, look out from your terrace to watch the towns of Bhimtal and Kathgodam sparkle like a carpet of fallen stars below.
-                </p>
-              </div>
+              <TiltCard maxTilt={4}>
+                <motion.div variants={cardVariant} style={{ background: '#FFFFFF', borderRadius: '24px', padding: '30px', border: '1px solid rgba(173, 138, 63, 0.18)', boxShadow: '0 10px 30px rgba(0,0,0,0.03)', height: '100%' }}>
+                  <div style={{ width: '48px', height: '48px', borderRadius: '16px', background: 'rgba(44, 74, 34, 0.08)', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '18px' }}>
+                    <Sparkles size={24} color="var(--brass)" />
+                  </div>
+                  <h3 style={{ fontFamily: 'Fraunces, serif', fontSize: '20px', fontWeight: 700, color: 'var(--forest-deep)', margin: '0 0 8px' }}>
+                    Twinkling Valley Lights at Dusk
+                  </h3>
+                  <p style={{ fontSize: '14px', color: 'var(--ink-soft)', lineHeight: 1.6, margin: 0 }}>
+                    As dusk blankets the Himalayan peaks, look out from your terrace to watch the towns of Bhimtal and Kathgodam sparkle like a carpet of fallen stars below.
+                  </p>
+                </motion.div>
+              </TiltCard>
 
               {/* Feature 3 */}
-              <div style={{ background: '#FFFFFF', borderRadius: '24px', padding: '30px', border: '1px solid rgba(173, 138, 63, 0.18)', boxShadow: '0 10px 30px rgba(0,0,0,0.03)' }}>
-                <div style={{ width: '48px', height: '48px', borderRadius: '16px', background: 'rgba(44, 74, 34, 0.08)', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '18px' }}>
-                  <HeartHandshake size={24} color="var(--forest-deep)" />
-                </div>
-                <h3 style={{ fontFamily: 'Fraunces, serif', fontSize: '20px', fontWeight: 700, color: 'var(--forest-deep)', margin: '0 0 8px' }}>
-                  Devoted Kumaoni Hospitality
-                </h3>
-                <p style={{ fontSize: '14px', color: 'var(--ink-soft)', lineHeight: 1.6, margin: 0 }}>
-                  Authentic, unhurried warmth. From personal sherpas guiding your ridge treks to evening braziers lit on your private stone balcony.
-                </p>
-              </div>
-            </div>
+              <TiltCard maxTilt={4}>
+                <motion.div variants={cardVariant} style={{ background: '#FFFFFF', borderRadius: '24px', padding: '30px', border: '1px solid rgba(173, 138, 63, 0.18)', boxShadow: '0 10px 30px rgba(0,0,0,0.03)', height: '100%' }}>
+                  <div style={{ width: '48px', height: '48px', borderRadius: '16px', background: 'rgba(44, 74, 34, 0.08)', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '18px' }}>
+                    <HeartHandshake size={24} color="var(--forest-deep)" />
+                  </div>
+                  <h3 style={{ fontFamily: 'Fraunces, serif', fontSize: '20px', fontWeight: 700, color: 'var(--forest-deep)', margin: '0 0 8px' }}>
+                    Devoted Kumaoni Hospitality
+                  </h3>
+                  <p style={{ fontSize: '14px', color: 'var(--ink-soft)', lineHeight: 1.6, margin: 0 }}>
+                    Authentic, unhurried warmth. From personal sherpas guiding your ridge treks to evening braziers lit on your private stone balcony.
+                  </p>
+                </motion.div>
+              </TiltCard>
+            </motion.div>
           </div>
-        </div>
+        </motion.div>
 
-        {/* ── 7. FOOTER ── */}
-        <footer style={{ background: '#1A2E13', color: '#EBE0C4', padding: '48px 0 100px', borderTop: '1px solid rgba(173, 138, 63, 0.3)' }}>
+        {/* ── 8. FOOTER WITH LOGO CREST & QUICK SWITCHER ── */}
+        <footer style={{ background: '#132511', color: '#EBE0C4', padding: '48px 0 100px', borderTop: '1.5px solid rgba(173, 138, 63, 0.3)' }}>
           <div className="desktop-container">
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '32px' }}>
               <div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '12px' }}>
-                  <img src={IMAGES.logo} alt="Shivalaya Logo" style={{ width: '36px', height: '36px', objectFit: 'contain' }} />
+                <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '14px' }}>
+                  <div style={{ width: '38px', height: '38px', borderRadius: '50%', background: '#1A2E13', border: '1.5px solid var(--brass)', padding: '2px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <img src={IMAGES.logo} alt="Shivalaya Logo" style={{ width: '100%', height: '100%', objectFit: 'contain' }} onError={(e) => { (e.currentTarget as HTMLImageElement).src = '/shivalaya_logo_transparent.png' }} />
+                  </div>
                   <span style={{ fontFamily: 'Fraunces, serif', fontSize: '22px', fontWeight: 700, color: '#FFF' }}>SHIVALAYA RESORTS</span>
                 </div>
                 <p style={{ fontSize: '13.5px', color: 'rgba(235, 224, 196, 0.75)', maxWidth: '380px', lineHeight: 1.6, margin: 0 }}>
@@ -783,7 +975,56 @@ export default function LandingPage() {
               </div>
             </div>
 
-            <div style={{ borderTop: '1px solid rgba(255,255,255,0.1)', marginTop: '36px', paddingTop: '20px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '12px', fontSize: '12px', color: 'rgba(235, 224, 196, 0.6)' }}>
+            {/* Quick Access to Operations & Staff Portals */}
+            <div style={{ marginTop: '28px', paddingTop: '20px', borderTop: '1px solid rgba(255,255,255,0.08)', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '16px' }}>
+              <span style={{ fontSize: '11.5px', textTransform: 'uppercase', letterSpacing: '0.12em', color: 'var(--brass)', fontWeight: 700 }}>
+                Operations & Staff Terminals
+              </span>
+              <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
+                <a
+                  href={import.meta.env.VITE_RECEPTION_PORTAL_URL || 'http://localhost:5183'}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  style={{
+                    fontSize: '12.5px',
+                    color: 'rgba(235, 224, 196, 0.88)',
+                    textDecoration: 'none',
+                    padding: '8px 16px',
+                    borderRadius: '10px',
+                    border: '1px solid rgba(173, 138, 63, 0.35)',
+                    background: 'rgba(255,255,255,0.05)',
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '8px',
+                    transition: 'all 0.2s ease'
+                  }}
+                >
+                  <span>🛎️ Front Desk Reception</span>
+                </a>
+                <a
+                  href={import.meta.env.VITE_KITCHEN_PORTAL_URL || 'http://localhost:5181'}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  style={{
+                    fontSize: '12.5px',
+                    color: 'rgba(235, 224, 196, 0.88)',
+                    textDecoration: 'none',
+                    padding: '8px 16px',
+                    borderRadius: '10px',
+                    border: '1px solid rgba(173, 138, 63, 0.35)',
+                    background: 'rgba(255,255,255,0.05)',
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: '8px',
+                    transition: 'all 0.2s ease'
+                  }}
+                >
+                  <span>👨‍🍳 Kitchen KDS Display</span>
+                </a>
+              </div>
+            </div>
+
+            <div style={{ borderTop: '1px solid rgba(255,255,255,0.1)', marginTop: '24px', paddingTop: '20px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '12px', fontSize: '12px', color: 'rgba(235, 224, 196, 0.6)' }}>
               <span>© {new Date().getFullYear()} Shivalaya Resorts & Panache Restaurant. All rights reserved.</span>
               <span>29.35° N, 79.52° E · Alt. 1,450m Kumaon Himalayas</span>
             </div>
@@ -804,9 +1045,10 @@ export default function LandingPage() {
               style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.65)', backdropFilter: 'blur(6px)' }}
             />
             <motion.div 
-              initial={{ scale: 0.9, opacity: 0 }} 
-              animate={{ scale: 1, opacity: 1 }} 
-              exit={{ scale: 0.9, opacity: 0 }}
+              initial={{ scale: 0.9, opacity: 0, y: 15 }} 
+              animate={{ scale: 1, opacity: 1, y: 0 }} 
+              exit={{ scale: 0.9, opacity: 0, y: 15 }}
+              transition={{ type: 'spring', damping: 25, stiffness: 350 }}
               style={{ position: 'relative', zIndex: 10, background: '#FFF', borderRadius: '24px', padding: '32px', maxWidth: '380px', width: '100%', boxShadow: '0 20px 50px rgba(0,0,0,0.3)', textAlign: 'center' }}
             >
               <div style={{ width: '56px', height: '56px', borderRadius: '50%', background: 'rgba(44, 74, 34, 0.08)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 16px' }}>

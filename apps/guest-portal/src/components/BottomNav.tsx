@@ -1,4 +1,3 @@
-import React from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { Home, UtensilsCrossed, Compass, ClipboardList, User } from 'lucide-react';
 import { useGuestAuth } from '../contexts/GuestAuthContext';

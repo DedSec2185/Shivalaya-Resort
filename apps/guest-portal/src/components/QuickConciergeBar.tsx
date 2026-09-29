@@ -1,6 +1,6 @@
-import React, { useState } from 'react'
+import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Phone, Sparkles, UtensilsCrossed, Car, CheckCircle2, X } from 'lucide-react'
+import { Phone, Sparkles, UtensilsCrossed, Car, CheckCircle2 } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 
 export default function QuickConciergeBar() {

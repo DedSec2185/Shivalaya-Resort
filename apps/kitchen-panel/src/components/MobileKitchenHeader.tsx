@@ -44,6 +44,29 @@ export default function MobileKitchenHeader({
           {sidebarOpen ? <X size={20} /> : <Menu size={20} />}
         </button>
 
+        <div 
+          style={{
+            width: '34px',
+            height: '34px',
+            borderRadius: '50%',
+            background: '#132511',
+            border: '1.5px solid var(--brass-light, #D9BD75)',
+            boxShadow: '0 2px 8px rgba(0,0,0,0.3)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            padding: '2px',
+            flexShrink: 0
+          }}
+        >
+          <img 
+            src="/panache_badge_perfect.png" 
+            alt="Panache Logo" 
+            style={{ width: '100%', height: '100%', objectFit: 'contain' }}
+            onError={(e) => { (e.currentTarget as HTMLImageElement).src = '/panache_logo_transparent.png' }}
+          />
+        </div>
+
         <div style={{ display: 'flex', flexDirection: 'column' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
             <span style={{ fontFamily: 'Fraunces, serif', fontStyle: 'italic', fontWeight: 700, fontSize: '18px', color: '#F3EEDB', lineHeight: 1 }}>
@@ -53,8 +76,8 @@ export default function MobileKitchenHeader({
               KDS
             </span>
           </div>
-          <span style={{ fontSize: '9px', color: 'rgba(243,238,219,0.6)', letterSpacing: '1px', textTransform: 'uppercase', fontWeight: 600 }}>
-            Shivalaya Resorts
+          <span style={{ fontSize: '9px', color: 'rgba(243,238,219,0.7)', letterSpacing: '1px', textTransform: 'uppercase', fontWeight: 600 }}>
+            Shivalaya Resorts · Uttarakhand
           </span>
         </div>
       </div>

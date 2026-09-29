@@ -40,7 +40,8 @@ export default function LoginPage() {
   const [errorMsg, setErrorMsg]         = useState('')
 
   useEffect(() => {
-    supabase.from('staff').select('id, name, role').eq('is_active', true)
+    // Use staff_public view — safe columns only, no pin_hash
+    supabase.from('staff_public').select('id, name, role, avatar_color').eq('is_active', true)
       .then(({ data, error }) => {
         if (error || !data?.length) {
           setStaffList([
@@ -120,6 +121,23 @@ export default function LoginPage() {
         </div>
 
         <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+          <a
+            href={import.meta.env.VITE_RECEPTION_PORTAL_URL || 'http://localhost:5183'}
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{
+              fontSize: '12px',
+              color: 'var(--brass, #D9BD75)',
+              textDecoration: 'none',
+              padding: '6px 12px',
+              borderRadius: '8px',
+              border: '1px solid rgba(217, 189, 117, 0.3)',
+              background: 'rgba(217, 189, 117, 0.08)',
+              fontWeight: 600
+            }}
+          >
+            🛎️ Front Desk
+          </a>
           <LanguageToggle compact={true} />
           <div className="login-status-badge">
             <span className="login-status-dot" />

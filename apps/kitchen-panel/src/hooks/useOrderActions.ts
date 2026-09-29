@@ -7,6 +7,12 @@ export function useOrderActions(onStatusChange?: (orderId: string, status: strin
     }
 
     try {
+      const bc = new BroadcastChannel('panache_live_sync')
+      bc.postMessage({ type: 'ORDER_STATUS_CHANGED', orderId, status })
+      bc.close()
+    } catch { /* ignore */ }
+
+    try {
       const { error } = await supabase
         .from('orders')
         .update({ status })

@@ -84,32 +84,22 @@ export default function LoginPage() {
   }
 
   // ── Quick Demo Autofill Helper ─────────────────────────────
-  async function handleQuickDemo(type: 'reception_email' | 'owner_email' | 'bilam_pin' | 'owner_pin') {
+  function handleQuickDemo(type: 'reception_email' | 'owner_email' | 'bilam_pin' | 'owner_pin') {
     setErrorMsg('')
     if (type === 'reception_email') {
       setAuthMode('account')
       setEmail('receptionist@shivalaya.com')
       setPassword('shivalaya1234')
-      setLoading(true)
-      const res = await login('receptionist@shivalaya.com', 'shivalaya1234')
-      setLoading(false)
-      if (!res.error) navigate('/')
     } else if (type === 'owner_email') {
       setAuthMode('account')
       setEmail('owner@shivalaya.com')
       setPassword('shivalaya2026')
-      setLoading(true)
-      const res = await login('owner@shivalaya.com', 'shivalaya2026')
-      setLoading(false)
-      if (!res.error) navigate('/')
     } else if (type === 'bilam_pin') {
       setAuthMode('pin')
       setPin('1234')
-      handlePinSubmit('1234')
     } else if (type === 'owner_pin') {
       setAuthMode('pin')
       setPin('9999')
-      handlePinSubmit('9999')
     }
   }
 
@@ -145,7 +135,7 @@ export default function LoginPage() {
             <div style={{ textAlign: 'center' }}>
               <div style={{ fontSize: '36px', marginBottom: '4px' }}>🏔️</div>
               <div style={{ fontSize: '9px', letterSpacing: '2px', textTransform: 'uppercase', fontFamily: 'IBM Plex Mono, monospace', color: 'var(--brass-light)' }}>
-                Manali · Himachal
+                Bhimtal · Uttarakhand
               </div>
             </div>
           </div>
@@ -392,6 +382,27 @@ export default function LoginPage() {
                   </button>
                 </div>
               </div>
+            </div>
+
+            {/* Switch to Other Portals */}
+            <div style={{ marginTop: '16px', paddingTop: '14px', borderTop: '1px solid rgba(255,255,255,0.06)', display: 'flex', justifyContent: 'center', gap: '16px', fontSize: '12px' }}>
+              <a
+                href={import.meta.env.VITE_KITCHEN_PORTAL_URL || 'http://localhost:5181'}
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{ color: 'var(--brass-light, #D9BD75)', textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: '4px' }}
+              >
+                <span>👨‍🍳 Kitchen KDS</span>
+              </a>
+              <span style={{ color: 'rgba(255,255,255,0.2)' }}>•</span>
+              <a
+                href={import.meta.env.VITE_GUEST_PORTAL_URL || 'http://localhost:5190'}
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{ color: 'var(--brass-light, #D9BD75)', textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: '4px' }}
+              >
+                <span>🍽️ Guest Menu</span>
+              </a>
             </div>
           </div>
 

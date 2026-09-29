@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from 'react'
+import { useState, useEffect } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
-import { ChevronLeft, Loader2, Receipt, Calendar, ArrowRight, Sparkles, User, Printer } from 'lucide-react'
-import { motion, AnimatePresence } from 'framer-motion'
+import { ChevronLeft, Loader2, Receipt, Calendar, ArrowRight, User, Printer } from 'lucide-react'
+import { motion } from 'framer-motion'
 import { useGuestAuth } from '../contexts/GuestAuthContext'
 import CustomerBillModal from '../components/CustomerBillModal'
 
@@ -125,7 +125,14 @@ export default function MyOrdersPage() {
             <button 
               className="icon-btn" 
               aria-label="Go back" 
-              onClick={(e) => { e.stopPropagation(); navigate('/'); }}
+              onClick={(e) => { 
+                e.stopPropagation(); 
+                if (window.history.length > 1) {
+                  navigate(-1);
+                } else {
+                  navigate('/');
+                }
+              }}
               style={{ width: '32px', height: '32px', marginRight: '2px' }}
             >
               <ChevronLeft size={18} />
@@ -363,9 +370,58 @@ export default function MyOrdersPage() {
               ))}
             </div>
           ) : (
-            <div className="empty-state">
-              <Receipt size={48} />
-              <p>No food orders found.</p>
+            <div 
+              style={{
+                textAlign: 'center',
+                padding: '48px 24px',
+                background: '#FFFFFF',
+                borderRadius: '24px',
+                border: '1.5px solid rgba(173, 138, 63, 0.2)',
+                boxShadow: '0 10px 30px rgba(26,46,19,0.06)'
+              }}
+            >
+              <div 
+                style={{
+                  width: '64px',
+                  height: '64px',
+                  borderRadius: '50%',
+                  background: 'rgba(44, 74, 34, 0.08)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  margin: '0 auto 16px',
+                  color: 'var(--forest-deep)'
+                }}
+              >
+                <Receipt size={30} />
+              </div>
+              <h3 style={{ fontFamily: 'Fraunces, serif', fontSize: '20px', fontWeight: 700, color: 'var(--forest-deep)', margin: '0 0 8px' }}>
+                No Food Orders Yet
+              </h3>
+              <p style={{ color: 'var(--sage)', fontSize: '13.5px', maxWidth: '320px', margin: '0 auto 20px', lineHeight: 1.5 }}>
+                Taste the slow-simmered culinary secrets of Panache. Browse our starters, tandoor specials, and desserts.
+              </p>
+              <button
+                type="button"
+                onClick={() => navigate('/menu')}
+                style={{
+                  padding: '11px 22px',
+                  borderRadius: '12px',
+                  background: 'linear-gradient(135deg, #1A3B1E 0%, #2C4A22 100%)',
+                  color: '#FFF',
+                  border: 'none',
+                  fontSize: '13.5px',
+                  fontWeight: 700,
+                  cursor: 'pointer',
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '8px',
+                  boxShadow: '0 4px 14px rgba(26, 46, 19, 0.2)'
+                }}
+              >
+                <span>Explore Panache Menu</span>
+                <ArrowRight size={15} />
+              </button>
             </div>
           )
         ) : (
@@ -420,9 +476,58 @@ export default function MyOrdersPage() {
               ))}
             </div>
           ) : (
-            <div className="empty-state">
-              <Calendar size={48} />
-              <p>No activity bookings found.</p>
+            <div 
+              style={{
+                textAlign: 'center',
+                padding: '48px 24px',
+                background: '#FFFFFF',
+                borderRadius: '24px',
+                border: '1.5px solid rgba(173, 138, 63, 0.2)',
+                boxShadow: '0 10px 30px rgba(26,46,19,0.06)'
+              }}
+            >
+              <div 
+                style={{
+                  width: '64px',
+                  height: '64px',
+                  borderRadius: '50%',
+                  background: 'rgba(173, 138, 63, 0.12)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  margin: '0 auto 16px',
+                  color: 'var(--brass)'
+                }}
+              >
+                <Calendar size={30} />
+              </div>
+              <h3 style={{ fontFamily: 'Fraunces, serif', fontSize: '20px', fontWeight: 700, color: 'var(--forest-deep)', margin: '0 0 8px' }}>
+                No Activity Bookings Yet
+              </h3>
+              <p style={{ color: 'var(--sage)', fontSize: '13.5px', maxWidth: '340px', margin: '0 auto 20px', lineHeight: 1.5 }}>
+                Immerse yourself in mountain experiences: fairy-lit Bird Cage dining, pine wood bonfires, and stargazing walks.
+              </p>
+              <button
+                type="button"
+                onClick={() => navigate('/experiences')}
+                style={{
+                  padding: '11px 22px',
+                  borderRadius: '12px',
+                  background: 'linear-gradient(135deg, #AD8A3F 0%, #C59B27 100%)',
+                  color: '#1A2E13',
+                  border: 'none',
+                  fontSize: '13.5px',
+                  fontWeight: 700,
+                  cursor: 'pointer',
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '8px',
+                  boxShadow: '0 4px 14px rgba(173, 138, 63, 0.3)'
+                }}
+              >
+                <span>Discover Experiences</span>
+                <ArrowRight size={15} />
+              </button>
             </div>
           )
         )}

@@ -1,6 +1,6 @@
-import React, { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Volume2, VolumeX, Sparkles, Wind, X } from 'lucide-react'
+import { Volume2, VolumeX, Wind, X } from 'lucide-react'
 
 export default function MountainSoundscape() {
   const [isPlaying, setIsPlaying] = useState(false)

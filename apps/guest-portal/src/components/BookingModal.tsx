@@ -20,7 +20,7 @@ interface BookingModalProps {
 }
 
 export default function BookingModal({ activity, onClose, onSuccess }: BookingModalProps) {
-  const { guest, isLoggedIn, isResortGuest } = useGuestAuth();
+  const { guest } = useGuestAuth();
   const [step, setStep] = useState<1 | 2 | 3>(1);
   const [selectedDate, setSelectedDate] = useState<string>('');
   const [selectedSlot, setSelectedSlot] = useState<AvailableSlot | null>(null);

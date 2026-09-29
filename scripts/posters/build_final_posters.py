@@ -2,10 +2,18 @@ import os
 import sys
 from pathlib import Path
 
-WORKSPACE = Path(__file__).resolve().parent.parent
+def get_workspace_root():
+    p = Path(__file__).resolve().parent
+    while p != p.parent:
+        if (p / 'package.json').exists():
+            return p
+        p = p.parent
+    return Path.cwd()
+
+WORKSPACE = get_workspace_root()
 os.chdir(WORKSPACE)
 
-# 1. HIGHWAY RED EDITION (CLEAN, FOCUSED BILLBOARD - 50M VISIBILITY)
+# 1. HIGHWAY RED EDITION HTML
 RED_HTML = """<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -36,13 +44,13 @@ RED_HTML = """<!DOCTYPE html>
       display: flex;
       flex-direction: column;
       justify-content: space-between;
-      padding: 36px 38px 30px 38px;
+      padding: 28px 34px 26px 34px;
       color: #fff;
       overflow: hidden;
       box-shadow: 0 25px 60px rgba(0,0,0,0.9);
     }
 
-    /* 1. TOP HIGHWAY STRIP */
+    /* 1. TOP HIGHWAY LOCATION & DISTANCE BAR (NO WRAPPING) */
     .top-strip {
       display: flex;
       justify-content: space-between;
@@ -50,13 +58,13 @@ RED_HTML = """<!DOCTYPE html>
       background: rgba(0, 0, 0, 0.7);
       border: 2px solid #FFD700;
       border-radius: 40px;
-      padding: 8px 10px 8px 24px;
+      padding: 6px 8px 6px 20px;
       white-space: nowrap;
     }
     .location-tag {
       font-size: 15px;
       font-weight: 800;
-      letter-spacing: 2px;
+      letter-spacing: 1.5px;
       color: #FFD700;
       text-transform: uppercase;
       white-space: nowrap;
@@ -64,9 +72,9 @@ RED_HTML = """<!DOCTYPE html>
     .distance-hero {
       background: #FFD700;
       color: #630000;
-      font-size: 18px;
+      font-size: 17px;
       font-weight: 900;
-      padding: 8px 22px;
+      padding: 8px 18px;
       border-radius: 30px;
       letter-spacing: 1px;
       text-transform: uppercase;
@@ -74,13 +82,19 @@ RED_HTML = """<!DOCTYPE html>
       white-space: nowrap;
     }
 
-    /* 2. PILGRIM HOOK */
+    /* 2. GRAND HOOK BLOCK (CLEAN, NO SMEARY SHADOW) */
     .hook-block {
       text-align: center;
-      margin-top: 6px;
+      margin-top: 4px;
     }
-    .hook-lead {
-      font-size: 30px;
+    .hook-unified {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      margin-bottom: 8px;
+    }
+    .hook-line-1 {
+      font-size: 32px;
       font-weight: 900;
       color: #FFE600;
       letter-spacing: 1.5px;
@@ -88,70 +102,79 @@ RED_HTML = """<!DOCTYPE html>
       line-height: 1.2;
       white-space: nowrap;
     }
-    .hook-main {
-      font-size: 46px;
+    .hook-line-2 {
+      font-size: 44px;
       font-weight: 900;
       color: #FFFFFF;
-      letter-spacing: 2px;
+      letter-spacing: 1.5px;
       text-transform: uppercase;
       line-height: 1.15;
-      margin-top: 2px;
       white-space: nowrap;
-      text-shadow: 0 4px 18px rgba(0,0,0,0.9);
     }
-
-    /* 3. EXCLUSIVITY CALLOUT (GHORAKHAL'S ONLY LUXURY RESTAURANT) */
-    .usp-banner {
+    .dhaba-banner {
       background: #FFE600;
-      border-radius: 18px;
-      padding: 16px 22px;
-      text-align: center;
-      box-shadow: 0 8px 25px rgba(0,0,0,0.6);
-      margin: 10px 0;
+      border-radius: 14px;
+      padding: 10px 18px;
+      margin-bottom: 8px;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.6);
     }
-    .usp-question {
-      font-size: 32px;
+    .dhaba-q {
+      font-size: 30px;
       font-weight: 900;
       color: #7A0000;
       line-height: 1.15;
       white-space: nowrap;
     }
-    .usp-claim {
-      font-size: 25px;
+    .dhaba-ans {
+      font-size: 26px;
       font-weight: 900;
       color: #000000;
       line-height: 1.2;
       text-transform: uppercase;
-      margin-top: 4px;
-      letter-spacing: 0.5px;
       white-space: nowrap;
     }
-    .usp-sub {
+    .features-strip {
+      display: flex;
+      justify-content: space-evenly;
+      align-items: center;
+      background: rgba(0, 0, 0, 0.65);
+      border: 2px solid #FFD700;
+      border-radius: 30px;
+      padding: 9px 16px;
+      white-space: nowrap;
+    }
+    .feat-item {
       font-size: 15px;
       font-weight: 800;
-      color: #550000;
-      margin-top: 6px;
-      letter-spacing: 0.5px;
+      color: #FFF3BD;
+      letter-spacing: 0.8px;
+      text-transform: uppercase;
       white-space: nowrap;
     }
+    .feat-sep {
+      color: #FFD700;
+      font-weight: 900;
+      font-size: 18px;
+      opacity: 0.6;
+    }
 
-    /* 4. MASTER BRAND HERO */
+    /* 3. RESORT HERO & PANACHE */
     .brand-hero {
-      background: rgba(0, 0, 0, 0.5);
+      background: rgba(0, 0, 0, 0.45);
       border: 3px solid rgba(255, 215, 0, 0.85);
-      border-radius: 24px;
-      padding: 22px 24px;
+      border-radius: 20px;
+      padding: 14px 20px;
       text-align: center;
       box-shadow: 0 10px 30px rgba(0,0,0,0.5);
     }
     .logo-medallion {
-      width: 120px;
-      height: 120px;
-      margin: 0 auto 10px auto;
+      width: 112px;
+      height: 112px;
+      margin: 0 auto 6px auto;
       border-radius: 50%;
       border: 3px solid #FFD700;
       background: #000;
-      box-shadow: 0 0 24px rgba(255, 215, 0, 0.6);
+      box-shadow: 0 0 20px rgba(255, 215, 0, 0.6);
       overflow: hidden;
       display: flex;
       align-items: center;
@@ -163,46 +186,110 @@ RED_HTML = """<!DOCTYPE html>
       object-fit: cover;
       border-radius: 50%;
     }
-    .restaurant-title {
+    .resort-title {
       font-family: 'Cinzel', serif;
       font-size: 46px;
       font-weight: 900;
       letter-spacing: 2px;
-      color: #FFFFFF;
+      color: #FFDF00;
       text-shadow: 0 4px 15px rgba(0,0,0,0.8);
       line-height: 1.1;
       white-space: nowrap;
     }
-    .resort-connector {
-      font-family: 'Cinzel', serif;
-      font-size: 26px;
-      font-weight: 800;
-      letter-spacing: 3px;
-      color: #FFDF00;
-      text-shadow: 0 3px 12px rgba(0,0,0,0.8);
-      margin-top: 6px;
+    .resort-sub {
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 4px;
+      color: #FFFFFF;
+      text-transform: uppercase;
+      margin-top: 2px;
       white-space: nowrap;
     }
-    .cuisines-bar {
-      margin-top: 14px;
-      display: inline-block;
-      background: rgba(255, 215, 0, 0.15);
-      border: 1.5px solid #FFD700;
-      border-radius: 20px;
-      padding: 8px 20px;
-      font-size: 14px;
+    .connector {
+      margin: 6px auto;
+      font-size: 12px;
       font-weight: 800;
-      letter-spacing: 1.5px;
-      color: #FFF2BD;
+      letter-spacing: 3px;
+      color: #FFD700;
       text-transform: uppercase;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      white-space: nowrap;
+    }
+    .connector::before, .connector::after {
+      content: "";
+      height: 1px;
+      width: 50px;
+      background: linear-gradient(90deg, transparent, #FFD700);
+    }
+    .connector::after {
+      background: linear-gradient(90deg, #FFD700, transparent);
+    }
+    .restaurant-title {
+      font-family: 'Cinzel', serif;
+      font-size: 34px;
+      font-weight: 900;
+      letter-spacing: 2px;
+      color: #FFFFFF;
+      text-shadow: 0 4px 12px rgba(0,0,0,0.8);
+      line-height: 1.1;
+      white-space: nowrap;
+    }
+    .restaurant-sub {
+      font-size: 14px;
+      font-weight: 700;
+      color: #FFD700;
+      letter-spacing: 1.5px;
+      margin-top: 2px;
       white-space: nowrap;
     }
 
-    /* 5. BOTTOM HIGHWAY DIRECTION & MASSIVE NUMBERS */
+    /* 4. FOUR FOOD PILLARS (HIGH CONTRAST) */
+    .food-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+    }
+    .food-card {
+      background: rgba(0, 0, 0, 0.75);
+      border: 2.5px solid #FFD700;
+      border-radius: 14px;
+      padding: 12px 16px;
+      box-shadow: 0 4px 14px rgba(0,0,0,0.5);
+      border-left: 6px solid #FFD700;
+    }
+    .food-tag {
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 1.5px;
+      color: #FFD700;
+      text-transform: uppercase;
+      margin-bottom: 2px;
+      white-space: nowrap;
+    }
+    .food-heading {
+      font-size: 19px;
+      font-weight: 900;
+      color: #FFFFFF;
+      letter-spacing: 0.5px;
+      line-height: 1.2;
+      white-space: nowrap;
+    }
+    .food-desc {
+      font-size: 13px;
+      font-weight: 700;
+      color: #FFE6A3;
+      margin-top: 2px;
+      white-space: nowrap;
+    }
+
+    /* 5. BOTTOM HIGHWAY DIRECTION & UNCLIPPED PHONE NUMBERS */
     .bottom-anchor {
       background: #FFD700;
-      border-radius: 20px;
-      padding: 16px 20px;
+      border-radius: 18px;
+      padding: 14px 20px;
       color: #5B0000;
       text-align: center;
       box-shadow: 0 10px 30px rgba(0,0,0,0.8);
@@ -213,18 +300,18 @@ RED_HTML = """<!DOCTYPE html>
       justify-content: center;
       gap: 14px;
       border-bottom: 2px dashed #9E7400;
-      padding-bottom: 10px;
-      margin-bottom: 10px;
+      padding-bottom: 8px;
+      margin-bottom: 8px;
       white-space: nowrap;
     }
     .direction-arrow {
-      font-size: 42px;
+      font-size: 38px;
       font-weight: 900;
       color: #990000;
       line-height: 1;
     }
     .direction-main {
-      font-size: 28px;
+      font-size: 26px;
       font-weight: 900;
       color: #700000;
       letter-spacing: 1px;
@@ -232,10 +319,10 @@ RED_HTML = """<!DOCTYPE html>
       white-space: nowrap;
     }
     .direction-sub {
-      font-size: 16px;
+      font-size: 15px;
       font-weight: 800;
       color: #222222;
-      margin-top: 3px;
+      margin-top: 2px;
       white-space: nowrap;
     }
     .call-box {
@@ -254,7 +341,7 @@ RED_HTML = """<!DOCTYPE html>
       white-space: nowrap;
     }
     .call-numbers {
-      font-size: 38px;
+      font-size: 36px;
       font-weight: 900;
       color: #8C0000;
       letter-spacing: 2px;
@@ -266,7 +353,7 @@ RED_HTML = """<!DOCTYPE html>
     .num-sep {
       color: #700000;
       font-weight: 700;
-      margin: 0 10px;
+      margin: 0 8px;
       opacity: 0.7;
     }
 
@@ -279,38 +366,72 @@ RED_HTML = """<!DOCTYPE html>
 </head>
 <body>
   <div class="poster">
-    <!-- Top Strip: Road & 5 Mins Distance -->
+    <!-- Top Strip (Single Line, No Breaks) -->
     <div class="top-strip">
       <div class="location-tag">GOLU DEVTA MANDIR ROAD</div>
       <div class="distance-hero">BAS 2 KM • SIRF 5 MINS DRIVE</div>
     </div>
 
-    <!-- Pilgrim Hook: Balanced & Grand -->
+    <!-- Unified Hook Block (Clean, Zero Shadow) -->
     <div class="hook-block">
-      <div class="hook-lead">MANDIR DARSHAN KE BAAD...</div>
-      <div class="hook-main">SWAAD BHI, SUKOON BHI!</div>
+      <div class="hook-unified">
+        <div class="hook-line-1">MANDIR DARSHAN KE BAAD...</div>
+        <div class="hook-line-2">SWAAD BHI, SUKOON BHI!</div>
+      </div>
+      
+      <div class="dhaba-banner">
+        <div class="dhaba-q">“Random Dhaba Kyun?”</div>
+        <div class="dhaba-ans">Jab 5 Mins Mein Hai Luxury Dining!</div>
+      </div>
+
+      <div class="features-strip">
+        <span class="feat-item">100% FAMILY AMBIENCE</span>
+        <span class="feat-sep">|</span>
+        <span class="feat-item">VALLEY VIEW DINING</span>
+        <span class="feat-sep">|</span>
+        <span class="feat-item">AMPLE CAR PARKING</span>
+      </div>
     </div>
 
-    <!-- Core Exclusivity Callout: The Only Luxury Dining around Ghorakhal -->
-    <div class="usp-banner">
-      <div class="usp-question">“Random Dhaba Kyun?”</div>
-      <div class="usp-claim">GHORAKHAL'S ONLY LUXURY MULTI-CUISINE DINING</div>
-      <div class="usp-sub">100% Family Ambience • Breathtaking Valley Views • Ample Parking</div>
-    </div>
-
-    <!-- Master Brand Hero: Panache Restaurant at Shivalaya Resort -->
+    <!-- Resort Master Brand Hero -->
     <div class="brand-hero">
       <div class="logo-medallion">
-        <img src="../assets/branding/shivalaya_badge_perfect.png" onerror="this.src='../assets/branding/shivalaya_logo.jpg'" alt="Shivalaya Resort Logo">
+        <img src="../../assets/branding/shivalaya_badge_perfect.png" onerror="this.src='../../assets/branding/shivalaya_logo.jpg'" alt="Shivalaya Resort Logo">
       </div>
+      <div class="resort-title">SHIVALAYA RESORT</div>
+      <div class="resort-sub">LUXURY MOUNTAIN RETREAT & STAYS</div>
+      
+      <div class="connector">HOME TO THE RENOWNED</div>
+      
       <div class="restaurant-title">PANACHE RESTAURANT</div>
-      <div class="resort-connector">AT SHIVALAYA RESORT</div>
-      <div class="cuisines-bar">
-        AUTHENTIC PAHADI • SHUDDH VRAT THALI • NORTH INDIAN • CAFE
+      <div class="restaurant-sub">Fine Dining & Authentic Himalayan Cuisine</div>
+    </div>
+
+    <!-- 4 High-Contrast Food Pillars -->
+    <div class="food-grid">
+      <div class="food-card">
+        <div class="food-tag">TRADITIONAL</div>
+        <div class="food-heading">KUMAONI (PAHADI)</div>
+        <div class="food-desc">Bhat ki Chudkani & Pahadi Raita</div>
+      </div>
+      <div class="food-card">
+        <div class="food-tag">FASTING SPECIAL</div>
+        <div class="food-heading">SHUDDH VRAT THALI</div>
+        <div class="food-desc">Sabudana Tikki, Kuttu Poori, Kheer</div>
+      </div>
+      <div class="food-card">
+        <div class="food-tag">CLASSIC FAVORITES</div>
+        <div class="food-heading">NORTH INDIAN & TANDOOR</div>
+        <div class="food-desc">Rich Dal Makhani, Paneer, Naan</div>
+      </div>
+      <div class="food-card">
+        <div class="food-tag">CONTINENTAL & BITES</div>
+        <div class="food-heading">CAFE & QUICK BITES</div>
+        <div class="food-desc">Cold Coffee, Pahadi Chai, Snacks</div>
       </div>
     </div>
 
-    <!-- Bottom Highway Direction & Massive Unclipped Contact -->
+    <!-- Bottom Highway Direction & Centered Numbers -->
     <div class="bottom-anchor">
       <div class="direction-banner">
         <div class="direction-arrow">➔</div>
@@ -321,7 +442,7 @@ RED_HTML = """<!DOCTYPE html>
       </div>
       <div class="call-box">
         <div class="call-label">CALL FOR TABLE BOOKING & DIRECTIONS</div>
-        <div class="call-numbers">76680 09400<span class="num-sep">|</span>94121 56361</div>
+        <div class="call-numbers">+91 76680 09400</div>
       </div>
     </div>
   </div>
@@ -329,7 +450,7 @@ RED_HTML = """<!DOCTYPE html>
 </html>
 """
 
-# 2. ALPINE WHITE & EMERALD EDITION (CRISP, PURE, LUXURY MOUNTAIN PALETTE)
+# 2. ALPINE WHITE & EMERALD EDITION (CRISP, PURE, ZERO DIRTY SHADOWS)
 WHITE_HTML = RED_HTML.replace(
     """radial-gradient(circle at 50% 25%, #a60005 0%, #780004 55%, #420002 100%)""",
     """linear-gradient(180deg, #FFFFFF 0%, #F5FAF6 45%, #E5F0E8 100%)"""
@@ -361,32 +482,26 @@ WHITE_HTML = RED_HTML.replace(
     """color: #0F3E2C;"""
 ).replace(
     """color: #FFFFFF;
-      letter-spacing: 2px;
+      letter-spacing: 1.5px;
       text-transform: uppercase;
       line-height: 1.15;
-      margin-top: 2px;
-      white-space: nowrap;
-      text-shadow: 0 4px 18px rgba(0,0,0,0.9);""",
+      white-space: nowrap;""",
     """color: #0F3E2C;
-      letter-spacing: 2px;
+      letter-spacing: 1.5px;
       text-transform: uppercase;
       line-height: 1.15;
-      margin-top: 2px;
-      white-space: nowrap;
-      text-shadow: none;"""
+      white-space: nowrap;"""
 ).replace(
     """background: #FFE600;
-      border-radius: 18px;
-      padding: 16px 22px;
-      text-align: center;
-      box-shadow: 0 8px 25px rgba(0,0,0,0.6);
-      margin: 10px 0;""",
+      border-radius: 14px;
+      padding: 10px 18px;
+      margin-bottom: 8px;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.6);""",
     """background: #0F3E2C;
-      border-radius: 18px;
-      padding: 16px 22px;
-      text-align: center;
-      box-shadow: 0 8px 25px rgba(15,62,44,0.3);
-      margin: 10px 0;"""
+      border-radius: 14px;
+      padding: 10px 18px;
+      margin-bottom: 8px;
+      box-shadow: 0 6px 20px rgba(15,62,44,0.3);"""
 ).replace(
     """color: #7A0000;""",
     """color: #FFD700;"""
@@ -394,68 +509,120 @@ WHITE_HTML = RED_HTML.replace(
     """color: #000000;
       line-height: 1.2;
       text-transform: uppercase;
-      margin-top: 4px;
-      letter-spacing: 0.5px;
       white-space: nowrap;""",
     """color: #FFFFFF;
       line-height: 1.2;
       text-transform: uppercase;
-      margin-top: 4px;
-      letter-spacing: 0.5px;
       white-space: nowrap;"""
 ).replace(
-    """color: #550000;
-      margin-top: 6px;""",
-    """color: #D6EADF;
-      margin-top: 6px;"""
+    """background: rgba(0, 0, 0, 0.65);
+      border: 2px solid #FFD700;
+      border-radius: 30px;
+      padding: 9px 16px;
+      white-space: nowrap;""",
+    """background: #FFFFFF;
+      border: 2.5px solid #0F3E2C;
+      border-radius: 30px;
+      padding: 9px 16px;
+      white-space: nowrap;"""
 ).replace(
-    """background: rgba(0, 0, 0, 0.5);
+    """color: #FFF3BD;""",
+    """color: #0F3E2C;"""
+).replace(
+    """color: #FFD700;
+      font-weight: 900;
+      font-size: 18px;
+      opacity: 0.6;""",
+    """color: #0F3E2C;
+      font-weight: 900;
+      font-size: 18px;
+      opacity: 0.4;"""
+).replace(
+    """background: rgba(0, 0, 0, 0.45);
       border: 3px solid rgba(255, 215, 0, 0.85);""",
     """background: #FFFFFF;
       border: 3px solid #0F3E2C;"""
 ).replace(
+    """color: #FFDF00;
+      text-shadow: 0 4px 15px rgba(0,0,0,0.8);""",
+    """color: #0F3E2C;
+      text-shadow: none;"""
+).replace(
     """color: #FFFFFF;
-      text-shadow: 0 4px 15px rgba(0,0,0,0.8);
-      line-height: 1.1;
+      text-transform: uppercase;
+      margin-top: 2px;
+      white-space: nowrap;""",
+    """color: #555555;
+      text-transform: uppercase;
+      margin-top: 2px;
+      white-space: nowrap;"""
+).replace(
+    """color: #FFD700;
+      text-transform: uppercase;
+      display: flex;""",
+    """color: #C8963E;
+      text-transform: uppercase;
+      display: flex;"""
+).replace(
+    """color: #FFFFFF;
+      text-shadow: 0 4px 12px rgba(0,0,0,0.8);""",
+    """color: #0F3E2C;
+      text-shadow: none;"""
+).replace(
+    """color: #FFD700;
+      letter-spacing: 1.5px;
+      margin-top: 2px;
+      white-space: nowrap;""",
+    """color: #B45309;
+      letter-spacing: 1.5px;
+      margin-top: 2px;
+      white-space: nowrap;"""
+).replace(
+    """background: rgba(0, 0, 0, 0.75);
+      border: 2.5px solid #FFD700;
+      border-radius: 14px;
+      padding: 12px 16px;
+      box-shadow: 0 4px 14px rgba(0,0,0,0.5);
+      border-left: 6px solid #FFD700;""",
+    """background: #FFFFFF;
+      border: 2.5px solid #0F3E2C;
+      border-radius: 14px;
+      padding: 12px 16px;
+      box-shadow: 0 4px 14px rgba(15,62,44,0.12);
+      border-left: 6px solid #C8963E;"""
+).replace(
+    """color: #FFD700;
+      text-transform: uppercase;
+      margin-bottom: 2px;
+      white-space: nowrap;""",
+    """color: #B45309;
+      text-transform: uppercase;
+      margin-bottom: 2px;
+      white-space: nowrap;"""
+).replace(
+    """color: #FFFFFF;
+      letter-spacing: 0.5px;
+      line-height: 1.2;
       white-space: nowrap;""",
     """color: #0F3E2C;
-      text-shadow: none;
-      line-height: 1.1;
+      letter-spacing: 0.5px;
+      line-height: 1.2;
       white-space: nowrap;"""
 ).replace(
-    """color: #FFDF00;
-      text-shadow: 0 3px 12px rgba(0,0,0,0.8);
-      margin-top: 6px;
+    """color: #FFE6A3;
+      margin-top: 2px;
       white-space: nowrap;""",
-    """color: #C8963E;
-      text-shadow: none;
-      margin-top: 6px;
+    """color: #4A6B5D;
+      margin-top: 2px;
       white-space: nowrap;"""
-).replace(
-    """background: rgba(255, 215, 0, 0.15);
-      border: 1.5px solid #FFD700;
-      border-radius: 20px;
-      padding: 8px 20px;
-      font-size: 14px;
-      font-weight: 800;
-      letter-spacing: 1.5px;
-      color: #FFF2BD;""",
-    """background: #F4F8F5;
-      border: 1.5px solid #0F3E2C;
-      border-radius: 20px;
-      padding: 8px 20px;
-      font-size: 14px;
-      font-weight: 800;
-      letter-spacing: 1.5px;
-      color: #0F3E2C;"""
 ).replace(
     """background: #FFD700;
-      border-radius: 20px;
-      padding: 16px 20px;
+      border-radius: 18px;
+      padding: 14px 20px;
       color: #5B0000;""",
     """background: #0F3E2C;
-      border-radius: 20px;
-      padding: 16px 20px;
+      border-radius: 18px;
+      padding: 14px 20px;
       color: #FFFFFF;"""
 ).replace(
     """color: #990000;""",
@@ -609,7 +776,7 @@ STUDIO_HTML = """<!DOCTYPE html>
   <div class="header">
     <div class="title">
       <h1>Shivalaya Resort & Panache Restaurant — Highway Kiosk Studio</h1>
-      <p>Standard 2ft × 3ft (24" × 36") Roadside Billboard • High-Voltage 50-Meter Readability</p>
+      <p>Standard 2ft × 3ft (24" × 36") Roadside Billboard • High-Voltage 50-Meter Contrast</p>
     </div>
     <div class="actions">
       <button id="distBtn" class="btn btn-action" onclick="toggle50m()">Test 50m Distance Blur</button>
@@ -636,18 +803,18 @@ STUDIO_HTML = """<!DOCTYPE html>
 </html>
 """
 
-posters_dir = WORKSPACE / "posters"
+posters_dir = WORKSPACE / "marketing" / "posters"
 posters_dir.mkdir(parents=True, exist_ok=True)
 
 with open(posters_dir / "poster_edition_red.html", "w", encoding="utf-8") as f:
     f.write(RED_HTML)
-print("[OK] Saved clean posters/poster_edition_red.html")
+print("[OK] Saved posters/poster_edition_red.html")
 
 with open(posters_dir / "poster_edition_white.html", "w", encoding="utf-8") as f:
     f.write(WHITE_HTML)
-print("[OK] Saved clean posters/poster_edition_white.html")
+print("[OK] Saved posters/poster_edition_white.html")
 
 with open(posters_dir / "poster_studio.html", "w", encoding="utf-8") as f:
     f.write(STUDIO_HTML)
-print("[OK] Saved clean posters/poster_studio.html")
-print(">>> ALL CLEAN BILLBOARDS GENERATED SUCCESSFULLY IN posters/! <<<")
+print("[OK] Saved posters/poster_studio.html")
+print(">>> ALL POSTERS PERFECTLY RE-GENERATED & SAVED IN posters/! <<<")

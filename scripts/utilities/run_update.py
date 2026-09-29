@@ -2,7 +2,15 @@ import os
 from pathlib import Path
 from PIL import Image, ImageDraw
 
-WORKSPACE = Path(__file__).resolve().parent.parent
+def get_workspace_root():
+    p = Path(__file__).resolve().parent
+    while p != p.parent:
+        if (p / 'package.json').exists():
+            return p
+        p = p.parent
+    return Path.cwd()
+
+WORKSPACE = get_workspace_root()
 os.chdir(WORKSPACE)
 
 # 1. Create seamless circular Shivalaya medallion
@@ -370,7 +378,7 @@ RED_HTML = """<!DOCTYPE html>
     <!-- Resort Master Brand Hero -->
     <div class="brand-hero">
       <div class="logo-medallion">
-        <img src="../assets/branding/shivalaya_badge_perfect.png" onerror="this.src='../assets/branding/shivalaya_logo.jpg'" alt="Shivalaya Resort Logo">
+        <img src="../../assets/branding/shivalaya_badge_perfect.png" onerror="this.src='../../assets/branding/shivalaya_logo.jpg'" alt="Shivalaya Resort Logo">
       </div>
       <div class="resort-title">SHIVALAYA RESORT</div>
       <div class="resort-sub">LUXURY MOUNTAIN RETREAT & STAYS</div>
@@ -424,7 +432,7 @@ RED_HTML = """<!DOCTYPE html>
       </div>
       <div class="call-strip">
         <span class="call-label">FOR TABLE & BOOKINGS:</span>
-        <span class="call-numbers">📞 76680 09400 / 94121 56361</span>
+        <span class="call-numbers">📞 +91 76680 09400</span>
       </div>
     </div>
   </div>
@@ -739,7 +747,7 @@ STUDIO_HTML = """<!DOCTYPE html>
 </html>
 """
 
-posters_dir = WORKSPACE / "posters"
+posters_dir = WORKSPACE / "marketing" / "posters"
 posters_dir.mkdir(parents=True, exist_ok=True)
 
 with open(posters_dir / "poster_edition_red.html", "w", encoding="utf-8") as f:

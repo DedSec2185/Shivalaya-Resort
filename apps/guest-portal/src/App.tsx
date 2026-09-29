@@ -7,6 +7,7 @@ import ExperiencesPage from './pages/ExperiencesPage'
 import MyOrdersPage    from './pages/MyOrdersPage'
 import LoginPage       from './pages/LoginPage'
 import ProfilePage     from './pages/ProfilePage'
+import RoomsPage       from './pages/RoomsPage'
 import NotFound        from './pages/NotFound'
 import { ErrorBoundary } from './components/ErrorBoundary'
 import { useQRSession } from './hooks/useQRSession'
@@ -16,13 +17,22 @@ import { GuestAuthProvider } from './contexts/GuestAuthContext'
 import HimalayanAtmosphere from './components/HimalayanAtmosphere'
 import MountainSoundscape from './components/MountainSoundscape'
 import PageTransition from './components/PageTransition'
+import CustomCursor from './components/CustomCursor'
+import ScrollProgress from './components/ScrollProgress'
+import MountainParticles from './components/MountainParticles'
 
 function AppLayout() {
+  // Initialize QR session inside GuestAuthProvider
+  useQRSession()
+
   const location = useLocation()
   const hideNav = location.pathname.startsWith('/order/') || location.pathname === '/login'
   
   return (
     <div className="mobile-app-container">
+      <CustomCursor />
+      <ScrollProgress />
+      <MountainParticles />
       <HimalayanAtmosphere />
       <AnimatePresence mode="wait">
         <Routes location={location} key={location.pathname}>
@@ -31,6 +41,7 @@ function AppLayout() {
           <Route path="/order/:id"   element={<PageTransition><OrderTrack /></PageTransition>}  />
           <Route path="/experiences" element={<PageTransition><ExperiencesPage /></PageTransition>} />
           <Route path="/orders"      element={<PageTransition><MyOrdersPage /></PageTransition>} />
+          <Route path="/rooms"       element={<PageTransition><RoomsPage /></PageTransition>}   />
           <Route path="/login"       element={<PageTransition><LoginPage /></PageTransition>} />
           <Route path="/profile"     element={<PageTransition><ProfilePage /></PageTransition>} />
           <Route path="*"            element={<PageTransition><NotFound /></PageTransition>}    />
@@ -44,9 +55,6 @@ function AppLayout() {
 }
 
 export default function App() {
-  // Initialize QR session once at root level
-  useQRSession();
-
   return (
     <ErrorBoundary>
       <GuestAuthProvider>
@@ -57,4 +65,3 @@ export default function App() {
     </ErrorBoundary>
   )
 }
-

@@ -1,0 +1,1194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Shivalaya Panache — Executive System & Operations Handover Guide</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;0,9..144,700;1,9..144,400&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #1A3B1E;
+      --primary-light: #2A5A30;
+      --primary-dark: #0E2411;
+      --accent: #C59B27;
+      --accent-light: #F4E8C1;
+      --accent-dark: #8E6D15;
+      --bg: #F8F9F5;
+      --card-bg: #FFFFFF;
+      --text: #1E2721;
+      --text-muted: #5A6B60;
+      --border: #E2E8E2;
+      --border-subtle: #EEF2EE;
+      --success: #1E7E34;
+      --warning: #B38600;
+      --info: #0D6EFD;
+      --danger: #DC3545;
+      --radius: 12px;
+      --radius-sm: 8px;
+      --radius-lg: 18px;
+      --shadow: 0 10px 30px rgba(26, 59, 30, 0.06);
+      --shadow-lg: 0 20px 40px rgba(26, 59, 30, 0.12);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background-color: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* Top Floating Action Bar */
+    .top-bar {
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      background: rgba(26, 59, 30, 0.95);
+      backdrop-filter: blur(12px);
+      color: white;
+      padding: 12px 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 2px solid var(--accent);
+      box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+    }
+
+    .top-bar-title {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-weight: 700;
+      font-size: 1.05rem;
+      letter-spacing: 0.5px;
+    }
+
+    .top-bar-title span.badge {
+      background: var(--accent);
+      color: var(--primary-dark);
+      font-size: 0.75rem;
+      padding: 3px 8px;
+      border-radius: 20px;
+      font-weight: 800;
+      text-transform: uppercase;
+    }
+
+    .top-actions {
+      display: flex;
+      gap: 10px;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 16px;
+      border-radius: var(--radius-sm);
+      font-weight: 600;
+      font-size: 0.88rem;
+      cursor: pointer;
+      text-decoration: none;
+      transition: all 0.2s ease;
+      border: none;
+    }
+
+    .btn-gold {
+      background: var(--accent);
+      color: var(--primary-dark);
+    }
+    .btn-gold:hover {
+      background: #dfb234;
+      transform: translateY(-1px);
+    }
+
+    .btn-outline {
+      background: transparent;
+      color: white;
+      border: 1px solid rgba(255,255,255,0.3);
+    }
+    .btn-outline:hover {
+      background: rgba(255,255,255,0.1);
+    }
+
+    /* Container Layout */
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 40px 24px 80px 24px;
+    }
+
+    /* Hero Presentation Cover */
+    .hero-cover {
+      background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary) 60%, #2A5A30 100%);
+      color: white;
+      padding: 60px 48px;
+      border-radius: var(--radius-lg);
+      margin-bottom: 40px;
+      box-shadow: var(--shadow-lg);
+      position: relative;
+      overflow: hidden;
+      border: 1px solid rgba(197, 155, 39, 0.3);
+    }
+
+    .hero-cover::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      right: -20%;
+      width: 600px;
+      height: 600px;
+      background: radial-gradient(circle, rgba(197, 155, 39, 0.15) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .hero-subtitle {
+      color: var(--accent);
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      font-weight: 700;
+      font-size: 0.9rem;
+      margin-bottom: 12px;
+    }
+
+    .hero-title {
+      font-family: 'Fraunces', serif;
+      font-size: 2.8rem;
+      font-weight: 700;
+      line-height: 1.2;
+      margin-bottom: 16px;
+    }
+
+    .hero-desc {
+      font-size: 1.15rem;
+      color: #D3E0D5;
+      max-width: 800px;
+      margin-bottom: 30px;
+    }
+
+    .meta-pills {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .meta-pill {
+      background: rgba(255,255,255,0.12);
+      border: 1px solid rgba(255,255,255,0.2);
+      padding: 6px 14px;
+      border-radius: 30px;
+      font-size: 0.85rem;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    /* Table of Contents Navigation */
+    .toc-card {
+      background: var(--card-bg);
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      padding: 28px;
+      margin-bottom: 40px;
+      box-shadow: var(--shadow);
+    }
+
+    .toc-title {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--primary);
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .toc-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 12px;
+    }
+
+    .toc-link {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 14px;
+      background: var(--bg);
+      border-radius: var(--radius-sm);
+      text-decoration: none;
+      color: var(--text);
+      font-weight: 600;
+      font-size: 0.9rem;
+      transition: all 0.2s;
+      border: 1px solid transparent;
+    }
+
+    .toc-link:hover {
+      background: #EAF0EB;
+      border-color: var(--accent);
+      color: var(--primary-dark);
+      transform: translateX(3px);
+    }
+
+    .toc-num {
+      width: 24px;
+      height: 24px;
+      background: var(--primary);
+      color: white;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.75rem;
+      font-weight: 700;
+    }
+
+    /* Document Sections */
+    .section {
+      background: var(--card-bg);
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      padding: 40px;
+      margin-bottom: 40px;
+      box-shadow: var(--shadow);
+      position: relative;
+    }
+
+    .section-header {
+      border-bottom: 2px solid var(--border-subtle);
+      padding-bottom: 20px;
+      margin-bottom: 28px;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+
+    .section-tag {
+      color: var(--accent-dark);
+      font-weight: 700;
+      font-size: 0.85rem;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      margin-bottom: 6px;
+    }
+
+    .section-title {
+      font-family: 'Fraunces', serif;
+      font-size: 1.9rem;
+      color: var(--primary);
+      font-weight: 700;
+    }
+
+    .section-lead {
+      color: var(--text-muted);
+      font-size: 1rem;
+      max-width: 850px;
+      margin-top: 8px;
+    }
+
+    /* Grid Layouts & Cards */
+    .grid-2 {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 24px;
+      margin: 24px 0;
+    }
+
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 20px;
+      margin: 24px 0;
+    }
+
+    .grid-4 {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 16px;
+      margin: 24px 0;
+    }
+
+    .card {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 24px;
+      transition: all 0.2s ease;
+    }
+
+    .card:hover {
+      box-shadow: var(--shadow);
+      border-color: #cbd8cd;
+    }
+
+    .card-highlight {
+      border-left: 4px solid var(--accent);
+      background: #FAF8F2;
+    }
+
+    .card-success {
+      border-left: 4px solid var(--success);
+      background: #F4FAF5;
+    }
+
+    .card-primary {
+      border-left: 4px solid var(--primary);
+      background: #F2F7F3;
+    }
+
+    .card-title {
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: var(--primary);
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .card-desc {
+      font-size: 0.92rem;
+      color: var(--text-muted);
+      line-height: 1.55;
+    }
+
+    /* Visual Architecture Box */
+    .arch-diagram {
+      background: linear-gradient(to right, #0F2513, #1A3B1E);
+      color: white;
+      border-radius: var(--radius);
+      padding: 30px;
+      margin: 28px 0;
+      border: 1px solid var(--accent);
+    }
+
+    .arch-grid {
+      display: grid;
+      grid-template-columns: 1fr auto 1fr auto 1fr;
+      align-items: center;
+      gap: 16px;
+      text-align: center;
+    }
+
+    @media (max-width: 850px) {
+      .arch-grid {
+        grid-template-columns: 1fr;
+        gap: 20px;
+      }
+      .arch-arrow {
+        transform: rotate(90deg);
+      }
+    }
+
+    .arch-node {
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: var(--radius-sm);
+      padding: 20px 16px;
+    }
+
+    .arch-node.hub {
+      background: rgba(197, 155, 39, 0.2);
+      border: 2px solid var(--accent);
+    }
+
+    .arch-node h4 {
+      font-size: 1.05rem;
+      color: var(--accent);
+      margin-bottom: 6px;
+    }
+
+    .arch-node p {
+      font-size: 0.82rem;
+      color: #D3E0D5;
+    }
+
+    .arch-arrow {
+      color: var(--accent);
+      font-size: 1.8rem;
+      font-weight: bold;
+    }
+
+    /* "Why It Is There" Feature Callouts */
+    .why-box {
+      background: #FFFFFF;
+      border: 1px solid #D6E4D8;
+      border-left: 5px solid var(--primary-light);
+      border-radius: var(--radius-sm);
+      padding: 18px 22px;
+      margin: 16px 0;
+    }
+
+    .why-tag {
+      font-size: 0.78rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--primary-light);
+      display: inline-block;
+      margin-bottom: 4px;
+    }
+
+    .why-title {
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--primary-dark);
+      margin-bottom: 6px;
+    }
+
+    .why-desc {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+    }
+
+    /* Tables */
+    .table-wrapper {
+      overflow-x: auto;
+      margin: 24px 0;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+      font-size: 0.92rem;
+      background: white;
+    }
+
+    th {
+      background: #EAF0EB;
+      color: var(--primary);
+      padding: 14px 18px;
+      font-weight: 700;
+      border-bottom: 2px solid var(--border);
+      white-space: nowrap;
+    }
+
+    td {
+      padding: 14px 18px;
+      border-bottom: 1px solid var(--border-subtle);
+      color: var(--text);
+    }
+
+    tr:last-child td {
+      border-bottom: none;
+    }
+
+    tr:nth-child(even) td {
+      background: #FDFEFD;
+    }
+
+    .badge-pill {
+      display: inline-block;
+      padding: 3px 10px;
+      border-radius: 12px;
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 0.3px;
+    }
+
+    .badge-primary { background: #E2ECE4; color: var(--primary); }
+    .badge-gold { background: var(--accent-light); color: var(--accent-dark); }
+    .badge-success { background: #D4EDDA; color: var(--success); }
+    .badge-info { background: #CCE5FF; color: var(--info); }
+
+    /* Code & Config snippets */
+    .code-box {
+      background: #19231A;
+      color: #E2ECE4;
+      font-family: 'JetBrains Mono', monospace;
+      padding: 18px;
+      border-radius: var(--radius-sm);
+      font-size: 0.88rem;
+      overflow-x: auto;
+      border: 1px solid #2F4432;
+      margin: 16px 0;
+      line-height: 1.5;
+    }
+
+    /* Checklist */
+    .checklist {
+      list-style: none;
+      margin: 18px 0;
+    }
+
+    .checklist-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      padding: 10px 0;
+      border-bottom: 1px dashed var(--border);
+      font-size: 0.95rem;
+    }
+
+    .checklist-item:last-child {
+      border-bottom: none;
+    }
+
+    .check-icon {
+      width: 20px;
+      height: 20px;
+      border-radius: 4px;
+      background: #E2ECE4;
+      color: var(--success);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+
+    /* Print Formatting */
+    @media print {
+      body {
+        background: white !important;
+        color: black !important;
+        font-size: 11pt;
+      }
+      .top-bar {
+        display: none !important;
+      }
+      .container {
+        max-width: 100% !important;
+        padding: 0 !important;
+        margin: 0 !important;
+      }
+      .hero-cover {
+        padding: 30px !important;
+        margin-bottom: 20px !important;
+        background: #1A3B1E !important;
+        color: white !important;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+      }
+      .section {
+        box-shadow: none !important;
+        border: 1px solid #ccc !important;
+        padding: 24px !important;
+        margin-bottom: 24px !important;
+        page-break-inside: avoid;
+      }
+      .page-break {
+        page-break-before: always;
+      }
+      .btn {
+        display: none !important;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Floating Sticky Action Bar -->
+  <div class="top-bar">
+    <div class="top-bar-title">
+      <span>🏔️ Shivalaya Panache</span>
+      <span class="badge">Production Certified</span>
+      <span style="font-size: 0.85rem; opacity: 0.85; font-weight: normal;">| Executive Handover & System Guide</span>
+    </div>
+    <div class="top-actions">
+      <button class="btn btn-gold" onclick="window.print()">
+        <svg width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path d="M2.5 8a.5.5 0 1 0 0-1 .5.5 0 0 0 0 1z"/><path d="M5 1a2 2 0 0 0-2 2v2H2a2 2 0 0 0-2 2v3a2 2 0 0 0 2 2h1v1a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2v-1h1a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-1V3a2 2 0 0 0-2-2H5zM4 3a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v2H4V3zm1 5a2 2 0 0 0-2 2v1H2a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1v3a1 1 0 0 1-1 1h-1v-1a2 2 0 0 0-2-2H5zm7 2v3a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1v-3a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1z"/></svg>
+        Save / Print as PDF
+      </button>
+      <a href="#quick-start" class="btn btn-outline">Day 1 Launch</a>
+    </div>
+  </div>
+
+  <div class="container">
+
+    <!-- Hero Presentation Cover -->
+    <header class="hero-cover">
+      <div class="hero-subtitle">Official Resort Operating Handover</div>
+      <h1 class="hero-title">Shivalaya Panache Resort Management & Dining Suite</h1>
+      <p class="hero-desc">
+        A cloud-native, real-time hospitality system interconnecting guest smartphone ordering, kitchen display management (KDS), front-desk folio billing, and luxury mountain resort operations.
+      </p>
+      <div class="meta-pills">
+        <div class="meta-pill">🏨 <strong>Property:</strong> Shivalaya Resort & Panache Restaurant</div>
+        <div class="meta-pill">📍 <strong>Capacity:</strong> 28 Rooms + 12 Restaurant Tables</div>
+        <div class="meta-pill">⚡ <strong>Architecture:</strong> Zero-Loss Realtime Cloud (Supabase + Vercel)</div>
+        <div class="meta-pill">🔒 <strong>Security:</strong> Production RLS + PIN-gated KDS</div>
+        <div class="meta-pill">📅 <strong>Handover Date:</strong> September 2026</div>
+      </div>
+    </header>
+
+    <!-- Table of Contents -->
+    <nav class="toc-card">
+      <div class="toc-title">
+        <svg width="20" height="20" fill="currentColor" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M2.5 12a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5z"/></svg>
+        Master Guide Navigation Index
+      </div>
+      <div class="toc-grid">
+        <a href="#section-1" class="toc-link"><span class="toc-num">1</span> System Architecture & Philosophy</a>
+        <a href="#section-2" class="toc-link"><span class="toc-num">2</span> 3 Production Links (Vercel)</a>
+        <a href="#section-3" class="toc-link"><span class="toc-num">3</span> Guest Portal: Screen by Screen</a>
+        <a href="#section-4" class="toc-link"><span class="toc-num">4</span> Kitchen KDS: Chef Operations</a>
+        <a href="#section-5" class="toc-link"><span class="toc-num">5</span> Reception Desk: Billing & Folio</a>
+        <a href="#section-6" class="toc-link"><span class="toc-num">6</span> HP Smart Tank 500 Setup</a>
+        <a href="#section-7" class="toc-link"><span class="toc-num">7</span> Official Staff PIN Roster</a>
+        <a href="#section-8" class="toc-link"><span class="toc-num">8</span> Day 1 Shift Checklists</a>
+        <a href="#section-9" class="toc-link"><span class="toc-num">9</span> Domain Transition Strategy</a>
+        <a href="#section-10" class="toc-link"><span class="toc-num">10</span> Emergency & FAQ Playbook</a>
+      </div>
+    </nav>
+
+    <!-- SECTION 1: ARCHITECTURE -->
+    <section id="section-1" class="section">
+      <div class="section-header">
+        <div>
+          <div class="section-tag">Section 1 · Foundations</div>
+          <h2 class="section-title">System Architecture & Core Philosophy</h2>
+          <p class="section-lead">Why this system was engineered this way, how the data flows in sub-seconds, and how paper-order chaos is eliminated forever.</p>
+        </div>
+      </div>
+
+      <div class="arch-diagram">
+        <div class="arch-grid">
+          <div class="arch-node">
+            <h4>📱 Guest Smartphones</h4>
+            <p>Scans QR at Table or in Room.<br>No app download needed. Instant catalog & order submission.</p>
+          </div>
+          <div class="arch-arrow">➔</div>
+          <div class="arch-node hub">
+            <h4>☁️ Supabase Real-Time Hub</h4>
+            <p>PostgreSQL Database + WebSockets.<br>Dispatches orders in &lt;150ms.<br>Enforces RLS Security & Tax rules.</p>
+          </div>
+          <div class="arch-arrow">➔</div>
+          <div class="arch-node">
+            <h4>👨‍🍳 Kitchen KDS & Desk</h4>
+            <p><strong>Kitchen:</strong> Instant Chime + KOT Print.<br><strong>Reception:</strong> Folio bill & instant GST invoice.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="grid-3">
+        <div class="card card-highlight">
+          <div class="card-title">💡 Why QR Code Ordering?</div>
+          <div class="card-desc">
+            Guests in luxury mountain resorts value privacy and speed. By scanning table acrylics (T-01 to T-12) or in-room standees (Rooms 101 to Villa 3), guests order directly from their own phones without waiting for a waiter to bring physical menus.
+          </div>
+        </div>
+        <div class="card card-primary">
+          <div class="card-title">⚡ Why Live WebSockets?</div>
+          <div class="card-desc">
+            Traditional restaurant POS systems require manual screen refreshing or printing delays. With Supabase real-time channels, the exact moment a guest taps "Place Order", Kundan Chef's tablet chimes and displays the ticket.
+          </div>
+        </div>
+        <div class="card card-success">
+          <div class="card-title">🛡️ Why Zero-Data-Loss Fallbacks?</div>
+          <div class="card-desc">
+            Hill station Wi-Fi can momentarily stutter. All 3 applications feature resilient client storage (IndexedDB/session cache) and retry logic so orders are never dropped mid-transmission.
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 2: PRODUCTION LINKS -->
+    <section id="section-2" class="section">
+      <div class="section-header">
+        <div>
+          <div class="section-tag">Section 2 · Deployment</div>
+          <h2 class="section-title">Your 3 Production Links (Live on Vercel)</h2>
+          <p class="section-lead">Immediate zero-cost deployment URLs ready for staff and guest operations today.</p>
+        </div>
+      </div>
+
+      <div class="table-wrapper">
+        <table>
+          <thead>
+            <tr>
+              <th>Application</th>
+              <th>Vercel Link</th>
+              <th>Target Device</th>
+              <th>Who Uses It?</th>
+              <th>Primary Purpose</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>1. Guest Portal</strong></td>
+              <td><code>https://shivalaya-guest.vercel.app</code></td>
+              <td>Guest Smartphones (iOS & Android)</td>
+              <td>All Resort Guests & Diners</td>
+              <td>Browse dynamic menu, filter dietary preferences, order to Table or Room, track live status.</td>
+            </tr>
+            <tr>
+              <td><strong>2. Kitchen KDS</strong></td>
+              <td><code>https://shivalaya-kitchen.vercel.app</code></td>
+              <td>Kitchen Tablet / Touch Monitor</td>
+              <td>Kundan Chef & Cooking Team</td>
+              <td>Live 3-column Kanban, audio alert bell, 1-click thermal KOT printing, 86-item toggle.</td>
+            </tr>
+            <tr>
+              <td><strong>3. Resort Reception</strong></td>
+              <td><code>https://shivalaya-reception.vercel.app</code></td>
+              <td>Front Desk PC / Laptop</td>
+              <td>Bilam Pandey & Management</td>
+              <td>Guest check-in/checkout, room folio charges, walk-in billing (UPI/Cash/Card), daily analytics.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="why-box">
+        <span class="why-tag">Zero Risk Strategy</span>
+        <div class="why-title">Why start with Vercel links before buying a custom domain?</div>
+        <div class="why-desc">
+          Vercel links give you <strong>100% full production capabilities</strong> with free automatic SSL, high-speed CDN delivery, and zero monthly fees. The resort team can start using the system immediately today, train the kitchen and front desk, and verify the flow. In a few days, when you acquire your custom domain (e.g. <code>shivalayaresort.com</code>), you simply map it in Vercel with zero downtime and zero code changes!
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 3: GUEST PORTAL -->
+    <section id="section-3" class="section">
+      <div class="section-header">
+        <div>
+          <div class="section-tag">Section 3 · Guest Experience</div>
+          <h2 class="section-title">Guest Portal: Screen-by-Screen Breakdown</h2>
+          <p class="section-lead">What your guests experience from the moment their camera scans a QR standee.</p>
+        </div>
+      </div>
+
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-title">1. Instant Context & QR Routing</div>
+          <div class="card-desc">
+            When a guest scans a QR code, the URL contains a context query:
+            <ul style="margin: 8px 0 8px 18px;">
+              <li><code>?table=T-04</code> → Panache Dining Table 4</li>
+              <li><code>?room=201</code> → Executive Room 201</li>
+            </ul>
+            <strong>Why it's there:</strong> The guest never has to manually type their room or table number. It prevents mistyped room numbers and misrouted food delivery.
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-title">2. Category & Dietary Filtering</div>
+          <div class="card-desc">
+            Clear visual tabs: <em>Starters, Panache Specials, Main Course, Tandoor & Breads, Beverages, Desserts</em>.<br>
+            Toggles for <strong>Pure Veg (🟢)</strong>, <strong>Non-Veg (🔴)</strong>, and <strong>Chef's Recommendations (⭐)</strong>.<br>
+            <strong>Why it's there:</strong> Guests with dietary restrictions can immediately filter out meat items in one tap.
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-title">3. Item Customizer & Spice Level</div>
+          <div class="card-desc">
+            Guests can select portion sizes (Half / Full) and add chef notes:
+            <em>"Less spicy for kids"</em> or <em>"No garlic / no onion"</em>.<br>
+            <strong>Why it's there:</strong> Eliminates back-and-forth verbal misunderstandings between waiters and chefs.
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-title">4. Cart & Transparent GST Breakdown</div>
+          <div class="card-desc">
+            The floating cart drawer shows exact pricing with legal 5% GST split:
+            <ul style="margin: 8px 0 8px 18px;">
+              <li>Item Subtotal</li>
+              <li>CGST (2.5%)</li>
+              <li>SGST (2.5%)</li>
+              <li>Total Payable Amount</li>
+            </ul>
+            <strong>Why it's there:</strong> Eliminates billing surprise. Full statutory compliance with Indian GST laws.
+          </div>
+        </div>
+      </div>
+
+      <div class="why-box">
+        <span class="why-tag">Live Progress Tracker</span>
+        <div class="why-title">5. Post-Order Visual Status Timeline</div>
+        <div class="why-desc">
+          After placing an order, the guest's screen transitions to the live order tracker:
+          <strong>Received ➔ In Kitchen (Chef Preparing) ➔ Ready / On the Way ➔ Delivered</strong>.<br>
+          Guests see a friendly progress bar and estimated preparation time. They don't need to repeatedly call room service or wave at busy waiters.
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 4: KITCHEN KDS -->
+    <section id="section-4" class="section">
+      <div class="section-header">
+        <div>
+          <div class="section-tag">Section 4 · Kitchen Display System</div>
+          <h2 class="section-title">Kitchen KDS: Chef & Line Operations</h2>
+          <p class="section-lead">Built specifically for Kundan Chef and the kitchen team: large touch targets, loud audio alerts, and one-tap KOT printing.</p>
+        </div>
+      </div>
+
+      <div class="grid-3">
+        <div class="card card-primary">
+          <div class="card-title">🔔 Chime Audio Alert</div>
+          <div class="card-desc">
+            When a new order lands, a high-pitch kitchen chime sounds repeatedly until acknowledged. In a noisy, bustling kitchen, chefs never miss an incoming ticket.
+          </div>
+        </div>
+        <div class="card card-highlight">
+          <div class="card-title">📋 3-Column Kanban Board</div>
+          <div class="card-desc">
+            Orders flow left to right:
+            <br><strong>Column 1: NEW ORDERS</strong> (Blinking yellow)
+            <br><strong>Column 2: PREPARING</strong> (Chef actively cooking)
+            <br><strong>Column 3: READY / DISPATCHED</strong>
+          </div>
+        </div>
+        <div class="card card-success">
+          <div class="card-title">🖨️ 1-Click KOT Printing</div>
+          <div class="card-desc">
+            Touch the <strong>"Print KOT"</strong> button on any ticket to generate a clean Kitchen Order Ticket on the HP Smart Tank 500 or thermal roll.
+          </div>
+        </div>
+      </div>
+
+      <div class="why-box">
+        <span class="why-tag">Chef Convenience</span>
+        <div class="why-title">Hindi Language Toggle & 86-Item (Out of Stock) Control</div>
+        <div class="why-desc">
+          Kitchen staff can tap the <strong>"हिंदी / English"</strong> toggle at top right to view dish titles in Devanagari Hindi.<br>
+          If an ingredient runs out (e.g. Fresh Paneer or Tandoori Chicken), the chef can tap <strong>"Menu Stock"</strong> and toggle the item to <em>"Out of Stock (86)"</em>. It instantly grays out on all guest phones across the resort!
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 5: RECEPTION & BILLING -->
+    <section id="section-5" class="section">
+      <div class="section-header">
+        <div>
+          <div class="section-tag">Section 5 · Front Desk & Billing</div>
+          <h2 class="section-title">Reception Desk: Folio & Bill Settlement</h2>
+          <p class="section-lead">For Bilam Pandey and the resort management: room occupancy management, walk-in billing, and automated tax invoicing.</p>
+        </div>
+      </div>
+
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-title">🏨 Room Folio (Charge to Room)</div>
+          <div class="card-desc">
+            When an in-room dining order is completed, it automatically posts to the guest's active room folio (e.g., Room 208).<br>
+            At final guest checkout, Front Desk clicks <strong>"Checkout & Settle"</strong> — all restaurant dining, activities, and room charges are bundled into a single consolidated tax invoice.
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-title">💳 Walk-In Restaurant Settlement</div>
+          <div class="card-desc">
+            For non-resident restaurant diners at tables (T-01 to T-12):
+            Reception selects the table, clicks <strong>"Generate Bill"</strong>, and chooses payment method:
+            <span class="badge-pill badge-primary">Cash</span>
+            <span class="badge-pill badge-gold">UPI QR</span>
+            <span class="badge-pill badge-info">Card</span>.<br>
+            Instantly prints a receipt on the HP Smart Tank 500 printer.
+          </div>
+        </div>
+      </div>
+
+      <div class="card card-highlight">
+        <div class="card-title">📊 Executive Daily Analytics</div>
+        <div class="card-desc">
+          Owners and managers can access the <strong>Analytics Tab</strong> at any time to inspect:
+          <ul style="margin: 8px 0 8px 18px; line-height: 1.8;">
+            <li><strong>Total Daily Revenue:</strong> Split between Room Service vs Restaurant Dine-in.</li>
+            <li><strong>Top 5 Selling Dishes:</strong> Identify guest favorites and food cost drivers.</li>
+            <li><strong>Peak Order Hours:</strong> Optimize kitchen staffing for lunch and dinner rushes.</li>
+            <li><strong>Occupancy Rate:</strong> Live count of occupied rooms out of 28 total keys.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 6: PRINTER SETUP -->
+    <section id="section-6" class="section">
+      <div class="section-header">
+        <div>
+          <div class="section-tag">Section 6 · Hardware Configuration</div>
+          <h2 class="section-title">HP Smart Tank 500 & Thermal Printer Setup</h2>
+          <p class="section-lead">The exact one-time Chrome browser print settings for flawless invoices and KOT slips.</p>
+        </div>
+      </div>
+
+      <div class="grid-2">
+        <div class="card card-primary">
+          <div class="card-title">🖨️ Step 1: Open Chrome Print Dialog</div>
+          <div class="card-desc">
+            When you click "Print Bill" or "Print KOT", Google Chrome opens the system print window (or press <code>Ctrl + P</code>).
+          </div>
+        </div>
+        <div class="card card-highlight">
+          <div class="card-title">⚙️ Step 2: Essential Settings Checklist</div>
+          <div class="card-desc">
+            Ensure these 4 settings are configured (Chrome will remember them permanently):
+            <ul style="margin: 8px 0 8px 18px; line-height: 1.8;">
+              <li><strong>Destination:</strong> Select <em>HP Smart Tank 500 series</em> (or your thermal printer).</li>
+              <li><strong>Margins:</strong> Set to <strong>"None"</strong> or <strong>"Minimum"</strong>.</li>
+              <li><strong>Options:</strong> <strong style="color: var(--success);">CHECK</strong> <em>"Background graphics"</em> (so logos and borders print).</li>
+              <li><strong>Options:</strong> <strong style="color: var(--danger);">UNCHECK</strong> <em>"Headers and footers"</em> (removes date/URL from edges).</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 7: STAFF PIN ROSTER -->
+    <section id="section-7" class="section page-break">
+      <div class="section-header">
+        <div>
+          <div class="section-tag">Section 7 · Security Credentials</div>
+          <h2 class="section-title">Official Staff PIN Roster & Roles</h2>
+          <p class="section-lead">Pre-seeded 4-digit PINs for seamless touch-screen access without typing long passwords.</p>
+        </div>
+      </div>
+
+      <div class="table-wrapper">
+        <table>
+          <thead>
+            <tr>
+              <th>Staff Name</th>
+              <th>Department / Role</th>
+              <th>Assigned Portal</th>
+              <th>4-Digit Login PIN</th>
+              <th>Permissions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Kundan Chef</strong></td>
+              <td><span class="badge-pill badge-gold">Head Chef</span></td>
+              <td>Kitchen KDS</td>
+              <td><code style="font-size: 1.1rem; font-weight: 700; color: var(--primary);">1101</code></td>
+              <td>Manage kitchen queue, KOT print, 86-item menu stock.</td>
+            </tr>
+            <tr>
+              <td><strong>Deepak</strong></td>
+              <td><span class="badge-pill badge-primary">Kitchen Line</span></td>
+              <td>Kitchen KDS</td>
+              <td><code style="font-size: 1.1rem; font-weight: 700;">1102</code></td>
+              <td>Update order preparation status, print KOT.</td>
+            </tr>
+            <tr>
+              <td><strong>Neha</strong></td>
+              <td><span class="badge-pill badge-primary">Kitchen Line</span></td>
+              <td>Kitchen KDS</td>
+              <td><code style="font-size: 1.1rem; font-weight: 700;">1103</code></td>
+              <td>Update order preparation status, print KOT.</td>
+            </tr>
+            <tr>
+              <td><strong>Himanshu</strong></td>
+              <td><span class="badge-pill badge-primary">Kitchen Line</span></td>
+              <td>Kitchen KDS</td>
+              <td><code style="font-size: 1.1rem; font-weight: 700;">1104</code></td>
+              <td>Update order preparation status, print KOT.</td>
+            </tr>
+            <tr>
+              <td><strong>Sujit</strong></td>
+              <td><span class="badge-pill badge-primary">Kitchen Line</span></td>
+              <td>Kitchen KDS</td>
+              <td><code style="font-size: 1.1rem; font-weight: 700;">1201</code></td>
+              <td>Update order preparation status, print KOT.</td>
+            </tr>
+            <tr>
+              <td><strong>Varun</strong></td>
+              <td><span class="badge-pill badge-primary">Kitchen Line</span></td>
+              <td>Kitchen KDS</td>
+              <td><code style="font-size: 1.1rem; font-weight: 700;">1202</code></td>
+              <td>Update order preparation status, print KOT.</td>
+            </tr>
+            <tr>
+              <td><strong>Bilam Pandey</strong></td>
+              <td><span class="badge-pill badge-success">Front Desk Receptionist</span></td>
+              <td>Resort Reception</td>
+              <td><code style="font-size: 1.1rem; font-weight: 700; color: var(--success);">1234</code></td>
+              <td>Check-in/out guests, room folios, walk-in billing, invoice printing.</td>
+            </tr>
+            <tr>
+              <td><strong>Resort Owner</strong></td>
+              <td><span class="badge-pill badge-gold">Executive Management</span></td>
+              <td>Reception & Analytics</td>
+              <td><code style="font-size: 1.1rem; font-weight: 700; color: var(--accent-dark);">9999</code></td>
+              <td>Full administrative privileges, financial reports, revenue analytics.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- SECTION 8: DAILY CHECKLISTS -->
+    <section id="section-8" class="section">
+      <div class="section-header">
+        <div>
+          <div class="section-tag">Section 8 · Standard Operating Procedures</div>
+          <h2 class="section-title">Day 1 Operational Shift Checklists</h2>
+          <p class="section-lead">Step-by-step procedures for staff morning opening and evening closing.</p>
+        </div>
+      </div>
+
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-title">🌅 Morning Opening Routine (07:30 AM)</div>
+          <ul class="checklist">
+            <li class="checklist-item">
+              <span class="check-icon">✓</span>
+              <span><strong>Front Desk:</strong> Turn on Reception PC and open <code>shivalaya-reception.vercel.app</code>. Log in using PIN <code>1234</code>.</span>
+            </li>
+            <li class="checklist-item">
+              <span class="check-icon">✓</span>
+              <span><strong>Kitchen:</strong> Turn on Kitchen Tablet and open <code>shivalaya-kitchen.vercel.app</code>. Kundan Chef logs in with <code>1101</code>.</span>
+            </li>
+            <li class="checklist-item">
+              <span class="check-icon">✓</span>
+              <span><strong>Audio Check:</strong> Tap the bell icon in Kitchen KDS to ensure speaker volume is set to maximum for incoming order chimes.</span>
+            </li>
+            <li class="checklist-item">
+              <span class="check-icon">✓</span>
+              <span><strong>Printer Check:</strong> Verify HP Smart Tank 500 has A4/bill paper and ink levels are normal.</span>
+            </li>
+          </ul>
+        </div>
+
+        <div class="card">
+          <div class="card-title">🌙 Night Audit & Closing Routine (11:00 PM)</div>
+          <ul class="checklist">
+            <li class="checklist-item">
+              <span class="check-icon">✓</span>
+              <span><strong>Kitchen Queue:</strong> Ensure all orders in KDS are moved to "Completed / Delivered". Zero pending orders in line.</span>
+            </li>
+            <li class="checklist-item">
+              <span class="check-icon">✓</span>
+              <span><strong>Walk-in Settlement:</strong> Verify all dining table orders (T-01 to T-12) are settled (Cash, UPI, or Card).</span>
+            </li>
+            <li class="checklist-item">
+              <span class="check-icon">✓</span>
+              <span><strong>Daily Sales Report:</strong> Bilam opens the Analytics tab and prints the daily financial summary for the owner.</span>
+            </li>
+            <li class="checklist-item">
+              <span class="check-icon">✓</span>
+              <span><strong>Standee Check:</strong> Housekeeping confirms all 28 rooms and 12 dining tables have their acrylic QR codes intact.</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 9: DOMAIN TRANSITION -->
+    <section id="section-9" class="section">
+      <div class="section-header">
+        <div>
+          <div class="section-tag">Section 9 · Future Scaling</div>
+          <h2 class="section-title">Domain Transition Strategy (Custom Domain ID)</h2>
+          <p class="section-lead">When you register your custom domain (e.g., <code>shivalayaresort.com</code>), follow this 5-minute zero-breakage process.</p>
+        </div>
+      </div>
+
+      <div class="card card-primary" style="margin-bottom: 20px;">
+        <div class="card-title">🌐 Recommended Subdomains</div>
+        <p style="font-size: 0.95rem; margin-top: 6px;">
+          • Guest Portal: <code>https://menu.shivalayaresort.com</code><br>
+          • Kitchen Display: <code>https://kitchen.shivalayaresort.com</code><br>
+          • Front Desk: <code>https://desk.shivalayaresort.com</code>
+        </p>
+      </div>
+
+      <div class="table-wrapper">
+        <table>
+          <thead>
+            <tr>
+              <th>DNS Record Type</th>
+              <th>Host / Subdomain</th>
+              <th>Target Value</th>
+              <th>TTL</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><code>CNAME</code></td>
+              <td><code>menu</code></td>
+              <td><code>cname.vercel-dns.com.</code></td>
+              <td>300 (or Auto)</td>
+            </tr>
+            <tr>
+              <td><code>CNAME</code></td>
+              <td><code>kitchen</code></td>
+              <td><code>cname.vercel-dns.com.</code></td>
+              <td>300 (or Auto)</td>
+            </tr>
+            <tr>
+              <td><code>CNAME</code></td>
+              <td><code>desk</code></td>
+              <td><code>cname.vercel-dns.com.</code></td>
+              <td>300 (or Auto)</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="why-box">
+        <span class="why-tag">Zero Interruption Guarantee</span>
+        <div class="why-title">What happens to the old QR codes when you switch domains?</div>
+        <div class="why-desc">
+          Vercel automatically keeps both the <code>.vercel.app</code> links and the new custom domain active simultaneously! Any guest who scans an old QR standee will be automatically redirected to the new domain. You can replace the physical acrylic standees at your own pace without losing a single guest order.
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 10: FAQ & EMERGENCY -->
+    <section id="section-10" class="section">
+      <div class="section-header">
+        <div>
+          <div class="section-tag">Section 10 · Support</div>
+          <h2 class="section-title">Emergency Playbook & Frequently Asked Questions</h2>
+          <p class="section-lead">Quick resolutions for the most common daily operational questions.</p>
+        </div>
+      </div>
+
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-title">❓ Q: A guest scanned the QR but the menu isn't loading?</div>
+          <div class="card-desc">
+            <strong>Fix:</strong> Check if the guest's phone has active 4G/5G data or is connected to the Resort Guest Wi-Fi. The portal is extremely lightweight (&lt;2MB) and opens on any standard mobile browser (Safari, Chrome, Samsung Internet).
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-title">❓ Q: A new order arrived but the kitchen didn't hear a chime?</div>
+          <div class="card-desc">
+            <strong>Fix:</strong> Modern browsers require one initial touch on the screen before playing audio. Make sure Kundan Chef taps anywhere on the screen upon morning login to allow audio alerts. Also check the tablet media volume slider.
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-title">❓ Q: A guest wants to cancel or modify an item after ordering?</div>
+          <div class="card-desc">
+            <strong>Fix:</strong> Kundan Chef or Bilam Pandey can open the order card in Kitchen KDS or Reception, tap the item, and click "Cancel Item". The bill and live guest tracker update immediately.
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-title">❓ Q: How do we change prices or add new dishes?</div>
+          <div class="card-desc">
+            <strong>Fix:</strong> Menu items are stored in your central cloud database (Supabase). Simply log into your Supabase Dashboard → Table Editor → <code>menu_items</code> to adjust any price or description in real time.
+          </div>
+        </div>
+      </div>
+
+      <div style="text-align: center; margin-top: 40px; padding-top: 30px; border-top: 1px solid var(--border);">
+        <p style="font-weight: 700; color: var(--primary); font-size: 1.1rem;">Shivalaya Panache Resort Management System</p>
+        <p style="color: var(--text-muted); font-size: 0.88rem; margin-top: 4px;">Delivered with full source code, production deployment configurations, and operational training guides.</p>
+        <div style="margin-top: 16px;">
+          <button class="btn btn-gold" onclick="window.print()">🖨️ Print Complete Document as PDF</button>
+        </div>
+      </div>
+    </section>
+
+  </div>
+
+</body>
+</html>

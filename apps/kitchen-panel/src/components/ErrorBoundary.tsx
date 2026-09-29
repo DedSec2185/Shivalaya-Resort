@@ -1,4 +1,5 @@
 import { Component, type ErrorInfo, type ReactNode } from 'react'
+import { ChefHat, RotateCcw } from 'lucide-react'
 
 interface Props {
   children: ReactNode
@@ -26,39 +27,111 @@ export class ErrorBoundary extends Component<Props, State> {
   public render() {
     if (this.state.hasError) {
       return (
-        <div style={{
-          minHeight: '100vh',
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          justifyContent: 'center',
-          padding: '2rem',
-          textAlign: 'center',
-          background: '#12161A',
-          color: '#F8FAFC',
-          fontFamily: 'system-ui, sans-serif'
-        }}>
-          <div style={{ fontSize: '3rem', marginBottom: '1rem' }}>🍳</div>
-          <h2 style={{ fontSize: '1.5rem', fontWeight: 600, marginBottom: '0.5rem', color: '#E2E8F0' }}>
-            Kitchen Panel System Error
-          </h2>
-          <p style={{ color: '#94A3B8', fontSize: '0.95rem', maxWidth: '400px', marginBottom: '1.5rem' }}>
-            An unhandled runtime exception occurred. Please reload the kitchen panel.
-          </p>
-          <button
-            onClick={() => window.location.href = '/'}
+        <div 
+          style={{
+            minHeight: '100vh',
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            justifyContent: 'center',
+            padding: '24px',
+            textAlign: 'center',
+            background: '#111A12',
+            color: '#F3EEDB',
+            fontFamily: "'Plus Jakarta Sans', -apple-system, sans-serif"
+          }}
+        >
+          <div 
             style={{
-              padding: '0.75rem 1.5rem',
-              background: '#E2A03F',
-              color: '#12161A',
-              border: 'none',
-              borderRadius: '0.5rem',
-              fontWeight: 600,
-              cursor: 'pointer'
+              maxWidth: '440px',
+              width: '100%',
+              background: '#1A241C',
+              borderRadius: '24px',
+              border: '1.5px solid rgba(217, 189, 117, 0.3)',
+              padding: '40px 28px',
+              boxShadow: '0 24px 60px rgba(0,0,0,0.4)',
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center'
             }}
           >
-            Reload Dashboard
-          </button>
+            <div 
+              style={{
+                width: '68px',
+                height: '68px',
+                borderRadius: '50%',
+                background: 'rgba(217, 189, 117, 0.15)',
+                border: '2px solid #D9BD75',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                color: '#D9BD75',
+                marginBottom: '16px'
+              }}
+            >
+              <ChefHat size={34} />
+            </div>
+
+            <div 
+              style={{
+                fontSize: '11px',
+                fontWeight: 800,
+                letterSpacing: '0.2em',
+                textTransform: 'uppercase',
+                color: '#D9BD75',
+                marginBottom: '6px'
+              }}
+            >
+              Panache Kitchen Station
+            </div>
+
+            <h2 
+              style={{
+                fontFamily: 'Fraunces, serif',
+                fontSize: '24px',
+                fontWeight: 700,
+                color: '#FFF',
+                margin: '0 0 10px'
+              }}
+            >
+              Kitchen Display Paused
+            </h2>
+
+            <p 
+              style={{
+                color: '#A8B8AA',
+                fontSize: '14px',
+                lineHeight: 1.55,
+                margin: '0 0 26px'
+              }}
+            >
+              An unexpected runtime interruption occurred. Tap below to reload the line and reconnect to the live order channel.
+            </p>
+
+            <button
+              onClick={() => window.location.reload()}
+              style={{
+                width: '100%',
+                minHeight: '52px',
+                padding: '14px 24px',
+                background: 'linear-gradient(135deg, #D9BD75 0%, #AD8A3F 100%)',
+                color: '#132015',
+                border: 'none',
+                borderRadius: '14px',
+                fontWeight: 800,
+                fontSize: '15px',
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '8px',
+                boxShadow: '0 6px 20px rgba(173,138,63,0.35)'
+              }}
+            >
+              <RotateCcw size={18} />
+              <span>Reload Kitchen Display</span>
+            </button>
+          </div>
         </div>
       )
     }

@@ -9,8 +9,8 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useGuestAuth } from '../contexts/GuestAuthContext'
-import { User, BedDouble, Phone, Receipt, Compass, LogOut, ChevronRight, ChevronLeft, Edit3, Check, Mail, Key, UtensilsCrossed, ArrowRight } from 'lucide-react'
-import { motion, AnimatePresence } from 'framer-motion'
+import { User, BedDouble, Phone, Receipt, Compass, LogOut, ChevronRight, ChevronLeft, Edit3, Check, Key, UtensilsCrossed, ArrowRight } from 'lucide-react'
+import { motion } from 'framer-motion'
 
 export default function ProfilePage() {
   const navigate = useNavigate()
@@ -43,7 +43,7 @@ export default function ProfilePage() {
   }
   const itemVars = {
     hidden: { opacity: 0, y: 20 },
-    show: { opacity: 1, y: 0, transition: { type: 'spring', stiffness: 300, damping: 24 } }
+    show: { opacity: 1, y: 0, transition: { type: 'spring' as const, stiffness: 300, damping: 24 } }
   }
 
   return (
@@ -68,7 +68,13 @@ export default function ProfilePage() {
           <button 
             className="icon-btn" 
             aria-label="Go back" 
-            onClick={() => navigate(-1)}
+            onClick={() => {
+              if (window.history.length > 1) {
+                navigate(-1)
+              } else {
+                navigate('/')
+              }
+            }}
             style={{ width: '34px', height: '34px', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}
           >
             <ChevronLeft size={20} />

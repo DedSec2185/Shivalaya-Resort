@@ -1,5 +1,4 @@
-import React from 'react'
-import { Printer, X, CheckCircle, ShieldCheck } from 'lucide-react'
+import { Printer, X, ShieldCheck } from 'lucide-react'
 
 export interface BillOrder {
   id: string

@@ -1,8 +1,8 @@
-import React, { useState, KeyboardEvent } from 'react'
+import { useState, KeyboardEvent } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
 import { useGuestAuth } from '../contexts/GuestAuthContext'
 import { 
-  Key, ShieldCheck, ChevronLeft, Loader2, Sparkles, 
+  Key, ChevronLeft, Loader2, Sparkles, 
   Wifi, BedDouble, UtensilsCrossed, ArrowRight, CheckCircle2, User, Phone, MapPin
 } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
@@ -745,6 +745,19 @@ export default function LoginPage() {
               </div>
             </div>
           ))}
+        </div>
+
+        {/* ── Staff Terminals Direct Link ── */}
+        <div style={{ textAlign: 'center', marginTop: '14px' }}>
+          <span style={{ fontSize: '12px', color: 'rgba(243,238,219,0.55)' }}>Are you resort or kitchen staff? </span>
+          <a
+            href={import.meta.env.VITE_RECEPTION_PORTAL_URL || 'http://localhost:5183'}
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{ fontSize: '12px', color: 'var(--brass-light)', fontWeight: 600, textDecoration: 'underline' }}
+          >
+            Access Staff Consoles ➔
+          </a>
         </div>
 
       </div>

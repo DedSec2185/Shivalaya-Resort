@@ -71,6 +71,9 @@ importers:
 
   apps/kitchen-panel:
     dependencies:
+      '@panache/shared-types':
+        specifier: workspace:*
+        version: link:../../packages/shared-types
       '@supabase/supabase-js':
         specifier: ^2.112.3
         version: 2.112.3
@@ -123,6 +126,9 @@ importers:
 
   apps/resort-reception:
     dependencies:
+      '@panache/shared-types':
+        specifier: workspace:*
+        version: link:../../packages/shared-types
       '@supabase/supabase-js':
         specifier: ^2.112.3
         version: 2.112.3

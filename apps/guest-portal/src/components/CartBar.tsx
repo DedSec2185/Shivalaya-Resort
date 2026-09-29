@@ -17,6 +17,7 @@ export default function CartBar({ totalItems, total, onCheckout }: CartBarProps)
       const timer = setTimeout(() => setPulse(false), 300)
       return () => clearTimeout(timer)
     }
+    return undefined
   }, [totalItems])
 
   return (

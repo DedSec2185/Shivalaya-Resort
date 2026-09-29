@@ -1,146 +1,190 @@
-# Shivalaya Resorts & Panache Restaurant — Live Demo & Deployment Guide
+# Shivalaya Resorts & Panache Restaurant — Complete Deployment & Client Presentation Guide
 
-This guide walks you through deploying the live demo links for **Supabase** and **Vercel** so resort owners, kitchen staff, and guests can immediately place real orders, track live preparation over WebSockets, settle bills, and view owner analytics.
-
----
-
-## 🏛️ Architecture Overview
-
-The system consists of three distinct web applications connected to a single Supabase backend:
-
-| Application | Directory | Purpose / Audience |
-| :--- | :--- | :--- |
-| **Guest Sanctuary Portal** | `apps/guest-portal` | Customer ordering for both **In-House Room Residents** and **Outside Walk-In Diners** at Panache Restaurant. Includes instant 1-tap entry (zero OTP delays), live order tracker, and itemized 5% GST tax bill. |
-| **Kitchen KDS Kanban** | `apps/kitchen-panel` | Live kitchen display system for the chef team. Real-time audio-visual alerts on incoming orders, color-coded badges for `🍽️ WALK-IN TABLE T-XX` vs `🛎️ ROOM SERVICE`, and 1-tap prep status progression. |
-| **Receptionist & Owner Desk** | `apps/resort-reception` | Front-desk ledger, running folio management, walk-in bill settlement modal (Cash / UPI / Card), and dedicated Owner Analytics separating Walk-In customers from In-House room folios. |
+This guide provides a foolproof roadmap for deploying the entire Shivalaya Resort & Panache Restaurant suite to **Vercel** with a fresh **Supabase** backend, guaranteeing a smooth, non-crashing presentation for your client.
 
 ---
 
-## ⚡ Part 1: Supabase Setup (Database & Realtime)
+## 🌟 Highlights of This Setup
 
-### 1. Create a Supabase Project
-1. Go to [supabase.com](https://supabase.com) and create a new project (e.g. `shivalaya-panache-prod`).
-2. Note your **Project URL** and **anon public key** from `Settings` -> `API`.
-
-### 2. Run Database Migrations
-Open the **SQL Editor** in your Supabase dashboard and run the migrations located in `supabase/migrations/`:
-- If starting fresh, run migrations `001` through `020`.
-- If your database already has the base tables, execute:
-  `supabase/migrations/020_walkin_and_realtime_enhancements.sql`
-
-This migration provisions:
-- `tax_amount`, `grand_total`, `payment_status`, `payment_method`, `settled_at`, and `settled_by` columns on `orders`.
-- 12 restaurant tables (`T-01` through `T-12`) in `restaurant_tables`.
-- The `direct_guest_login` RPC for frictionless 1-tap guest authentication without SMS OTP blockers.
-- The canonical `create_order` RPC calculating 5% Restaurant GST (2.5% CGST + 2.5% SGST) and setting payment status (`'folio'` for rooms, `'pending'` for walk-ins).
-- The `settle_walkin_bill` RPC for recording payment mode (UPI, Cash, Card).
-
-### 3. Enable Realtime Publications
-1. In the Supabase Dashboard, go to **Database** -> **Replication** (or **Publications**).
-2. Ensure `orders` and `restaurant_tables` are selected in the `supabase_realtime` publication.
-3. Verify that `orders` has `REPLICA IDENTITY FULL`:
-   ```sql
-   ALTER TABLE public.orders REPLICA IDENTITY FULL;
-   ```
+1. **Zero External SMS / OTP Blockers**:
+   - Guests log in with 1 tap using their Room Number (e.g. `204`) or Dining Table (e.g. `T-03`), or via the instant **"Quick Demo Resident"** button.
+   - No SMS gateway contracts, Twilio credits, or DLT registration required.
+2. **Zero Automated WhatsApp API Blockers**:
+   - Automated check-in/check-out WhatsApp notifications are simulated in real time with high-fidelity toasts showing exact message content and recipient numbers.
+   - Concierge and direct room inquiries open native WhatsApp web/app links (`https://api.whatsapp.com/send`) without requiring server-side Meta Graph API tokens.
+3. **Resilient Dual-Layer Realtime Sync**:
+   - Real-time order cards, preparation stages, and bill settlements sync via **Supabase PostgreSQL Realtime WebSockets** (`orders`, `restaurant_tables`, `activity_bookings`).
+   - If running locally across tabs or during temporary network drops, the system falls back to a zero-latency `BroadcastChannel('panache_live_sync')` so orders never get lost.
+4. **White-Screen Immunity (WSOD Safe)**:
+   - Missing or unconfigured environment variables fall back to safe demo states with preloaded menus and orders instead of crashing the app.
 
 ---
 
-## 🚀 Part 2: Vercel Deployment (3 Live Demo URLs)
+## 🏛️ System Architecture
 
-To provide distinct URLs for guests, kitchen staff, and reception/owners, create **3 separate Vercel projects** linked to your Git repository:
+The monorepo contains three independent client applications sharing a single Supabase backend:
 
-### Project 1: Guest Portal (`panache-guest.vercel.app`)
-- **Root Directory**: `apps/guest-portal`
+| Application | Directory | Default Port | Audience / Role |
+| :--- | :--- | :--- | :--- |
+| **Guest Sanctuary Portal** | `apps/guest-portal` | `5190` | In-house room guests & walk-in restaurant diners. Digital menus, room service, bespoke experiences, bill previews. |
+| **Kitchen KDS Kanban** | `apps/kitchen-panel` | `5181` | Kitchen chefs & line cooks. Live audio-visual order cards, prep status management, inventory tracker. |
+| **Resort Reception & Owner Desk** | `apps/resort-reception` | `5183` | Front desk staff & owners. Guest check-in/out, room keys, walk-in billing, and analytics. |
+
+---
+
+## ⚡ Step 1: Provision the Supabase Database (60 Seconds)
+
+1. Create a new project on [supabase.com](https://supabase.com) (e.g., `shivalaya-resorts-demo`).
+2. Go to **Settings** -> **API** and copy:
+   - **Project URL** (`https://xxxxxxxxxxxx.supabase.co`)
+   - **Anon Public API Key** (`eyJh......`)
+3. Open the **SQL Editor** tab in your Supabase dashboard.
+4. Open the file [supabase/ALL_IN_ONE_SETUP.sql](file:///c:/Users/abhay/Desktop/Shivalaya%20Panache%20Menu/supabase/ALL_IN_ONE_SETUP.sql), copy its entire contents, paste it into the SQL Editor, and click **Run**.
+
+### What This Single Script Provisions:
+- **Core Tables**: `resorts`, `rooms` (28 keys), `restaurant_tables` (12 tables), `staff`, `guests`, `guest_sessions`, `orders`, `order_status_log`, `activities`, `activity_time_slots`, `activity_bookings`, `inventory_items`, `stock_inward`, `stock_consumption`.
+- **Views**:
+  - `staff_public`: Masked staff view for PIN pickers (hides password/PIN hashes from client).
+  - `guest_folio`: Unified billing combining restaurant charges and activity bookings.
+  - `current_stock`: Live computed stock balances with automatic low-stock alerts.
+- **Secure Stored Procedures (RPCs)**:
+  - `verify_staff_pin` & `verify_staff_pin_any`: Bcrypt-hashed 4-digit PIN verification.
+  - `direct_guest_login`: Instant guest login bypassing OTP.
+  - `create_order`: Canonical order placement with 5% Restaurant GST calculation.
+  - `settle_walkin_bill`: Instant walk-in invoice settlement (Cash, UPI, Card).
+  - `check_in_guest` & `check_out_guest`: Room management and guest session issuance.
+  - `get_available_slots` & `book_activity_slot`: Experience bookings with capacity locking.
+- **Realtime Publications**: Auto-subscribes `orders`, `restaurant_tables`, and `activity_bookings` to Supabase Realtime with full replica identity.
+- **Pre-Seeded Data**:
+  - 28 Official Rooms across 6 categories.
+  - 12 Restaurant Tables (`T-01` to `T-12`).
+  - 8 Staff Accounts with PINs.
+  - 23 Menu Categories and 150+ authentic dishes with prices.
+  - 6 Signature Himalayan Experiences with live time slots.
+  - Active resident guest in Room `204` (*Abhay Sharma*) with a live sample order in preparation so the screen is never blank!
+
+---
+
+## 🚀 Step 2: Push to Git & Deploy to Vercel
+
+### 1. Push Your Code to a New Git Repository
+```bash
+git remote add origin https://github.com/YOUR_USERNAME/shivalaya-panache-menu.git
+git branch -M main
+git push -u origin main
+```
+
+### 2. Deploy 3 Distinct Projects on Vercel
+In your [Vercel Dashboard](https://vercel.com/dashboard), click **"Add New..."** -> **"Project"** and import your repository **3 separate times**:
+
+#### Project 1: Guest Portal
+- **Project Name**: `shivalaya-guest` (or `panache-guest`)
+- **Root Directory**: Click *Edit* and select `apps/guest-portal`
 - **Framework Preset**: `Vite`
-- **Build Command**: `pnpm build` (or `npm run build`)
-- **Output Directory**: `dist`
+- **Build Command**: `pnpm build` (default)
+- **Output Directory**: `dist` (default)
 - **Environment Variables**:
-  - `VITE_SUPABASE_URL` = `https://your-project.supabase.co`
-  - `VITE_SUPABASE_ANON_KEY` = `your-anon-key`
-  - `VITE_RESORT_ID` = `00000000-0000-0000-0000-000000000001`
+  ```env
+  VITE_SUPABASE_URL=https://your-project.supabase.co
+  VITE_SUPABASE_ANON_KEY=your-anon-public-key
+  VITE_RESORT_ID=00000000-0000-0000-0000-000000000001
+  VITE_APP_DEMO_MODE=false
+  ```
 
-### Project 2: Kitchen Display System (`panache-kitchen.vercel.app`)
-- **Root Directory**: `apps/kitchen-panel`
+#### Project 2: Kitchen Display System (KDS)
+- **Project Name**: `shivalaya-kitchen` (or `panache-kitchen`)
+- **Root Directory**: Click *Edit* and select `apps/kitchen-panel`
 - **Framework Preset**: `Vite`
-- **Build Command**: `pnpm build` (or `npm run build`)
-- **Output Directory**: `dist`
+- **Build Command**: `pnpm build` (default)
+- **Output Directory**: `dist` (default)
 - **Environment Variables**:
-  - `VITE_SUPABASE_URL` = `https://your-project.supabase.co`
-  - `VITE_SUPABASE_ANON_KEY` = `your-anon-key`
-  - `VITE_RESORT_ID` = `00000000-0000-0000-0000-000000000001`
+  ```env
+  VITE_SUPABASE_URL=https://your-project.supabase.co
+  VITE_SUPABASE_ANON_KEY=your-anon-public-key
+  VITE_RESORT_ID=00000000-0000-0000-0000-000000000001
+  VITE_APP_DEMO_MODE=false
+  ```
 
-### Project 3: Receptionist & Owner Dashboard (`panache-desk.vercel.app`)
-- **Root Directory**: `apps/resort-reception`
+#### Project 3: Resort Reception & Front Desk
+- **Project Name**: `shivalaya-reception` (or `panache-desk`)
+- **Root Directory**: Click *Edit* and select `apps/resort-reception`
 - **Framework Preset**: `Vite`
-- **Build Command**: `pnpm build` (or `npm run build`)
-- **Output Directory**: `dist`
+- **Build Command**: `pnpm build` (default)
+- **Output Directory**: `dist` (default)
 - **Environment Variables**:
-  - `VITE_SUPABASE_URL` = `https://your-project.supabase.co`
-  - `VITE_SUPABASE_ANON_KEY` = `your-anon-key`
-  - `VITE_RESORT_ID` = `00000000-0000-0000-0000-000000000001`
+  ```env
+  VITE_SUPABASE_URL=https://your-project.supabase.co
+  VITE_SUPABASE_ANON_KEY=your-anon-public-key
+  VITE_RESORT_ID=00000000-0000-0000-0000-000000000001
+  VITE_APP_DEMO_MODE=false
+  VITE_GUEST_PORTAL_URL=https://shivalaya-guest.vercel.app
+  ```
 
-> **Note on Client-Side Routing**: Each application already includes a `vercel.json` file configuring SPA rewrites:
-> ```json
-> {
->   "rewrites": [
->     { "source": "/(.*)", "destination": "/index.html" }
->   ]
-> }
-> ```
-> This ensures that refreshing deep URLs (e.g. `/order/12345` or `/menu`) works without 404 errors.
+*(SPA routing is handled automatically by the preconfigured `vercel.json` in each folder).*
 
 ---
 
-## 🧪 Part 3: End-to-End Live Verification Test
+## 🔑 Login & Authorization Cheat-Sheet
 
-Follow this 6-step walkthrough to demonstrate the full system to the resort owners:
+| Portal | User / Role | Login Method | Credentials |
+| :--- | :--- | :--- | :--- |
+| **Guest Portal** | Resident Room Guest | Room Number | Room: `204`, Mobile: `9876543210` |
+| **Guest Portal** | Walk-in Restaurant Diner | Table Number | Table: `T-03` (or `T-01` to `T-12`), Mobile: any 10 digits |
+| **Guest Portal** | Quick Demo Mode | 1-Tap Button | Click **"Quick Demo Resident"** on `/login` |
+| **Kitchen Panel** | Head Chef Kundan | 4-Digit PIN | PIN: `1101` (or Quick PIN `1234`) |
+| **Kitchen Panel** | Line Cook Deepak | 4-Digit PIN | PIN: `1102` |
+| **Reception Desk** | Bilam Pandey (Receptionist) | 4-Digit PIN | PIN: `1234` |
+| **Reception Desk** | Resort Owner | 4-Digit PIN | PIN: `9999` |
+| **Reception Desk** | Staff Email Fallback | Email & Password | `receptionist@shivalaya.com` / `shivalaya1234` |
+| **Reception Desk** | Owner Email Fallback | Email & Password | `owner@shivalaya.com` / `shivalaya2026` |
 
-### Step 1: Open the Three Dashboards in Separate Windows
-- Window A: Guest Portal (`http://localhost:5173` or Vercel URL)
-- Window B: Kitchen Panel (`http://localhost:5174` or Vercel URL)
-- Window C: Reception Dashboard (`http://localhost:5175` or Vercel URL)
+---
 
-### Step 2: Outside Walk-In Customer Ordering
-1. In Window A (Guest Portal), go to `/login`.
-2. Select **"Walk-In Diner"**.
-3. Enter:
-   - Name: `Karan Malhotra`
-   - Mobile: `9876543211`
-   - Table: `Table T-03`
-4. Tap **"Start Dining Order"** (instant entry, no SMS OTP required).
-5. Add items to cart (e.g. *Panache Chicken* + *Garlic Naan*).
-6. Tap **"Cart"** -> **"Proceed to Details & Seating"**.
-7. Note the transparent 5% GST breakdown:
-   - Subtotal: ₹510
-   - Restaurant GST (5%): ₹25.50
-   - Grand Total: ₹535.50
-8. Tap **"Place Order"**.
+## 🎬 Client Presentation Walkthrough (Showcase Flow)
 
-### Step 3: Realtime Kitchen Alert (Zero Page Refresh)
-1. Observe Window B (Kitchen Panel):
-   - A chime plays and a new order card appears instantly at the top of the **New Orders** column.
-   - The card displays a prominent gold badge: `🍽️ Walk-In Table T-03` alongside `Karan Malhotra (Walk-In)`.
-2. Kitchen staff taps **"Accept Order"** -> card transitions to **In Preparation**.
-3. Kitchen staff taps **"Start Prep"** -> **"Mark Ready"**.
+For the client demo, open **3 browser tabs or 3 windows side-by-side**:
+- **Tab 1**: Guest Portal (`panache-guest.vercel.app`)
+- **Tab 2**: Kitchen Panel (`panache-kitchen.vercel.app`)
+- **Tab 3**: Reception Desk (`panache-desk.vercel.app`)
 
-### Step 4: Realtime Order Tracking for Guest
-1. Observe Window A (Guest Portal):
-   - The status stepper progresses automatically from *Order Received* -> *Confirmed* -> *Preparing* -> *Ready!* via Supabase WebSocket broadcast.
-   - Guest sees the itemized tax receipt with payment status badge: `PAY AT TABLE / COUNTER`.
+### 1. Show Instant Guest Login & Dining Order
+1. In **Tab 1** (Guest Portal), go to `/login` and click **"Quick Demo Resident"** (or choose Walk-In Table `T-03`).
+2. Add dishes to cart (e.g. *Kadahi Paneer*, *Garlic Naan*, *Virgin Mojito*).
+3. Open Cart, view the 5% Restaurant GST calculation, and tap **"Place Order"**.
+4. The screen transitions instantly to the live **Order Tracking** screen (`/order/PAN-XXXXX`).
 
-### Step 5: Receptionist Walk-In Bill Settlement
-1. Observe Window C (Receptionist Dashboard -> **Orders** tab):
-   - Order appears live with customer badge `Walk-In Diner`, table `🍽️ Table T-03`, and status `⏳ PENDING BILL`.
-2. Receptionist clicks **"🧾 Settle Bill"**:
-   - Itemized Tax Invoice modal opens showing subtotal, CGST 2.5%, SGST 2.5%, and Grand Total.
-   - Receptionist selects **"📱 UPI / QR"** or **"💵 Cash"** and taps **"Confirm Payment"**.
-   - Order instantly updates to `✓ Paid (UPI)`.
-   - Receptionist can tap **"🖨️ Print Tax Invoice"** for a physical thermal printout.
+### 2. Show Live Real-Time Kitchen Reception
+1. Switch to **Tab 2** (Kitchen Panel, logged in with PIN `1101` or `1234`).
+2. Notice the order appears **immediately without refreshing the page**:
+   - Tagged with `🛎️ Room 204 — Abhay Sharma` or `🍽️ Table T-03 (Walk-In)`.
+   - Audio notification chime triggers.
+3. Tap **"Accept Order"** -> status updates to `Confirmed`.
+4. Tap **"Start Prep"** -> card moves to `Preparing`.
+5. Switch to **Tab 1** (Guest Portal) — notice the status stepper in the guest's phone has updated to **"Preparing" in real-time**!
+6. In **Tab 2**, tap **"Mark Ready"**.
 
-### Step 6: Owner Analytics Dashboard
-1. In Window C, switch to the **Analytics** tab:
-   - The Owner sees dedicated metrics:
-     - **Walk-In Outside Diners**: Order count, Direct cash/UPI revenue, Average Order Value (AOV).
-     - **In-House Room Residents**: Room order count, Room folio billed revenue, Resident AOV.
-     - **Revenue Origin Split Bar**: Visual percentage split between outside diners vs hotel guests.
-     - **Total F&B Revenue**: Combined restaurant sales including 5% GST.
+### 3. Show Reception Desk & Walk-In Bill Settlement
+1. Switch to **Tab 3** (Reception Desk, logged in with PIN `1234`).
+2. Open the **Orders** tab:
+   - View the active orders.
+   - For walk-in orders, click **"🧾 Settle Bill"** -> select **"📱 UPI"** or **"💵 Cash"** -> confirm payment.
+   - Click **"🖨️ Print Tax Invoice"** to preview a thermal-ready receipt.
+3. Open the **Folio / Rooms** tab:
+   - Notice Room `204` displays running room charges with both the food orders and room rate neatly aggregated.
+4. Open the **Analytics** tab:
+   - View the live revenue split between Room Folios and Walk-in Diners, Average Order Value (AOV), and total F&B gross revenue.
+
+---
+
+## 🛠️ Local Development & Offline Mode
+
+If running completely offline or without internet access:
+```bash
+# Run all 3 portals concurrently in dev mode
+pnpm dev
+```
+- Guest Portal: `http://localhost:5190`
+- Kitchen Panel: `http://localhost:5181`
+- Reception Desk: `http://localhost:5183`
+
+The built-in `BroadcastChannel` will keep state synced between all three browser tabs locally with zero lag!

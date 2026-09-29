@@ -1,6 +1,5 @@
-import React from 'react'
 import { motion } from 'framer-motion'
-import { Mountain, Wind, Sun, Compass } from 'lucide-react'
+import { Mountain, Sun } from 'lucide-react'
 
 export default function ResortWeatherBar() {
   return (

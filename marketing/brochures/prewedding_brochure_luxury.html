@@ -1,0 +1,2171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Shivalaya Resorts, Ghorakhal — Pre-Wedding Shoot Packages</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700;800;900&family=Montserrat:wght@300;400;500;600;700;800&family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,400;1,600;1,700&display=swap" rel="stylesheet">
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    :root {
+      --dark-obsidian: #09100d;
+      --dark-emerald: #061811;
+      --dark-card: #102018;
+      --dark-card-soft: rgba(18, 35, 27, 0.75);
+      --gold-primary: #d4af37;
+      --gold-light: #f5e4b3;
+      --gold-deep: #a88426;
+      --gold-soft: #ecd9a4;
+      --cream-bg: #faf7f2;
+      --cream-card: #ffffff;
+      --text-dark: #1b2620;
+      --text-muted: #56685f;
+      --text-light: #f0f4f1;
+      --text-dim: #9ab0a4;
+      --border-gold: rgba(212, 175, 55, 0.45);
+      --border-gold-subtle: rgba(212, 175, 55, 0.22);
+      --border-subtle-dark: rgba(255, 255, 255, 0.08);
+      --border-subtle-light: #e2eae4;
+    }
+
+    body {
+      background: #050807;
+      font-family: 'Montserrat', sans-serif;
+      color: var(--text-dark);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 0 0 80px 0;
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* FULL-WIDTH TOP STICKY BAR (NEVER OVERLAPS ANY CONTENT) */
+    .web-nav {
+      position: sticky;
+      top: 0;
+      width: 100%;
+      z-index: 99999;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: rgba(8, 14, 11, 0.98);
+      padding: 12px 38px;
+      border-bottom: 1.5px solid var(--border-gold);
+      backdrop-filter: blur(14px);
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.65);
+      margin-bottom: 30px;
+    }
+    .web-nav-brand {
+      font-family: 'Cinzel', serif;
+      font-size: 13.5px;
+      color: var(--gold-light);
+      letter-spacing: 2.5px;
+      text-transform: uppercase;
+      font-weight: 700;
+    }
+    .web-nav-links {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .nav-btn {
+      padding: 8px 18px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 700;
+      text-decoration: none;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s ease;
+      letter-spacing: 0.5px;
+    }
+    .nav-btn-gold {
+      background: linear-gradient(135deg, #d4af37, #ab851a);
+      color: #080e0b;
+      border: none;
+      box-shadow: 0 3px 10px rgba(212, 175, 55, 0.35);
+    }
+    .nav-btn-gold:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 6px 16px rgba(212, 175, 55, 0.55);
+    }
+    .nav-btn-outline {
+      background: transparent;
+      color: var(--gold-light);
+      border: 1px solid var(--border-gold);
+    }
+    .nav-btn-outline:hover {
+      background: rgba(212, 175, 55, 0.15);
+      border-color: var(--gold-primary);
+    }
+
+    /* EXACT A4 PAGE GEOMETRY (794px x 1123px) */
+    .page {
+      width: 794px;
+      height: 1123px;
+      min-height: 1123px;
+      max-height: 1123px;
+      position: relative;
+      overflow: hidden;
+      margin-bottom: 35px;
+      box-shadow: 0 18px 50px rgba(0, 0, 0, 0.7);
+      box-sizing: border-box;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .cinzel { font-family: 'Cinzel', serif; }
+    .cormorant { font-family: 'Cormorant Garamond', serif; }
+    .gold-gradient {
+      background: linear-gradient(135deg, #fcedcf 0%, #d4af37 55%, #a67c1c 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    /* HEADER & FOOTER FORMATTING WITH AIRY BREATHING ROOM */
+    .header-bar-light {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-bottom: 12px;
+      border-bottom: 1.5px solid rgba(212, 175, 55, 0.4);
+      margin-bottom: 22px;
+    }
+    .header-bar-dark {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-bottom: 12px;
+      border-bottom: 1.5px solid rgba(212, 175, 55, 0.35);
+      margin-bottom: 22px;
+    }
+    .brand-title {
+      font-family: 'Cinzel', serif;
+      font-size: 13.5px;
+      letter-spacing: 3px;
+      font-weight: 700;
+      text-transform: uppercase;
+      color: var(--gold-deep);
+    }
+    .brand-title-dark {
+      font-family: 'Cinzel', serif;
+      font-size: 13.5px;
+      letter-spacing: 3px;
+      font-weight: 700;
+      text-transform: uppercase;
+      color: var(--gold-light);
+    }
+    .brand-sub {
+      font-size: 9.5px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--text-muted);
+    }
+    .brand-sub-dark {
+      font-size: 9.5px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--text-dim);
+    }
+    .header-pill {
+      font-size: 10px;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      padding: 5px 14px;
+      border-radius: 20px;
+      border: 1px solid var(--border-gold);
+      color: var(--gold-deep);
+      background: rgba(212, 175, 55, 0.08);
+      font-weight: 700;
+    }
+    .header-pill-dark {
+      font-size: 10px;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      padding: 5px 14px;
+      border-radius: 20px;
+      border: 1px solid var(--border-gold);
+      color: var(--gold-light);
+      background: rgba(212, 175, 55, 0.12);
+      font-weight: 700;
+    }
+
+    .footer-bar-light {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-top: 14px;
+      border-top: 1px solid #dfe7e2;
+      font-size: 10px;
+      letter-spacing: 1.5px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+    }
+    .footer-bar-dark {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-top: 14px;
+      border-top: 1px solid var(--border-subtle-dark);
+      font-size: 10px;
+      letter-spacing: 1.5px;
+      color: var(--text-dim);
+      text-transform: uppercase;
+    }
+
+    /* ========================================================
+       PAGE 1: ROYAL COVER (BRIGHT & VIBRANT LAKESIDE COUPLE)
+       ======================================================== */
+    .page-1 {
+      background: linear-gradient(180deg, 
+        rgba(8, 14, 11, 0.48) 0%, 
+        rgba(8, 14, 11, 0.12) 25%, 
+        rgba(8, 14, 11, 0.12) 55%, 
+        rgba(8, 14, 11, 0.72) 80%, 
+        rgba(8, 14, 11, 0.94) 100%),
+        url('prewedding_assets/couple_lake_purple_gown.jpg') center 40% / cover no-repeat;
+      color: #fff;
+      padding: 46px 48px 36px 48px;
+      text-align: center;
+    }
+    .p1-inner-border {
+      position: absolute;
+      inset: 16px;
+      border: 1px solid rgba(212, 175, 55, 0.35);
+      pointer-events: none;
+    }
+    .p1-inner-border::after {
+      content: "";
+      position: absolute;
+      inset: 4px;
+      border: 0.5px solid rgba(212, 175, 55, 0.18);
+    }
+    .p1-top-badge {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      width: 100%;
+      margin-bottom: 20px;
+      z-index: 10;
+    }
+    .p1-resort-title {
+      font-family: 'Cinzel', serif;
+      font-size: 13.5px;
+      letter-spacing: 4px;
+      font-weight: 700;
+      color: var(--gold-light);
+      text-transform: uppercase;
+      text-shadow: 0 2px 6px rgba(0,0,0,0.8);
+    }
+    .p1-resort-loc {
+      font-size: 9.5px;
+      letter-spacing: 3px;
+      color: #e0ece5;
+      text-transform: uppercase;
+      margin-top: 2px;
+      text-shadow: 0 2px 6px rgba(0,0,0,0.8);
+    }
+    .p1-pkg-pill {
+      border: 1px solid var(--gold-primary);
+      padding: 6px 18px;
+      border-radius: 20px;
+      font-size: 10px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--gold-light);
+      background: rgba(8, 14, 11, 0.65);
+      font-weight: 600;
+      backdrop-filter: blur(6px);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+    }
+
+    .p1-center-crest {
+      width: 85px;
+      height: 85px;
+      margin: 15px auto 10px;
+      z-index: 10;
+      filter: drop-shadow(0 6px 18px rgba(0,0,0,0.75));
+    }
+    .p1-center-crest img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+
+    .p1-hero-content {
+      margin-top: auto;
+      margin-bottom: 24px;
+      z-index: 10;
+    }
+    .p1-kicker {
+      font-size: 12px;
+      letter-spacing: 5px;
+      text-transform: uppercase;
+      color: var(--gold-primary);
+      margin-bottom: 14px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+      text-shadow: 0 2px 8px rgba(0,0,0,0.9);
+    }
+    .p1-kicker::before, .p1-kicker::after {
+      content: "";
+      width: 45px;
+      height: 1px;
+      background: var(--gold-primary);
+      box-shadow: 0 1px 4px rgba(0,0,0,0.8);
+    }
+    .p1-title-main {
+      font-family: 'Cinzel', serif;
+      font-size: 42px;
+      font-weight: 700;
+      line-height: 1.15;
+      color: #ffffff;
+      letter-spacing: 1px;
+      text-shadow: 0 3px 12px rgba(0,0,0,0.95);
+    }
+    .p1-title-script {
+      font-family: 'Cormorant Garamond', serif;
+      font-style: italic;
+      font-size: 64px;
+      font-weight: 600;
+      color: var(--gold-light);
+      display: block;
+      margin: 2px 0 6px 0;
+      line-height: 1.05;
+      text-shadow: 0 4px 20px rgba(0,0,0,0.95);
+    }
+    .p1-title-sub {
+      font-family: 'Cinzel', serif;
+      font-size: 38px;
+      font-weight: 600;
+      color: #ffffff;
+      letter-spacing: 2px;
+      text-shadow: 0 3px 12px rgba(0,0,0,0.95);
+    }
+    .p1-divider {
+      width: 90px;
+      height: 1.5px;
+      background: linear-gradient(90deg, transparent, var(--gold-primary), transparent);
+      margin: 20px auto;
+    }
+    .p1-tagline {
+      font-size: 12px;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+      color: var(--gold-light);
+      text-shadow: 0 2px 8px rgba(0,0,0,0.9);
+    }
+
+    .p1-stats-strip {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+      z-index: 10;
+      margin-bottom: 18px;
+    }
+    .p1-stat-card {
+      background: rgba(8, 14, 11, 0.75);
+      border: 1px solid var(--border-gold);
+      border-radius: 6px;
+      padding: 10px 8px;
+      text-align: center;
+      backdrop-filter: blur(8px);
+      box-shadow: 0 4px 14px rgba(0,0,0,0.5);
+    }
+    .p1-stat-val {
+      font-family: 'Cinzel', serif;
+      font-size: 14px;
+      font-weight: 800;
+      color: var(--gold-light);
+    }
+    .p1-stat-lbl {
+      font-size: 9px;
+      color: var(--text-dim);
+      letter-spacing: 0.5px;
+      margin-top: 3px;
+    }
+
+    .p1-bottom-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      width: 100%;
+      border-top: 1px solid rgba(212, 175, 55, 0.35);
+      padding-top: 14px;
+      font-size: 10.5px;
+      color: var(--text-dim);
+      letter-spacing: 1.5px;
+      z-index: 10;
+    }
+
+    /* ========================================================
+       PAGE 2: THE RESORT & PEACE OF MIND
+       ======================================================== */
+    .page-2 {
+      background: var(--cream-bg);
+      padding: 44px 44px 34px 44px;
+      color: var(--text-dark);
+    }
+    .p2-layout {
+      display: grid;
+      grid-template-columns: 1.12fr 0.88fr;
+      gap: 28px;
+      align-items: start;
+    }
+    .p2-eyebrow {
+      font-size: 11px;
+      letter-spacing: 3.5px;
+      text-transform: uppercase;
+      color: var(--gold-deep);
+      font-weight: 700;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .p2-eyebrow::before {
+      content: "";
+      width: 24px;
+      height: 1.5px;
+      background: var(--gold-deep);
+    }
+    .p2-heading {
+      font-family: 'Cinzel', serif;
+      font-size: 28px;
+      line-height: 1.25;
+      color: var(--dark-obsidian);
+      margin-bottom: 14px;
+      font-weight: 700;
+    }
+    .p2-heading span {
+      font-family: 'Cormorant Garamond', serif;
+      font-style: italic;
+      font-weight: 600;
+      color: var(--gold-deep);
+      display: block;
+      font-size: 34px;
+    }
+    .p2-desc {
+      font-size: 12px;
+      line-height: 1.65;
+      color: #3b4942;
+      margin-bottom: 12px;
+    }
+
+    .p2-features {
+      list-style: none;
+      margin: 16px 0;
+      display: flex;
+      flex-direction: column;
+      gap: 9px;
+    }
+    .p2-feature-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 12px;
+      font-weight: 600;
+      color: #24332b;
+      padding: 9px 12px;
+      background: #ffffff;
+      border: 1px solid var(--border-subtle-light);
+      border-radius: 4px;
+      border-left: 3px solid var(--gold-primary);
+    }
+    .p2-feature-item span.icon {
+      color: var(--gold-deep);
+      font-size: 11px;
+      font-weight: 800;
+    }
+
+    .p2-peace-card {
+      background: #ffffff;
+      border: 1.5px solid rgba(212, 175, 55, 0.45);
+      border-radius: 6px;
+      padding: 14px 16px;
+      margin-top: 14px;
+      box-shadow: 0 4px 14px rgba(0,0,0,0.03);
+    }
+    .p2-peace-title {
+      font-family: 'Cinzel', serif;
+      font-size: 11.5px;
+      font-weight: 800;
+      color: var(--gold-deep);
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      margin-bottom: 6px;
+    }
+    .p2-peace-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      font-size: 10.5px;
+      color: var(--text-muted);
+    }
+    .p2-peace-grid div {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .p2-peace-grid div::before {
+      content: "✓";
+      color: #2e7d32;
+      font-weight: 800;
+    }
+
+    .p2-right-col {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .p2-hero-img-box {
+      border-radius: 6px;
+      overflow: hidden;
+      border: 1.5px solid var(--border-gold);
+      height: 235px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+      position: relative;
+    }
+    .p2-hero-img-box img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .p2-hero-caption {
+      position: absolute;
+      bottom: 0;
+      inset-inline: 0;
+      background: linear-gradient(to top, rgba(8,14,11,0.92), transparent);
+      padding: 18px 12px 8px;
+      color: #ffffff;
+      font-size: 10.5px;
+      letter-spacing: 0.5px;
+      text-align: center;
+    }
+
+    .p2-sub-img-box {
+      border-radius: 6px;
+      overflow: hidden;
+      border: 1px solid var(--border-subtle-light);
+      height: 195px;
+      position: relative;
+      box-shadow: 0 6px 16px rgba(0,0,0,0.06);
+    }
+    .p2-sub-img-box img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .p2-stats-card {
+      background: var(--dark-obsidian);
+      border: 1.5px solid var(--gold-primary);
+      border-radius: 6px;
+      padding: 16px 14px;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      text-align: center;
+      color: #fff;
+      box-shadow: 0 8px 22px rgba(0,0,0,0.2);
+    }
+    .p2-stat-num {
+      font-family: 'Cinzel', serif;
+      font-size: 24px;
+      font-weight: 700;
+      color: var(--gold-light);
+      line-height: 1;
+      margin-bottom: 4px;
+    }
+    .p2-stat-label {
+      font-size: 8.5px;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: var(--text-dim);
+    }
+
+    /* ========================================================
+       PAGE 3: WHERE YOUR STORY UNFOLDS (HARMONIOUS 6-CARD GRID)
+       ======================================================== */
+    .page-3 {
+      background: var(--dark-obsidian);
+      padding: 38px 44px 34px 44px;
+      color: #ffffff;
+    }
+    .p3-title-wrap {
+      text-align: center;
+      margin-bottom: 16px;
+    }
+    .p3-heading {
+      font-family: 'Cinzel', serif;
+      font-size: 26px;
+      color: #ffffff;
+      font-weight: 600;
+      letter-spacing: 1px;
+    }
+    .p3-heading span {
+      font-family: 'Cormorant Garamond', serif;
+      font-style: italic;
+      color: var(--gold-light);
+      font-size: 34px;
+      font-weight: 600;
+      margin-left: 6px;
+    }
+
+    .p3-grid-balanced {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      grid-template-rows: repeat(3, 272px);
+      gap: 16px;
+      margin-top: 10px;
+    }
+    .p3-card {
+      position: relative;
+      border-radius: 6px;
+      overflow: hidden;
+      border: 1px solid var(--border-gold);
+      background: var(--dark-card);
+      box-shadow: 0 8px 20px rgba(0,0,0,0.5);
+    }
+    .p3-card img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+    .p3-card-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(180deg, rgba(8,14,11,0.02) 40%, rgba(8,14,11,0.92) 100%);
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      padding: 16px 14px 10px;
+      text-align: left;
+    }
+    .p3-badge-loc {
+      font-family: 'Cinzel', serif;
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--gold-light);
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      margin-bottom: 2px;
+    }
+    .p3-desc-loc {
+      font-size: 9.5px;
+      color: #d2ddd6;
+      line-height: 1.35;
+    }
+
+    /* ========================================================
+       PAGE 4: THE STANDARD COLLECTION (₹ 19,000)
+       LUXURY EDITORIAL BREATHING ROOM — NO CLUNKY STACKED BOXES!
+       ======================================================== */
+    .page-4 {
+      background: var(--cream-bg);
+      padding: 44px 44px 34px 44px;
+      color: var(--text-dark);
+    }
+    .p4-kicker {
+      font-size: 11px;
+      letter-spacing: 3.5px;
+      text-transform: uppercase;
+      color: var(--gold-deep);
+      font-weight: 700;
+      margin-bottom: 6px;
+    }
+    .p4-title {
+      font-family: 'Cinzel', serif;
+      font-size: 32px;
+      font-weight: 700;
+      color: var(--dark-obsidian);
+      line-height: 1.2;
+      margin-bottom: 4px;
+    }
+    .p4-title span {
+      font-family: 'Cormorant Garamond', serif;
+      font-style: italic;
+      color: var(--gold-deep);
+      font-weight: 600;
+      font-size: 36px;
+    }
+    .p4-intro {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-bottom: 16px;
+    }
+
+    .pkg-table {
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 0;
+      margin: 8px 0 16px 0;
+      background: #ffffff;
+      border: 1px solid #dbe3de;
+      border-radius: 6px;
+      overflow: hidden;
+      box-shadow: 0 6px 18px rgba(0,0,0,0.03);
+    }
+    .pkg-table tr {
+      border-bottom: 1px solid #edf2ef;
+    }
+    .pkg-table tr:last-child {
+      border-bottom: none;
+    }
+    .pkg-table td {
+      padding: 12px 14px;
+      vertical-align: middle;
+    }
+    .td-num {
+      width: 44px;
+      font-size: 11px;
+      color: var(--gold-deep);
+      font-weight: 700;
+      text-align: center;
+      border-right: 1px solid #edf2ef;
+    }
+    .td-info {
+      padding-left: 16px !important;
+    }
+    .td-title {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--dark-obsidian);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .td-desc {
+      font-size: 10.5px;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+    .td-price {
+      width: 110px;
+      text-align: right;
+      font-family: 'Cinzel', serif;
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--dark-obsidian);
+      padding-right: 18px !important;
+    }
+
+    /* SCULPTED LUXURY TOTAL SECTION */
+    .p4-total-sculpt {
+      background: linear-gradient(135deg, #09130e 0%, #060d09 100%);
+      border: 1.5px solid var(--gold-primary);
+      border-radius: 8px;
+      padding: 20px 28px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      color: #ffffff;
+      box-shadow: 0 10px 24px rgba(0,0,0,0.18);
+      margin: 12px 0 18px 0;
+    }
+    .p4-total-lbl {
+      font-size: 11px;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: var(--gold-light);
+      font-weight: 700;
+    }
+    .p4-total-sub {
+      font-size: 10px;
+      color: var(--text-dim);
+      margin-top: 3px;
+    }
+    .p4-total-num {
+      font-family: 'Cinzel', serif;
+      font-size: 34px;
+      font-weight: 800;
+      color: var(--gold-light);
+    }
+
+    /* AIRY 3-COLUMN EDITORIAL INCLUSIONS STRIP (REPLACES CRUMPLED BOXES) */
+    .p4-editorial-strip {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 16px;
+      background: #ffffff;
+      border: 1px solid var(--border-subtle-light);
+      border-radius: 8px;
+      padding: 16px 20px;
+      box-shadow: 0 4px 14px rgba(0,0,0,0.02);
+    }
+    .p4-strip-col {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .p4-strip-col:not(:last-child) {
+      border-right: 1px solid #eef3f0;
+      padding-right: 14px;
+    }
+    .p4-strip-head {
+      font-family: 'Cinzel', serif;
+      font-size: 10px;
+      font-weight: 800;
+      color: var(--gold-deep);
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      margin-bottom: 2px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .p4-strip-text {
+      font-size: 10px;
+      color: #4a5c54;
+      line-height: 1.45;
+    }
+
+    /* ========================================================
+       PAGE 5: THE PREMIUM COLLECTION (₹ 26,000)
+       BESPOKE EDITORIAL LAYOUT WITH AIRY BREATHING SPACE
+       ======================================================== */
+    .page-5 {
+      background: var(--dark-obsidian);
+      padding: 42px 44px 34px 44px;
+      color: #ffffff;
+    }
+    .p5-kicker {
+      font-size: 11px;
+      letter-spacing: 3.5px;
+      text-transform: uppercase;
+      color: var(--gold-primary);
+      font-weight: 700;
+      margin-bottom: 6px;
+    }
+    .p5-title-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      margin-bottom: 4px;
+    }
+    .p5-title {
+      font-family: 'Cinzel', serif;
+      font-size: 32px;
+      font-weight: 700;
+      color: #ffffff;
+      line-height: 1.2;
+    }
+    .p5-title span {
+      font-family: 'Cormorant Garamond', serif;
+      font-style: italic;
+      color: var(--gold-light);
+      font-weight: 600;
+      font-size: 36px;
+    }
+    .badge-upgrade {
+      background: linear-gradient(135deg, #d4af37, #9e7a17);
+      color: #0c120f;
+      font-size: 9px;
+      font-weight: 800;
+      letter-spacing: 1px;
+      padding: 3px 10px;
+      border-radius: 4px;
+      text-transform: uppercase;
+      vertical-align: middle;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+    }
+
+    .pkg-table-dark {
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 0;
+      margin: 8px 0 16px 0;
+      background: var(--dark-card);
+      border: 1px solid var(--border-gold);
+      border-radius: 6px;
+      overflow: hidden;
+      box-shadow: 0 6px 18px rgba(0,0,0,0.3);
+    }
+    .pkg-table-dark tr {
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    }
+    .pkg-table-dark tr:last-child {
+      border-bottom: none;
+    }
+    .pkg-table-dark td {
+      padding: 11px 14px;
+      vertical-align: middle;
+    }
+    .td-num-dark {
+      width: 44px;
+      font-size: 11px;
+      color: var(--gold-primary);
+      font-weight: 700;
+      text-align: center;
+      border-right: 1px solid rgba(255, 255, 255, 0.06);
+    }
+    .td-title-dark {
+      font-size: 13px;
+      font-weight: 700;
+      color: #ffffff;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .td-desc-dark {
+      font-size: 10.5px;
+      color: var(--text-dim);
+      margin-top: 2px;
+    }
+    .td-price-dark {
+      width: 110px;
+      text-align: right;
+      font-family: 'Cinzel', serif;
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--gold-light);
+      padding-right: 18px !important;
+    }
+
+    /* SCULPTED LUXURY PREMIUM TOTAL */
+    .p5-total-sculpt {
+      background: linear-gradient(135deg, #0e2219 0%, #06110c 100%);
+      border: 1.5px solid var(--gold-primary);
+      border-radius: 8px;
+      padding: 20px 28px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      color: #ffffff;
+      box-shadow: 0 10px 24px rgba(0,0,0,0.35);
+      margin: 10px 0 16px 0;
+    }
+    .p5-total-lbl {
+      font-size: 11px;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: var(--gold-light);
+      font-weight: 700;
+    }
+    .p5-total-sub {
+      font-size: 10px;
+      color: var(--text-dim);
+      margin-top: 3px;
+    }
+    .p5-total-num {
+      font-family: 'Cinzel', serif;
+      font-size: 34px;
+      font-weight: 800;
+      color: var(--gold-light);
+    }
+
+    /* AIRY SIGNATURE UPGRADE HIGHLIGHTS (SPACIOUS 4-CARD GRID) */
+    .p5-upgrades-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+    .p5-upgrade-card {
+      background: rgba(18, 35, 27, 0.6);
+      border: 1px solid var(--border-gold-subtle);
+      border-radius: 6px;
+      padding: 10px 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+    .p5-upgrade-head {
+      font-family: 'Cinzel', serif;
+      font-size: 10.5px;
+      font-weight: 800;
+      color: var(--gold-light);
+      letter-spacing: 0.8px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .p5-upgrade-desc {
+      font-size: 9.5px;
+      color: #c9d8d0;
+      line-height: 1.4;
+    }
+
+    /* REFINED DINING & POLICIES FOOTNOTE */
+    .p5-dining-footer {
+      background: rgba(10, 18, 14, 0.85);
+      border-left: 3px solid var(--gold-primary);
+      border-radius: 4px;
+      padding: 10px 14px;
+      font-size: 10px;
+      color: #c4d4cc;
+      line-height: 1.5;
+    }
+    .p5-dining-footer strong {
+      color: var(--gold-light);
+    }
+
+    /* ========================================================
+       PAGE 6: YOUR SHOOT DAY & ADD-ONS (ZERO BLANK SPACE!)
+       ======================================================== */
+    .page-6 {
+      background: var(--cream-bg);
+      padding: 42px 44px 34px 44px;
+      color: var(--text-dark);
+    }
+    .p6-layout {
+      display: grid;
+      grid-template-columns: 1.05fr 0.95fr;
+      gap: 26px;
+      margin-top: 8px;
+    }
+    .p6-subhead {
+      font-family: 'Cinzel', serif;
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--dark-obsidian);
+      letter-spacing: 1px;
+      margin-bottom: 12px;
+      text-transform: uppercase;
+      border-bottom: 1.5px solid var(--border-subtle-light);
+      padding-bottom: 5px;
+    }
+
+    .timeline-wrap {
+      position: relative;
+      padding-left: 18px;
+    }
+    .timeline-wrap::before {
+      content: "";
+      position: absolute;
+      left: 5px;
+      top: 6px;
+      bottom: 10px;
+      width: 1.5px;
+      background: var(--gold-primary);
+    }
+    .tl-step {
+      position: relative;
+      margin-bottom: 13px;
+    }
+    .tl-step::before {
+      content: "";
+      position: absolute;
+      left: -18px;
+      top: 3px;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--cream-bg);
+      border: 2px solid var(--gold-deep);
+    }
+    .tl-time {
+      font-size: 9.5px;
+      font-weight: 700;
+      color: var(--gold-deep);
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+    .tl-title {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--dark-obsidian);
+      margin-top: 1px;
+    }
+    .tl-desc {
+      font-size: 10px;
+      color: var(--text-muted);
+      margin-top: 1px;
+      line-height: 1.35;
+    }
+
+    .addon-card {
+      background: #ffffff;
+      border: 1px solid var(--border-subtle-light);
+      border-radius: 5px;
+      padding: 9px 12px;
+      margin-bottom: 8px;
+      border-left: 3px solid var(--gold-primary);
+    }
+    .addon-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 2px;
+    }
+    .addon-title {
+      font-size: 11.5px;
+      font-weight: 700;
+      color: var(--dark-obsidian);
+    }
+    .addon-price {
+      font-family: 'Cinzel', serif;
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--gold-deep);
+    }
+    .addon-desc {
+      font-size: 9.5px;
+      color: var(--text-muted);
+      line-height: 1.3;
+    }
+
+    .p6-quote-card {
+      background: var(--dark-obsidian);
+      border: 1px solid var(--gold-primary);
+      border-radius: 6px;
+      padding: 12px 14px;
+      margin-top: 10px;
+      text-align: center;
+      color: #ffffff;
+      box-shadow: 0 4px 14px rgba(0,0,0,0.12);
+    }
+    .p6-quote-script {
+      font-family: 'Cormorant Garamond', serif;
+      font-style: italic;
+      font-size: 18px;
+      color: var(--gold-light);
+      font-weight: 600;
+      margin-bottom: 3px;
+    }
+    .p6-quote-text {
+      font-size: 10px;
+      color: #c9d6cf;
+      line-height: 1.4;
+    }
+
+    /* P6 BOTTOM PHOTO STRIP (COMPLETELY BALANCES THE PAGE) */
+    .p6-bottom-showcase {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-top: 16px;
+      height: 190px;
+    }
+    .p6-photo-box {
+      border-radius: 6px;
+      overflow: hidden;
+      border: 1.5px solid var(--border-gold);
+      position: relative;
+      box-shadow: 0 6px 18px rgba(0,0,0,0.1);
+    }
+    .p6-photo-box img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .p6-photo-caption {
+      position: absolute;
+      bottom: 0;
+      inset-inline: 0;
+      background: linear-gradient(to top, rgba(8,14,11,0.92), transparent);
+      padding: 18px 12px 6px;
+      color: #ffffff;
+      font-size: 10.5px;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      text-align: center;
+    }
+
+    /* ========================================================
+       PAGE 7: HOW TO RESERVE & DIRECT CONCIERGE
+       ======================================================== */
+    .page-7 {
+      background: linear-gradient(180deg, rgba(8, 14, 11, 0.92) 0%, rgba(8, 14, 11, 0.98) 100%),
+                  url('prewedding_assets/couple_bonfire_night.jpg') center 30% / cover no-repeat;
+      padding: 44px 44px 34px 44px;
+      color: #ffffff;
+    }
+    .p7-center-top {
+      text-align: center;
+      margin-bottom: 16px;
+    }
+    .p7-crest {
+      width: 60px;
+      height: 60px;
+      margin: 0 auto 8px;
+      filter: drop-shadow(0 4px 12px rgba(0,0,0,0.6));
+    }
+    .p7-crest img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+    .p7-main-title {
+      font-family: 'Cinzel', serif;
+      font-size: 26px;
+      font-weight: 700;
+      color: #ffffff;
+    }
+    .p7-main-title span {
+      font-family: 'Cormorant Garamond', serif;
+      font-style: italic;
+      color: var(--gold-light);
+      font-size: 34px;
+      font-weight: 600;
+      display: block;
+      margin-top: 2px;
+    }
+
+    .p7-layout {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 26px;
+      margin-top: 8px;
+    }
+    .p7-box-title {
+      font-family: 'Cinzel', serif;
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--gold-light);
+      letter-spacing: 2px;
+      margin-bottom: 10px;
+      text-transform: uppercase;
+      border-bottom: 1px solid rgba(212, 175, 55, 0.35);
+      padding-bottom: 5px;
+    }
+
+    .p7-steps {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .p7-step-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(212, 175, 55, 0.2);
+      border-radius: 5px;
+      padding: 8px 12px;
+    }
+    .p7-step-num {
+      font-family: 'Cinzel', serif;
+      font-size: 12.5px;
+      font-weight: 800;
+      color: #080e0b;
+      background: var(--gold-primary);
+      width: 22px;
+      height: 22px;
+      line-height: 22px;
+      text-align: center;
+      border-radius: 50%;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+    .p7-step-head {
+      font-size: 11.5px;
+      font-weight: 700;
+      color: #ffffff;
+    }
+    .p7-step-desc {
+      font-size: 10px;
+      color: #aebfb6;
+      margin-top: 1px;
+    }
+
+    .p7-policy-box {
+      background: rgba(18, 33, 25, 0.8);
+      border: 1px solid var(--border-gold);
+      border-radius: 5px;
+      padding: 12px 14px;
+      margin-top: 12px;
+      font-size: 9.5px;
+      color: #cbd8d1;
+      line-height: 1.5;
+    }
+    .p7-policy-title {
+      font-size: 10px;
+      font-weight: 700;
+      color: var(--gold-light);
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      margin-bottom: 5px;
+    }
+
+    .contact-item {
+      display: flex;
+      margin-bottom: 10px;
+      font-size: 11.5px;
+    }
+    .contact-lbl {
+      width: 90px;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 1.5px;
+      color: var(--gold-primary);
+      text-transform: uppercase;
+    }
+    .contact-data {
+      color: #ffffff;
+      flex: 1;
+      font-size: 11.5px;
+    }
+    .contact-data a {
+      color: #ffffff;
+      text-decoration: none;
+    }
+    .contact-data a:hover {
+      color: var(--gold-light);
+    }
+
+    .p7-cta-card {
+      background: rgba(212, 175, 55, 0.1);
+      border: 1.5px solid var(--gold-primary);
+      border-radius: 6px;
+      padding: 14px;
+      text-align: center;
+      margin-top: 14px;
+    }
+    .p7-cta-tag {
+      font-family: 'Cormorant Garamond', serif;
+      font-style: italic;
+      font-size: 17px;
+      color: var(--gold-light);
+      margin-bottom: 6px;
+    }
+    .p7-cta-btn {
+      background: linear-gradient(135deg, #d4af37, #aa820a);
+      color: #072116;
+      border: none;
+      padding: 8px 20px;
+      border-radius: 25px;
+      font-size: 11.5px;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    }
+
+    /* ========================================================
+       PRINT PERFECTION (A4 EXACT PAGES)
+       ======================================================== */
+    @page {
+      size: A4 portrait;
+      margin: 0;
+    }
+
+    @media print {
+      html, body {
+        margin: 0 !important;
+        padding: 0 !important;
+        background: #000 !important;
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+      }
+      .web-nav {
+        display: none !important;
+      }
+      .page {
+        width: 210mm !important;
+        height: 297mm !important;
+        min-height: 297mm !important;
+        max-height: 297mm !important;
+        margin: 0 !important;
+        box-shadow: none !important;
+        border-radius: 0 !important;
+        page-break-inside: avoid !important;
+        page-break-after: always !important;
+        break-after: page !important;
+        overflow: hidden !important;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Full-Width Sticky Top Header (Never Overlaps Page Content) -->
+  <header class="web-nav">
+    <div class="web-nav-brand">✦ Shivalaya Resorts · Ghorakhal · Pre-Wedding Packages</div>
+    <div class="web-nav-links">
+      <a href="https://wa.me/917668009400?text=Hi,%20I%20would%20like%20to%20inquire%20about%20the%20Pre-Wedding%20Shoot%20Packages%20at%20Shivalaya%20Resorts,%20Ghorakhal." target="_blank" class="nav-btn nav-btn-outline">
+        💬 WhatsApp Concierge
+      </a>
+      <a href="tel:+917668009400" class="nav-btn nav-btn-outline">
+        📞 +91 76680 09400
+      </a>
+      <button onclick="window.print()" class="nav-btn nav-btn-gold">
+        🖨️ Download / Print PDF
+      </button>
+    </div>
+  </header>
+
+  <!-- ========================================================
+       PAGE 1: ROYAL COVER (BRIGHT & VIBRANT LAKESIDE COUPLE)
+       ======================================================== -->
+  <section class="page page-1">
+    <div class="p1-inner-border"></div>
+
+    <div class="p1-top-badge">
+      <div style="text-align: left;">
+        <div class="p1-resort-title">Shivalaya Resorts</div>
+        <div class="p1-resort-loc">Ghorakhal · Near Bhimtal · Uttarakhand</div>
+      </div>
+      <div class="p1-pkg-pill">Pre-Wedding Shoot Packages · 2025–2026</div>
+    </div>
+
+    <div class="p1-center-crest">
+      <img src="prewedding_assets/shivalaya_badge_perfect.png" alt="Shivalaya Crest Emblem">
+    </div>
+
+    <div class="p1-hero-content">
+      <div class="p1-kicker">Where Every Frame Tells Your Story</div>
+      <h1 class="p1-title-main">Your Love Story</h1>
+      <span class="p1-title-script">Deserves</span>
+      <div class="p1-title-sub">These Hills.</div>
+      <div class="p1-divider"></div>
+      <div class="p1-tagline">Ghorakhal · Near Bhimtal · Uttarakhand</div>
+    </div>
+
+    <div class="p1-stats-strip">
+      <div class="p1-stat-card">
+        <div class="p1-stat-val">6 &amp; 9 Hrs</div>
+        <div class="p1-stat-lbl">Flexible Shoot Windows</div>
+      </div>
+      <div class="p1-stat-card">
+        <div class="p1-stat-val">5+ Locations</div>
+        <div class="p1-stat-lbl">Resort &amp; Lake Vistas</div>
+      </div>
+      <div class="p1-stat-card">
+        <div class="p1-stat-val">2 Stays</div>
+        <div class="p1-stat-lbl">Suite &amp; Crew Room</div>
+      </div>
+      <div class="p1-stat-card">
+        <div class="p1-stat-val">₹19K &amp; ₹26K</div>
+        <div class="p1-stat-lbl">All-Inclusive Packages</div>
+      </div>
+    </div>
+
+    <div class="p1-bottom-bar">
+      <div>GHORAKHAL · NEAR BHIMTAL · UTTARAKHAND</div>
+      <div>+91 76680 09400 · www.shivalayaresort.com</div>
+      <div>01 / 07</div>
+    </div>
+  </section>
+
+  <!-- ========================================================
+       PAGE 2: THE RESORT & PEACE OF MIND
+       ======================================================== -->
+  <section class="page page-2">
+    <div>
+      <div class="header-bar-light">
+        <div>
+          <div class="brand-title">Shivalaya Resorts</div>
+          <div class="brand-sub">Ghorakhal (Near Bhimtal), Uttarakhand</div>
+        </div>
+        <div class="header-pill">The Sanctuary</div>
+      </div>
+
+      <div class="p2-layout">
+        <!-- Left Column -->
+        <div>
+          <div class="p2-eyebrow">The Destination</div>
+          <h2 class="p2-heading">
+            A canvas as beautiful
+            <span>as your bond.</span>
+          </h2>
+          <p class="p2-desc">
+            Nestled in the serene hills of Ghorakhal, near Bhimtal, Shivalaya Resorts is a setting impossibly beautiful and entirely yours. Panoramic valley views, manicured gardens, a dramatic Shiva mural, warm Kumaoni architecture — every corner is a frame waiting to be taken.
+          </p>
+          <p class="p2-desc">
+            Arrive from anywhere in the world. Our dedicated team handles every logistical detail — from sunrise on the terrace to golden hour by the crackling bonfire.
+          </p>
+
+          <ul class="p2-features">
+            <li class="p2-feature-item">
+              <span class="icon">✦</span>
+              <span>Panoramic valley views · sunrise observation terrace</span>
+            </li>
+            <li class="p2-feature-item">
+              <span class="icon">✦</span>
+              <span>Lush manicured flora &amp; serene stone Buddha garden</span>
+            </li>
+            <li class="p2-feature-item">
+              <span class="icon">✦</span>
+              <span>Dramatic Lord Shiva mural — signature artistic backdrop</span>
+            </li>
+            <li class="p2-feature-item">
+              <span class="icon">✦</span>
+              <span>Ghorakhal pine heights &amp; nearby Bhimtal Lake viewpoints</span>
+            </li>
+            <li class="p2-feature-item">
+              <span class="icon">✦</span>
+              <span>Dedicated production coordinator for the full shoot day</span>
+            </li>
+          </ul>
+
+          <div class="p2-peace-card">
+            <div class="p2-peace-title">✦ The Production Peace of Mind</div>
+            <div class="p2-peace-grid">
+              <div>100% DG Power Backup</div>
+              <div>Estate Drone Clearances</div>
+              <div>Private Bridal Dressing Vanity</div>
+              <div>In-House Panache Dining</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right Column -->
+        <div class="p2-right-col">
+          <div class="p2-hero-img-box">
+            <img src="prewedding_assets/resort_villa_terrace.jpg" alt="Hilltop Architecture & Terraces">
+            <div class="p2-hero-caption">Hilltop Architecture &amp; Panoramic Terraces</div>
+          </div>
+
+          <div class="p2-sub-img-box">
+            <img src="prewedding_assets/resort_cottage_steps.jpg" alt="Terraced Stone Pathways">
+            <div class="p2-hero-caption">Kumaoni Cottages &amp; Terraced Gardens</div>
+          </div>
+
+          <div class="p2-stats-card">
+            <div>
+              <div class="p2-stat-num">9 hrs</div>
+              <div class="p2-stat-label">Max Shoot Window</div>
+            </div>
+            <div style="border-inline: 1px solid rgba(212, 175, 55, 0.3);">
+              <div class="p2-stat-num">5+</div>
+              <div class="p2-stat-label">Signature Zones</div>
+            </div>
+            <div>
+              <div class="p2-stat-num">2</div>
+              <div class="p2-stat-label">Curated Packages</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="footer-bar-light">
+      <div>Shivalaya Resorts · Ghorakhal</div>
+      <div>Pre-Wedding Shoot Packages · 2025–2026</div>
+      <div>02 / 07</div>
+    </div>
+  </section>
+
+  <!-- ========================================================
+       PAGE 3: WHERE YOUR STORY UNFOLDS (HARMONIOUS 6-CARD GRID)
+       ======================================================== -->
+  <section class="page page-3">
+    <div>
+      <div class="header-bar-dark">
+        <div>
+          <div class="brand-title-dark">Shivalaya Resorts</div>
+          <div class="brand-sub-dark">Ghorakhal · Visual Showcase</div>
+        </div>
+        <div class="header-pill-dark">Signature Frames</div>
+      </div>
+
+      <div class="p3-title-wrap">
+        <h2 class="p3-heading">
+          Where Your <span>Story Unfolds</span>
+        </h2>
+      </div>
+
+      <div class="p3-grid-balanced">
+        <!-- Card 1: Bhimtal Lake Boat Ride -->
+        <div class="p3-card">
+          <img src="prewedding_assets/couple_lake_boat.jpg" alt="Bhimtal Lake Boat Voyage" style="object-position: center 35%;">
+          <div class="p3-card-overlay">
+            <div class="p3-badge-loc">Nearby Bhimtal Lake Excursion</div>
+            <div class="p3-desc-loc">Intimate wooden boat portraits on serene emerald waters</div>
+          </div>
+        </div>
+
+        <!-- Card 2: Lakeside Royal Purple Gown -->
+        <div class="p3-card">
+          <img src="prewedding_assets/couple_lake_purple_gown.jpg" alt="Lakeside Nature Trail & Royal Gown" style="object-position: center 50%;">
+          <div class="p3-card-overlay">
+            <div class="p3-badge-loc">Lakeside Royal Trail</div>
+            <div class="p3-desc-loc">High-fashion flowing gown cinema framed by pine forests</div>
+          </div>
+        </div>
+
+        <!-- Card 3: Bonfire Night -->
+        <div class="p3-card">
+          <img src="prewedding_assets/couple_bonfire_night.jpg" alt="Twilight Bonfire Shoot" style="object-position: center 25%;">
+          <div class="p3-card-overlay">
+            <div class="p3-badge-loc">Twilight Bonfire</div>
+            <div class="p3-desc-loc">Crackling embers &amp; cozy golden starlight romance</div>
+          </div>
+        </div>
+
+        <!-- Card 4: Candlelight Dinner Setup -->
+        <div class="p3-card">
+          <img src="prewedding_assets/candle_dinner_setup.jpg" alt="Candlelight Dinner Setup" style="object-position: center 45%;">
+          <div class="p3-card-overlay">
+            <div class="p3-badge-loc">Candlelight Tablescape</div>
+            <div class="p3-desc-loc">Floral rose petal heart &amp; private twilight dining setup</div>
+          </div>
+        </div>
+
+        <!-- Card 5: Sacred Shiva Mural -->
+        <div class="p3-card">
+          <img src="prewedding_assets/resort_shiva_mural.jpg" alt="Lord Shiva Mural Backdrop">
+          <div class="p3-card-overlay">
+            <div class="p3-badge-loc">The Shiva Mural</div>
+            <div class="p3-desc-loc">Signature sacred artistic backdrop found nowhere else</div>
+          </div>
+        </div>
+
+        <!-- Card 6: Hilltop Terraces & Cottages -->
+        <div class="p3-card">
+          <img src="prewedding_assets/resort_villa_terrace.jpg" alt="Hilltop Architecture & Terraces">
+          <div class="p3-card-overlay">
+            <div class="p3-badge-loc">The Resort &amp; Terraces</div>
+            <div class="p3-desc-loc">Warm Kumaoni architecture &amp; panoramic valley vistas</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="footer-bar-dark">
+      <div>Shivalaya Resorts · Ghorakhal</div>
+      <div>Pre-Wedding Shoot Packages · 2025–2026</div>
+      <div>03 / 07</div>
+    </div>
+  </section>
+
+  <!-- ========================================================
+       PAGE 4: THE STANDARD COLLECTION (₹ 19,000)
+       LUXURY EDITORIAL BREATHING ROOM — NO CLUNKY STACKED BOXES!
+       ======================================================== -->
+  <section class="page page-4">
+    <div>
+      <div class="header-bar-light">
+        <div>
+          <div class="brand-title">Shivalaya Resorts</div>
+          <div class="brand-sub">Ghorakhal · Curated Packages</div>
+        </div>
+        <div class="header-pill">Package One of Two</div>
+      </div>
+
+      <div class="p4-kicker">PACKAGE ONE OF TWO · CLASSIC MOUNTAIN ROMANCE</div>
+      <h2 class="p4-title">THE <span>Standard</span> Collection</h2>
+      <p class="p4-intro">
+        Comprehensive 6-hour shooting schedule covering all primary resort indoor zones, terrace viewpoints, and evening setups with overnight luxury suite stay.
+      </p>
+
+      <table class="pkg-table">
+        <tbody>
+          <tr>
+            <td class="td-num">01</td>
+            <td class="td-info">
+              <div class="td-title">Venue Access Duration</div>
+              <div class="td-desc">6-hour shoot window · exclusive shooting rights across estate gardens, terrace &amp; interiors</div>
+            </td>
+            <td class="td-price">₹ 5,000</td>
+          </tr>
+          <tr>
+            <td class="td-num">02</td>
+            <td class="td-info">
+              <div class="td-title">Theme Decor &amp; Floral Styling</div>
+              <div class="td-desc">Classic floral accents &amp; romantic candlelight table setting executed by resort design team</div>
+            </td>
+            <td class="td-price">Included</td>
+          </tr>
+          <tr>
+            <td class="td-num">03</td>
+            <td class="td-info">
+              <div class="td-title">Decorated Golf Cart Experience</div>
+              <div class="td-desc">On-property entry &amp; cinematic reel drive with flower-adorned electric buggy</div>
+            </td>
+            <td class="td-price">₹ 3,000</td>
+          </tr>
+          <tr>
+            <td class="td-num">04</td>
+            <td class="td-info">
+              <div class="td-title">Himalayan Bonfire Night Shoot</div>
+              <div class="td-desc">Cozy pinecone campfire setup for golden-hour sparks &amp; twilight portraits</div>
+            </td>
+            <td class="td-price">₹ 1,500</td>
+          </tr>
+          <tr>
+            <td class="td-num">05</td>
+            <td class="td-info">
+              <div class="td-title">Romantic Candlelight Dinner Setup</div>
+              <div class="td-desc">Decorated candlelight table for 2 with fresh rose petals for sunset couple portraits</div>
+            </td>
+            <td class="td-price">₹ 1,500</td>
+          </tr>
+          <tr>
+            <td class="td-num">06</td>
+            <td class="td-info">
+              <div class="td-title">Couple Luxury Suite Stay (1 Night)</div>
+              <div class="td-desc">Accommodates up to 4 guests · bridal prep, vanity mirrors &amp; comfortable overnight stay</div>
+            </td>
+            <td class="td-price">₹ 6,000</td>
+          </tr>
+          <tr>
+            <td class="td-num">07</td>
+            <td class="td-info">
+              <div class="td-title">Photography Crew Room (1 Night)</div>
+              <div class="td-desc">Accommodates 2 crew members comfortably on-property for gear prep, rest &amp; editing</div>
+            </td>
+            <td class="td-price">₹ 2,000</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <!-- SCULPTED LUXURY TOTAL CARD (GENEROUS BREATHING SPACE) -->
+      <div class="p4-total-sculpt">
+        <div>
+          <div class="p4-total-lbl">STANDARD PACKAGE TOTAL</div>
+          <div class="p4-total-sub">Includes 2 Rooms · 6 Hours Venue Shoot · Complete In-House Setups (Venue-Only: ₹5,000)</div>
+        </div>
+        <div class="p4-total-num">₹ 19,000</div>
+      </div>
+
+      <!-- AIRY 3-COLUMN EDITORIAL STRIP (REPLACES RECTANGULAR BOX CLUTTER) -->
+      <div class="p4-editorial-strip">
+        <div class="p4-strip-col">
+          <div class="p4-strip-head">✦ Production Perks</div>
+          <div class="p4-strip-text">
+            • Private Makeup Suite with vanity<br>
+            • 100% DG Continuous Power Backup<br>
+            • Estate Drone Clearances &amp; Permits
+          </div>
+        </div>
+        <div class="p4-strip-col">
+          <div class="p4-strip-head">🍽️ Panache Dining</div>
+          <div class="p4-strip-text">
+            All meals, breakfast &amp; refreshments are to be paid and enjoyed à la carte at <strong>Panache Restaurant by Shivalaya Resorts</strong>.
+          </div>
+        </div>
+        <div class="p4-strip-col">
+          <div class="p4-strip-head">✦ Add-Ons &amp; Notes</div>
+          <div class="p4-strip-text">
+            • Wine setup (₹ 2,000) with dinner<br>
+            • Extra guests at ₹ 1,000 / person beyond 4 included suite guests.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="footer-bar-light">
+      <div>Shivalaya Resorts · Ghorakhal</div>
+      <div>Pre-Wedding Shoot Packages · 2025–2026</div>
+      <div>04 / 07</div>
+    </div>
+  </section>
+
+  <!-- ========================================================
+       PAGE 5: THE PREMIUM COLLECTION (₹ 26,000)
+       BESPOKE EDITORIAL LAYOUT WITH AIRY BREATHING SPACE
+       ======================================================== -->
+  <section class="page page-5">
+    <div>
+      <div class="header-bar-dark">
+        <div>
+          <div class="brand-title-dark">Shivalaya Resorts</div>
+          <div class="brand-sub-dark">Ghorakhal · Curated Packages</div>
+        </div>
+        <div class="header-pill-dark" style="background: var(--gold-primary); color: #080e0b; font-weight: 800;">★ Most Recommended</div>
+      </div>
+
+      <div class="p5-kicker">PACKAGE TWO OF TWO · EXTENDED GRAND PRODUCTION</div>
+      <div class="p5-title-row">
+        <h2 class="p5-title">THE <span>Premium</span> Collection</h2>
+        <div class="badge-upgrade">Full Day Grand Experience</div>
+      </div>
+      <p style="font-size: 12px; color: var(--text-dim); margin-bottom: 14px;">
+        The ultimate editorial-grade experience featuring 9 extended hours of shooting, bespoke floral arch theme styling, guided golf cart village tour, and luxury stay.
+      </p>
+
+      <table class="pkg-table-dark">
+        <tbody>
+          <tr>
+            <td class="td-num-dark">01</td>
+            <td style="padding-left: 16px;">
+              <div class="td-title-dark">
+                Venue Access Duration
+                <span class="badge-upgrade">Upgraded</span>
+              </div>
+              <div class="td-desc-dark">9-Hour Extended Window (Dawn Sunrise to Starlight Bonfire) · All 4 estate scenic zones</div>
+            </td>
+            <td class="td-price-dark">₹ 10,000</td>
+          </tr>
+          <tr>
+            <td class="td-num-dark">02</td>
+            <td style="padding-left: 16px;">
+              <div class="td-title-dark">
+                Theme Decor &amp; Floral Styling
+                <span class="badge-upgrade">Upgraded</span>
+              </div>
+              <div class="td-desc-dark">Custom Theme Floral Setup (Bespoke floral arch, fairy draping &amp; photography props)</div>
+            </td>
+            <td class="td-price-dark">Included</td>
+          </tr>
+          <tr>
+            <td class="td-num-dark">03</td>
+            <td style="padding-left: 16px;">
+              <div class="td-title-dark">
+                Decorated Golf Cart Experience
+                <span class="badge-upgrade">Upgraded</span>
+              </div>
+              <div class="td-desc-dark">On-Property Entry + Guided Scenic Village &amp; Valley Viewpoint Tour</div>
+            </td>
+            <td class="td-price-dark">₹ 5,000</td>
+          </tr>
+          <tr>
+            <td class="td-num-dark">04</td>
+            <td style="padding-left: 16px;">
+              <div class="td-title-dark">
+                Romantic Candlelight Dinner Setup
+                <span class="badge-upgrade">Upgraded</span>
+              </div>
+              <div class="td-desc-dark">Grand Multi-Tier Candlelight Setup with Fairy Light Canopy &amp; fresh petals</div>
+            </td>
+            <td class="td-price-dark">₹ 1,500</td>
+          </tr>
+          <tr>
+            <td class="td-num-dark">05</td>
+            <td style="padding-left: 16px;">
+              <div class="td-title-dark">
+                Himalayan Bonfire Night Shoot
+                <span class="badge-upgrade">Upgraded</span>
+              </div>
+              <div class="td-desc-dark">Ambient Bonfire with Low Seating, Rugs &amp; Moroccan Lanterns</div>
+            </td>
+            <td class="td-price-dark">₹ 1,500</td>
+          </tr>
+          <tr>
+            <td class="td-num-dark">06</td>
+            <td style="padding-left: 16px;">
+              <div class="td-title-dark">Couple Luxury Suite Stay (1 Night)</div>
+              <div class="td-desc-dark">Accommodates up to 4 guests · bridal prep, vanity &amp; overnight stay</div>
+            </td>
+            <td class="td-price-dark">₹ 6,000</td>
+          </tr>
+          <tr>
+            <td class="td-num-dark">07</td>
+            <td style="padding-left: 16px;">
+              <div class="td-title-dark">Photography Crew Room (1 Night)</div>
+              <div class="td-desc-dark">Accommodates 2 crew members comfortably on-property</div>
+            </td>
+            <td class="td-price-dark">₹ 2,000</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <!-- SCULPTED LUXURY PREMIUM TOTAL -->
+      <div class="p5-total-sculpt">
+        <div>
+          <div class="p5-total-lbl">PREMIUM PACKAGE TOTAL</div>
+          <div class="p5-total-sub" style="color: var(--gold-light);">Extended 9 Hours Shoot · Guided Village Tour · Custom Floral Arch (Venue + Custom Decor: ₹10,000)</div>
+        </div>
+        <div class="p5-total-num gold-gradient">₹ 26,000</div>
+      </div>
+
+      <!-- SPACIOUS SIGNATURE UPGRADE HIGHLIGHTS (AIRY 4-CARD MATRIX) -->
+      <div class="p5-upgrades-grid">
+        <div class="p5-upgrade-card">
+          <div class="p5-upgrade-head">✦ 9-Hour Shoot Window</div>
+          <div class="p5-upgrade-desc">Dawn sunrise to starlight bonfire (+3 extra hours of golden-hour freedom)</div>
+        </div>
+        <div class="p5-upgrade-card">
+          <div class="p5-upgrade-head">✦ Bespoke Floral Arch</div>
+          <div class="p5-upgrade-desc">Custom theme floral arch, romantic fairy draping &amp; photography props</div>
+        </div>
+        <div class="p5-upgrade-card">
+          <div class="p5-upgrade-head">✦ Village &amp; Lake Tour</div>
+          <div class="p5-upgrade-desc">Decorated electric golf cart tour through scenic Ghorakhal pine paths &amp; lake viewpoints</div>
+        </div>
+        <div class="p5-upgrade-card">
+          <div class="p5-upgrade-head">✦ Moroccan Bonfire &amp; Canopy</div>
+          <div class="p5-upgrade-desc">Low bohemian seating with rugs, lanterns &amp; grand fairy light canopy</div>
+        </div>
+      </div>
+
+      <!-- AIRY DINING & ADD-ONS STRIP -->
+      <div class="p5-dining-footer">
+        🍽️ <strong>Panache Restaurant Dining:</strong> All meals, breakfast &amp; beverages are to be paid and ordered à la carte at Panache Restaurant by Shivalaya Resorts. · Wine setup (₹ 2,000) · Extra guests at ₹ 1,000 / person beyond 4.
+      </div>
+    </div>
+
+    <div class="footer-bar-dark">
+      <div>Shivalaya Resorts · Ghorakhal</div>
+      <div>Pre-Wedding Shoot Packages · 2025–2026</div>
+      <div>05 / 07</div>
+    </div>
+  </section>
+
+  <!-- ========================================================
+       PAGE 6: YOUR SHOOT DAY & ADD-ONS (ZERO BLANK SPACE!)
+       ======================================================== -->
+  <section class="page page-6">
+    <div>
+      <div class="header-bar-light">
+        <div>
+          <div class="brand-title">Shivalaya Resorts</div>
+          <div class="brand-sub">Ghorakhal · Production Blueprint</div>
+        </div>
+        <div class="header-pill">Your Shoot Day</div>
+      </div>
+
+      <div class="p2-eyebrow">YOUR SHOOT DAY</div>
+      <h2 class="p2-heading" style="margin-bottom: 10px;">
+        The Perfect Day
+        <span>in the Hills.</span>
+      </h2>
+
+      <div class="p6-layout">
+        <!-- Left: Sample Day Schedule -->
+        <div>
+          <div class="p6-subhead">Sample Day Schedule</div>
+          <div class="timeline-wrap">
+            <div class="tl-step">
+              <div class="tl-time">06:00 – 08:00 AM</div>
+              <div class="tl-title">Sunrise Shoot</div>
+              <div class="tl-desc">Terrace · gardens · morning valley mist &amp; golden rays</div>
+            </div>
+            <div class="tl-step">
+              <div class="tl-time">08:00 – 09:00 AM</div>
+              <div class="tl-title">Breakfast &amp; Refresh at Panache</div>
+              <div class="tl-desc">Breakfast &amp; artisanal coffee at Panache Restaurant (À la carte)</div>
+            </div>
+            <div class="tl-step">
+              <div class="tl-time">09:00 AM – 01:00 PM</div>
+              <div class="tl-title">Indoor &amp; Garden Shoot</div>
+              <div class="tl-desc">Interiors · dressing room · Shiva mural · decor setups</div>
+            </div>
+            <div class="tl-step">
+              <div class="tl-time">01:00 – 02:00 PM</div>
+              <div class="tl-title">Lunch Break at Panache</div>
+              <div class="tl-desc">Multi-cuisine lunch at Panache Restaurant (À la carte)</div>
+            </div>
+            <div class="tl-step">
+              <div class="tl-time">02:00 – 04:00 PM</div>
+              <div class="tl-title">Outdoor &amp; Village Tour</div>
+              <div class="tl-desc">Golf cart · Ghorakhal pine trails · scenic mountain viewpoints</div>
+            </div>
+            <div class="tl-step">
+              <div class="tl-time">04:00 – 05:30 PM</div>
+              <div class="tl-title">Golden Hour Prep</div>
+              <div class="tl-desc">Wine · candle lights · bonfire lighting &amp; outfit change</div>
+            </div>
+            <div class="tl-step">
+              <div class="tl-time">05:30 – 07:30 PM</div>
+              <div class="tl-title">Golden Hour Shoot</div>
+              <div class="tl-desc">Bonfire · G-cart · fairy lights · candlelit portraits</div>
+            </div>
+            <div class="tl-step" style="margin-bottom: 0;">
+              <div class="tl-time">08:00 PM Onwards</div>
+              <div class="tl-title">Dinner &amp; Rest at Panache</div>
+              <div class="tl-desc">Candlelight dining at Panache · celebratory wine toast</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right: Add-On Services & Quote -->
+        <div>
+          <div class="p6-subhead">Add-On Services &amp; Dining</div>
+
+          <div class="addon-card">
+            <div class="addon-top">
+              <div class="addon-title">Panache Restaurant Dining</div>
+              <div class="addon-price">À La Carte</div>
+            </div>
+            <div class="addon-desc">
+              All meals, breakfast &amp; refreshments are to be paid and ordered directly from the gourmet Panache menu.
+            </div>
+          </div>
+
+          <div class="addon-card">
+            <div class="addon-top">
+              <div class="addon-title">Curated Wine Setup</div>
+              <div class="addon-price">₹ 2,000</div>
+            </div>
+            <div class="addon-desc">
+              Curated wine paired with your candlelight dinner — the perfect celebratory toast.
+            </div>
+          </div>
+
+          <div class="addon-card">
+            <div class="addon-top">
+              <div class="addon-title">Live Acoustic Guitarist</div>
+              <div class="addon-price">On Request</div>
+            </div>
+            <div class="addon-desc">
+              Live acoustic guitar for candid, musical moments and natural smiles throughout the shoot.
+            </div>
+          </div>
+
+          <div class="addon-card">
+            <div class="addon-top">
+              <div class="addon-title">Extra Guests</div>
+              <div class="addon-price">₹ 1,000 / person</div>
+            </div>
+            <div class="addon-desc">
+              Each additional person beyond the included 4 guests with full resort access.
+            </div>
+          </div>
+
+          <div class="p6-quote-card">
+            <div class="p6-quote-script">Your Day, Your Way</div>
+            <div class="p6-quote-text">
+              "Every shoot is unique. Our team works with you and your photographer to shape the day around your vision, shot list, and the golden light of Ghorakhal."
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- BOTTOM PHOTO STRIP (COMPLETELY BALANCES THE PAGE) -->
+      <div class="p6-bottom-showcase">
+        <div class="p6-photo-box">
+          <img src="prewedding_assets/candle_dinner_setup.jpg" alt="Romantic Candlelight Dinner Setup" style="object-position: center 40%;">
+          <div class="p6-photo-caption">Romantic Candlelight Dinner Setup with Rose Petal Heart</div>
+        </div>
+        <div class="p6-photo-box">
+          <img src="prewedding_assets/couple_bonfire_night.jpg" alt="Ambient Himalayan Bonfire Night Shoot" style="object-position: center 25%;">
+          <div class="p6-photo-caption">Ambient Himalayan Bonfire Night Portraits</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="footer-bar-light">
+      <div>Shivalaya Resorts · Ghorakhal</div>
+      <div>Pre-Wedding Shoot Packages · 2025–2026</div>
+      <div>06 / 07</div>
+    </div>
+  </section>
+
+  <!-- ========================================================
+       PAGE 7: HOW TO RESERVE & DIRECT CONCIERGE
+       ======================================================== -->
+  <section class="page page-7">
+    <div class="p1-inner-border"></div>
+
+    <div style="z-index: 10;">
+      <div class="header-bar-dark">
+        <div>
+          <div class="brand-title-dark">Shivalaya Resorts</div>
+          <div class="brand-sub-dark">Ghorakhal · Reservation Concierge</div>
+        </div>
+        <div class="header-pill-dark">Confirm Your Date</div>
+      </div>
+
+      <div class="p7-center-top">
+        <div class="p7-crest">
+          <img src="prewedding_assets/shivalaya_badge_perfect.png" alt="Shivalaya Crest">
+        </div>
+        <h2 class="p7-main-title">
+          Let us be part of
+          <span>your love story.</span>
+        </h2>
+      </div>
+
+      <div class="p7-layout">
+        <!-- Left: How to Reserve -->
+        <div>
+          <div class="p7-box-title">How To Reserve</div>
+          <div class="p7-steps">
+            <div class="p7-step-row">
+              <div class="p7-step-num">1</div>
+              <div>
+                <div class="p7-step-head">Choose Your Package</div>
+                <div class="p7-step-desc">Standard (₹19,000) or Premium (₹26,000)</div>
+              </div>
+            </div>
+            <div class="p7-step-row">
+              <div class="p7-step-num">2</div>
+              <div>
+                <div class="p7-step-head">Confirm Your Date</div>
+                <div class="p7-step-desc">WhatsApp or call — we hold the date for you</div>
+              </div>
+            </div>
+            <div class="p7-step-row">
+              <div class="p7-step-num">3</div>
+              <div>
+                <div class="p7-step-head">Pay 50% Advance</div>
+                <div class="p7-step-desc">Lock your booking with an advance payment</div>
+              </div>
+            </div>
+            <div class="p7-step-row">
+              <div class="p7-step-num">4</div>
+              <div>
+                <div class="p7-step-head">Arrive &amp; Shoot</div>
+                <div class="p7-step-desc">Balance on arrival · we handle everything</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="p7-policy-box">
+            <div class="p7-policy-title">✦ Cancellation &amp; Refund Policy</div>
+            <div>• Free cancellation up to 15 days before shoot date (100% full refund)</div>
+            <div>• 50% refund: 7–15 days before shoot date</div>
+            <div>• No refund within 7 days of scheduled shoot</div>
+          </div>
+        </div>
+
+        <!-- Right: Get in Touch -->
+        <div>
+          <div class="p7-box-title">Get In Touch</div>
+
+          <div class="contact-item">
+            <div class="contact-lbl">Phone</div>
+            <div class="contact-data">
+              <a href="tel:+917668009400">+91 76680 09400</a>
+              <span style="font-size: 10px; color: var(--gold-light); display: block;">Call or WhatsApp Concierge Available</span>
+            </div>
+          </div>
+
+          <div class="contact-item">
+            <div class="contact-lbl">Web</div>
+            <div class="contact-data">
+              <a href="https://www.shivalayaresort.com" target="_blank">www.shivalayaresort.com</a>
+            </div>
+          </div>
+
+          <div class="contact-item">
+            <div class="contact-lbl">Instagram</div>
+            <div class="contact-data">
+              <a href="https://instagram.com/shivalayaresort" target="_blank">@shivalayaresort</a>
+            </div>
+          </div>
+
+          <div class="contact-item">
+            <div class="contact-lbl">Address</div>
+            <div class="contact-data">
+              Shivalaya Resorts, Ghorakhal,<br>
+              Near Bhimtal &amp; Nainital, Uttarakhand, India
+            </div>
+          </div>
+
+          <div class="contact-item">
+            <div class="contact-lbl">Access</div>
+            <div class="contact-data" style="font-size: 10.5px; color: #aebfb6;">
+              Ghorakhal, Uttarakhand · 5 hrs from Delhi NCR · 45 mins from Kathgodam Station · 90 mins from Pantnagar Airport.
+            </div>
+          </div>
+
+          <div class="p7-cta-card">
+            <div class="p7-cta-tag">“Where every frame tells your story.”</div>
+            <a href="https://wa.me/917668009400?text=Hi,%20I'd%20like%20to%20reserve%20a%20pre-wedding%20shoot%20at%20Shivalaya%20Resorts,%20Ghorakhal." target="_blank" class="p7-cta-btn">
+              💬 Book Date on WhatsApp
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="p1-bottom-bar" style="margin-top: auto;">
+      <div>SHIVALAYA RESORTS · GHORAKHAL</div>
+      <div>PRE-WEDDING SHOOT PACKAGES · 2025–2026</div>
+      <div>+91 76680 09400</div>
+      <div>07 / 07</div>
+    </div>
+  </section>
+
+</body>
+</html>

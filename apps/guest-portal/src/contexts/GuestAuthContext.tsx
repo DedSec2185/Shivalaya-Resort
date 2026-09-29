@@ -97,8 +97,12 @@ export function GuestAuthProvider({ children }: { children: ReactNode }) {
   // ── Request OTP ──────────────────────────────────────────
   async function requestOtp(phone: string): Promise<{ success: boolean; error?: string }> {
     try {
-      const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || 'http://127.0.0.1:54321'
-      const anonKey    = import.meta.env.VITE_SUPABASE_ANON_KEY || ''
+      const supabaseUrl = import.meta.env.VITE_SUPABASE_URL
+      const anonKey    = import.meta.env.VITE_SUPABASE_ANON_KEY
+
+      if (!supabaseUrl || !anonKey) {
+        return { success: false, error: 'Supabase configuration missing.' }
+      }
 
       const res = await fetch(`${supabaseUrl}/functions/v1/send-guest-otp`, {
         method:  'POST',
