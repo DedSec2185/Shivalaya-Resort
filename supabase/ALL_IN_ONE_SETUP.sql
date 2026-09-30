@@ -1147,7 +1147,7 @@ CREATE POLICY p_sessions_insert ON guest_sessions    FOR INSERT TO anon, authent
 CREATE POLICY p_sessions_update ON guest_sessions    FOR UPDATE TO anon, authenticated USING (token IS NOT NULL) WITH CHECK (token IS NOT NULL);
 
 CREATE POLICY p_otp_select ON guest_phone_otp   FOR SELECT TO anon, authenticated USING (phone IS NOT NULL);
-CREATE POLICY p_otp_insert ON guest_phone_otp   FOR INSERT TO anon, authenticated WITH CHECK (phone IS NOT NULL AND otp_code IS NOT NULL);
+CREATE POLICY p_otp_insert ON guest_phone_otp   FOR INSERT TO anon, authenticated WITH CHECK (phone IS NOT NULL AND otp_hash IS NOT NULL);
 CREATE POLICY p_otp_update ON guest_phone_otp   FOR UPDATE TO anon, authenticated USING (phone IS NOT NULL) WITH CHECK (phone IS NOT NULL);
 
 -- Inventory
